@@ -14,6 +14,12 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         },
+
+
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
@@ -22,6 +28,6 @@ module.exports = {
       directory: path.join(__dirname, 'dist'),
     },
     compress: true,
-    port: 3000,
+    port: 1337,
   },
 };

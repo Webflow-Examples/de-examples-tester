@@ -1,13 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'
+import './App.css'
+
+import Auth from './components/Auth';
 
 const App = () => {
   return (
     <div>
-      <h1>Welcome to My React App</h1>
-      <p>This is a basic React application.</p>
+      <Auth />
     </div>
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const rootElement = document.getElementById('root')
+const root = ReactDOM.createRoot(rootElement)
+
+// Render your App component inside the root
+root.render(
+    <App />
+);
