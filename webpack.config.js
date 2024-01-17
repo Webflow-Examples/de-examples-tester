@@ -1,4 +1,6 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
+
 
 module.exports = {
   entry: './src/main.js', 
@@ -35,7 +37,7 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
-    ],
+    ]
   },
   devServer: {
     static: {
@@ -46,5 +48,13 @@ module.exports = {
   },
   resolve:{
     extensions: ['.tsx', '.ts', '.js', '.jsx']
-  }
+  },
+  plugins:[
+    new CopyPlugin({
+      patterns: [
+          { from: 'src/examples', to: 'public/examples' },
+          // You can add more patterns here if needed
+      ],
+  }),
+  ]
 };

@@ -102,9 +102,10 @@ select{
 
 body{
     color: var(--actionPrimaryText);
-    background: var(var(--background1))
-}
+    background-color: var(--background1);
+    font-family: var(--font-stack);
+};
 
-code{
-    background: var(--background5);
+.code-javascript{
+    background-color: var(--actionPrimaryBackground);
 }

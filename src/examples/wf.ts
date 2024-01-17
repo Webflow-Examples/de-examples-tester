@@ -12,6 +12,7 @@ export const WF = {
         // Print Site Information
         console.log('Site ID:', siteInfo.siteId);
         console.log('Site Name:', siteInfo.siteName);
+        console.log('Short Name:', siteInfo.shortName)
     },
 
     setExtensionSize: async () => {
@@ -63,13 +64,16 @@ export const WF = {
         console.log(idToken)
     },
 
-    /* User Events */
-
     notifyUser: () => {
 
-        webflow.notify({ type: 'Info', message: 'Great work!' }); // General notification
-        webflow.notify({ type: 'Error', message: 'Something went wrong, try again!' }); // Error notification
-        webflow.notify({ type: 'Success', message: 'Successfully did something!' }); // Success notification
+        // General notification
+        webflow.notify({ type: 'Info', message: 'Great work!' }); 
+
+         // Error notification
+        webflow.notify({ type: 'Error', message: 'Something went wrong, try again!' });
+
+        // Success notification
+        webflow.notify({ type: 'Success', message: 'Successfully did something!' }); 
     },
 
     subscribeSelect: async () => {
@@ -119,26 +123,30 @@ export const WF = {
                     console.log("Unknown breakpoint:", breakpoint);
             }
         });
-
-        /**
-         * Later, when you want to unsubscribe from the 'mediaquery' event:
-         * @function
-         */
-        unsubscribeMediaQuery();
     },
 
-    subscribePageChange: () => {
+    subscribePageChange: async () => {
 
         // Subscribe to changes in the selected page
-        const selectedPageCallback = (page: Page | null) => {
+        const selectedPageCallback = async (page: Page | null) => {
             if (page) {
-                console.log('Selected Page:', page);
+                
+                let pageName = await page.getName()
+                let pageSlug = await page.getSlug()
+                let pageParent = await page.getParent()
+                let searchDescription = await page.getSearchDescription()
+
+
+                console.log(`Page Name: ${pageName}`);
+                console.log(`Page Slug: ${pageSlug}`);
+                console.log(`Page Description: ${searchDescription}`)
+
             } else {
                 console.log('No element is currently selected.');
             }
         }
 
-        const unsubscribeSelectedElement = webflow.subscribe('currentPage', selectedPageCallback);
+        const unsubscribeSelectedElement = webflow.subscribe('currentpage', selectedPageCallback);
     }
 
 }

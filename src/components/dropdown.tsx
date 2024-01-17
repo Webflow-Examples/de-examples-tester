@@ -15,6 +15,7 @@ function Dropdown({options, selectedValue, onValueChange} : DropdownProps) {
     return(
         <div>
             <select value={selectedValue} onChange={handleChange}>
+                <option value="">Select an option</option>
                 {options.map((option) => (
                     <option key={option.value} value={option.value}>
                         {option.label}
