@@ -94,3 +94,17 @@ button:hover{
     background-color: var(--actionPrimaryBackgroundHover);
 
 }
+
+select{
+    padding: 3px 3px 3px 3px;
+    margin: 3px 3px;
+}
+
+body{
+    color: var(--actionPrimaryText);
+    background: var(var(--background1))
+}
+
+code{
+    background: var(--background5);
+}

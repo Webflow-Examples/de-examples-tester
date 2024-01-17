@@ -1,0 +1,29 @@
+import React, { ChangeEvent } from 'react';
+
+interface DropdownProps {
+    options: {value: string; label: string}[]
+    selectedValue: string
+    onValueChange: (value: string) => void
+}
+
+function Dropdown({options, selectedValue, onValueChange} : DropdownProps) {
+
+    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        onValueChange(event.target.value)
+    }
+
+    return(
+        <div>
+            <select value={selectedValue} onChange={handleChange}>
+                {options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+    )
+
+}
+
+export default Dropdown
