@@ -87,7 +87,11 @@ button{
     color: var(--actionPrimaryText);
     border-color: var(--blueBorder);
     background-color: var(--actionPrimaryBackground);
-    border-radius: var(--border-radius)
+    border-radius: var(--border-radius);
+    padding: 3px 3px 3px 3px;
+    margin: 3px 3px;
+
+
 }
 
 button:hover{
@@ -104,4 +108,17 @@ body{
     color: var(--actionPrimaryText);
     background-color: var(--background1);
     font-family: var(--font-stack);
-};
+}
+
+input{
+    padding: 3px 3px 3px 3px;
+    margin: 3px 3px;
+}
+
+/* In your CSS file */
+.small-code-block {
+    font-size: 12px; /* Smaller font size */
+    padding: 5px; /* Reduced padding */
+    max-width: 100%; /* Set a max width if needed */
+    overflow-x: auto; /* Enable horizontal scrolling for longer lines */
+}

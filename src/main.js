@@ -98,8 +98,8 @@ const App = () => {
 
   return (
     <div>
-      <h1>Welcome to The Example Tester App!</h1>
-      <p>Select an Example Category</p>
+      <h1>Welcome to the <br></br>Designer API Tester!</h1>
+      <p>Select a Category</p>
       {/* Dropdown for selecting an example category */}
       <Dropdown
         options={exampleOptions}
@@ -129,7 +129,7 @@ const App = () => {
       {selectedFunctionName && (
         <div>
           <h4>Source Code:</h4>
-          <pre><code className="language-typescript">{functionCode}</code></pre>
+          <pre className="small-code-block"><code className="language-typescript">{functionCode}</code></pre>
         </div>
       )}
     </div>
