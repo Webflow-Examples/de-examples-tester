@@ -105,7 +105,3 @@ body{
     background-color: var(--background1);
     font-family: var(--font-stack);
 };
-
-.code-javascript{
-    background-color: var(--actionPrimaryBackground);
-}

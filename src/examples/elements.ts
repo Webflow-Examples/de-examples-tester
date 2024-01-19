@@ -32,6 +32,114 @@ export const Elements = {
         } else {
             console.log("No elements found in the current context.");
         }
-    }
+    },
+
+    
+    removeElement: async () => {
+        // Get Selected Element
+        const el = await webflow.getSelectedElement();
+        // remove the selected element
+        await el?.remove();
+    },
+    
+    getRootElement: async () => {
+        
+        const rootElement = await webflow.getRootElement()
+        console.log(`Type: ${rootElement?.type} \n ID: ${rootElement?.id}`)
+        
+    },
+    
+    insertElementBefore: async () => {
+        
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+        
+        if (selectedElement){
+            
+            const newDiv = webflow.elementPresets.DivBlock
+            
+            // Insert DIV before selected Element
+            await selectedElement.before(newDiv)
+            
+        }
+        
+    },
+    
+    insertElementAfter: async () => {
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+        
+        if (selectedElement){
+            
+            const newDiv = webflow.elementPresets.DivBlock
+            
+            // Insert DIV before selected Element
+            await selectedElement.after(newDiv)
+            
+        }
+    },
+    
+    appendElement: async () => {
+    
+        const el = await webflow.getSelectedElement();
+    
+        if (el?.children) {
+    
+            try {
+                const newElement = webflow.elementPresets.LinkBlock
+                await el?.append(newElement)
+            } catch (error) {
+                await webflow.notify({
+                    type: "Error",
+                    message: "Element can not have children"
+                })
+            }
+    
+        }
+    
+    },
+
+    prependElement: async () => {
+    
+        const el = await webflow.getSelectedElement();
+    
+        if (el?.children) {
+    
+            try {
+                const newElement = webflow.elementPresets.LinkBlock
+                await el?.prepend(newElement)
+            } catch (error) {
+                await webflow.notify({
+                    type: "Error",
+                    message: "Element can not have children"
+                })
+            }
+    
+        }
+    
+    },
+
+    getCustomAttributes: async () => {
+
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.customAttributes){
+            const  customAttributes = await selectedElement.getAllCustomAttributes()
+            console.log(customAttributes)
+        }
+
+    },
+
+    getCustomAttribute: async (name: string) => {
+
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.customAttributes){
+            const  customAttributes = await selectedElement.getCustomAttribute(name)
+            console.log(customAttributes)
+        }
+
+    },
+
 
 }
