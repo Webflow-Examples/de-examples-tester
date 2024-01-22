@@ -16,11 +16,8 @@ const App = () => {
   const [selectedExampleValue, setSelectedExampleValue] = useState('');
   const [selectedFunctionName, setSelectedFunctionName] = useState('');
   const [functionCode, setFunctionCode] = useState('');
-  const [functionParameter, setFunctionParameter] = useState('');
-  const [requiresParameter, setRequiresParameter] = useState(false);
-
-  // Setting the size for the webflow extension
-  webflow.setExtensionSize({ height: 320, width: 500 });
+  const [functionParameters, setFunctionParameters] = useState({});
+  const [parameterNames, setParameterNames] = useState([]);
 
   // Creating options for the first dropdown from the examples object
   const exampleOptions = Object.keys(examples).map(key => ({ value: key, label: key }));
@@ -30,15 +27,17 @@ const App = () => {
     Object.keys(examples[selectedExampleValue]).map(key => ({ value: key, label: key })) : [];
 
   // Event handler for changes in the function parameter input field
-  const handleParameterChange = (event) => {
-    setFunctionParameter(event.target.value);
+  
+  const handleParameterChange = (paramName, value) => {
+    setFunctionParameters(prev => ({ ...prev, [paramName]: value }));
   };
 
   // Function to execute the selected function with the provided parameter
-  const executeFunctionWithParameter = () => {
+  const executeFunctionWithParameters = () => {
     const funcToExecute = examples[selectedExampleValue][selectedFunctionName];
     if (funcToExecute) {
-      funcToExecute(functionParameter);
+      const paramValues = parameterNames.map(name => functionParameters[name]);
+      funcToExecute(...paramValues);
     }
   };
 
@@ -72,7 +71,15 @@ const App = () => {
 
             // Checking if the function requires a parameter
             const functionString = examples[selectedExampleValue][selectedFunctionName]?.toString();
-            setRequiresParameter(/\(\s*[_a-zA-Z0-9]+\s*\)/.test(functionString));
+            const paramsMatch = functionString.match(/function\s*\w*\(([^)]+)\)/);
+            if (paramsMatch && paramsMatch[1]) {
+              const params = paramsMatch[1].split(',').map(param => param.trim());
+              setParameterNames(params);
+              setFunctionParameters(params.reduce((acc, param) => ({ ...acc, [param]: '' }), {}));
+            } else {
+              setParameterNames([]);
+              setFunctionParameters({});
+            }
 
             // Executing the function (without parameters)
             const funcToExecute = examples[selectedExampleValue][selectedFunctionName];
@@ -96,6 +103,12 @@ const App = () => {
     Prism.highlightAll();
   }, [functionCode]);
 
+  useEffect( () => {
+      
+    // Setting the size for the webflow extension
+  webflow.setExtensionSize({ height: 320, width: 500 });
+  }, [])
+
   return (
     <div>
       <h1>Welcome to the <br></br>Designer API Tester!</h1>
@@ -114,16 +127,17 @@ const App = () => {
         onValueChange={handleValueChangeSelectedFunction}
       />
       {/* Input and button for functions that require a parameter */}
-      {requiresParameter && (
-        <div>
-          <input
-            type="text"
-            value={functionParameter}
-            onChange={handleParameterChange}
-            placeholder="Enter parameter"
-          />
-          <button onClick={executeFunctionWithParameter}>Run Function</button>
-        </div>
+      {parameterNames.length > 0 && parameterNames.map(name => (
+        <input
+          key={name}
+          type="text"
+          value={functionParameters[name]}
+          onChange={(e) => handleParameterChange(name, e.target.value)}
+          placeholder={`Enter ${name}`}
+        />
+      ))}
+      {parameterNames.length > 0 && (
+        <button onClick={executeFunctionWithParameters}>Run Function</button>
       )}
       {/* Displaying the source code of the selected function */}
       {selectedFunctionName && (

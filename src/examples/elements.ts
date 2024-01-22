@@ -4,13 +4,14 @@ export const Elements = {
 
     getSelectedElement: async () => {
 
-        // Get Element
+        // Get Selected Element
         const element = await webflow.getSelectedElement();
 
         // Print element info
         if (element) {
             console.log(`Selected element ID: ${element.id}`);
             console.log(`Element type: ${element.type}`);
+
             // Perform some action with the selected element
         } else {
             console.log("No element is currently selected.");
@@ -20,12 +21,13 @@ export const Elements = {
 
     getAllElements: async () => {
 
-        // 🚀 Retrieve all elements in the current context 🚀
+        // Retrieve all elements in the current context
         const allElements = await webflow.getAllElements();
 
         // Print element list
         if (allElements.length > 0) {
             console.log("List of all elements:");
+
             allElements.forEach((element, index) => {
                 console.log(`${index + 1}. Element ID: ${element.id}, Element Type: ${element.type}`);
             });
@@ -34,112 +36,439 @@ export const Elements = {
         }
     },
 
-    
+    getRootElement: async () => {
+
+        // Get Root Element
+        const rootElement = await webflow.getRootElement()
+
+        // Print element details
+        console.log(`Type: ${rootElement?.type} \n ID: ${rootElement?.id}`)
+
+    },
+
     removeElement: async () => {
+
         // Get Selected Element
         const el = await webflow.getSelectedElement();
-        // remove the selected element
+
+        // Remove the selected element
         await el?.remove();
     },
-    
-    getRootElement: async () => {
-        
-        const rootElement = await webflow.getRootElement()
-        console.log(`Type: ${rootElement?.type} \n ID: ${rootElement?.id}`)
-        
-    },
-    
+
     insertElementBefore: async () => {
-        
+
         // Get Selected Element
         const selectedElement = await webflow.getSelectedElement()
-        
-        if (selectedElement){
-            
-            const newDiv = webflow.elementPresets.DivBlock
-            
+
+        if (selectedElement) {
+
             // Insert DIV before selected Element
-            await selectedElement.before(newDiv)
-            
+            const newDiv = await selectedElement.before(webflow.elementPresets.DivBlock)
+
+            // Print element details
+            console.log(`${JSON.stringify(newDiv)}`)
+
         }
-        
+
     },
-    
+
     insertElementAfter: async () => {
+
         // Get Selected Element
         const selectedElement = await webflow.getSelectedElement()
-        
-        if (selectedElement){
-            
-            const newDiv = webflow.elementPresets.DivBlock
-            
-            // Insert DIV before selected Element
-            await selectedElement.after(newDiv)
-            
+
+        if (selectedElement) {
+
+            // Insert DIV after selected Element
+            const newDiv = await selectedElement.after(webflow.elementPresets.DivBlock)
+
+            // Print element details
+            console.log(JSON.stringify(newDiv))
+
         }
     },
-    
+
     appendElement: async () => {
-    
+
+        // Get Selected Element
         const el = await webflow.getSelectedElement();
-    
+
+        // Check if element supports child elements
         if (el?.children) {
-    
-            try {
-                const newElement = webflow.elementPresets.LinkBlock
-                await el?.append(newElement)
-            } catch (error) {
-                await webflow.notify({
-                    type: "Error",
-                    message: "Element can not have children"
-                })
-            }
-    
+
+            // Append newElement as a child to of the selected element
+            const newElement = await el?.append(webflow.elementPresets.DivBlock)
+
+            // Print element Details
+            console.log(JSON.stringify(newElement))
+
         }
-    
+
     },
 
     prependElement: async () => {
-    
+
+        // Get Selected Element
         const el = await webflow.getSelectedElement();
-    
+
+
+        // Check if element supports child elements
         if (el?.children) {
-    
-            try {
-                const newElement = webflow.elementPresets.LinkBlock
-                await el?.prepend(newElement)
-            } catch (error) {
-                await webflow.notify({
-                    type: "Error",
-                    message: "Element can not have children"
-                })
-            }
-    
+
+            // Prepend newElement as a child to of the selected element
+            const newElement = await el?.prepend(webflow.elementPresets.DivBlock)
+
+            // Print element Details
+            console.log(JSON.stringify(newElement))
+
         }
-    
+
     },
 
     getCustomAttributes: async () => {
 
+        // Get Selected Element
         const selectedElement = await webflow.getSelectedElement()
 
-        if (selectedElement?.customAttributes){
-            const  customAttributes = await selectedElement.getAllCustomAttributes()
+        if (selectedElement?.customAttributes) {
+
+            // Get All Custom Attributes
+            const customAttributes = await selectedElement.getAllCustomAttributes()
             console.log(customAttributes)
+
         }
 
     },
 
     getCustomAttribute: async (name: string) => {
 
+        // Get Selected Element
         const selectedElement = await webflow.getSelectedElement()
 
-        if (selectedElement?.customAttributes){
-            const  customAttributes = await selectedElement.getCustomAttribute(name)
+        if (selectedElement?.customAttributes) {
+
+            // Get Custom Attribute by Name
+            const customAttribute = await selectedElement.getCustomAttribute(name)
+            console.log(customAttribute)
+
+        }
+
+    },
+
+    setCustomAttribute: async (name: string, value: string) => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.customAttributes) {
+
+            // Set Custom Attribute
+            await selectedElement.setCustomAttribute(name, value)
+
+        }
+    },
+
+    removeCustomAttribute: async (name: string) => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.customAttributes) {
+
+            // Remove Custom Attribute
+            await selectedElement.removeCustomAttribute(name)
+
+        }
+
+    },
+
+    getDOMId: async () => {
+
+        // Get selected element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.domId) {
+
+            // Get and print DOM ID
+            const domId = await selectedElement?.getDomId()
+            console.log(domId)
+        } else {
+            console.log('Element does not have a DOMId')
+        }
+    },
+
+    setDOMId: async (id: string) => {
+
+        // Get selected element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.domId) {
+
+            // Set and print DOM ID
+            await selectedElement?.setDomId(id)
+            const domID = await selectedElement?.getDomId()
+            console.log(domID)
+        }
+    },
+
+    getStyles: async () => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.styles) {
+
+            // Get Styles
+            const styles = await selectedElement.getStyles()
+
+            // Get Style Details
+            const styleDetails = styles.map(async style => {
+
+                const styleName = await style.getName()
+                const styleProperties = await style.getProperties()
+
+                return {
+                    Name: styleName,
+                    Properties: styleProperties,
+                    ID: style.id,
+                }
+
+            })
+
+            // Print Style Details
+            console.log(await Promise.all(styleDetails))
+
+        }
+
+    },
+
+    setStyles: async (styleName: string) => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.styles) {
+
+            // Get Style by name
+            const myStyle = await webflow.getStyleByName(styleName)
+
+            if (myStyle) {
+
+                // Set and print style
+                await selectedElement.setStyles([myStyle])
+                const styles = await selectedElement.getStyles()
+                console.log(`Styles: ${JSON.stringify(styles)}`)
+            }
+
+        }
+
+    },
+
+    setTextContent: async (myText: string) => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.textContent) {
+
+            // Set and print text content
+            const text = await selectedElement.setTextContent(myText)
+            console.log(selectedElement.textContent)
+
+        }
+
+
+    },
+
+    getChildren: async () => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement();
+
+        if (selectedElement?.children) {
+            // Get Children
+            const children = await selectedElement.getChildren();
+
+            // Get Children Details
+            const childrenDetailsPromises = children.map(async (child) => {
+
+                let childStyles = child.styles ? await child.getStyles() : null;
+
+                // Get Style Details (This is the name of the element in the designer)
+                let styleDetails = null;
+                if (childStyles) {
+                    const styleNamesPromises = childStyles.map(style => style.getName());
+                    styleDetails = await Promise.all(styleNamesPromises);
+                }
+
+                return {
+                    styleDetails,
+                };
+            });
+
+            // Await the array of promises from the map
+            const childrenDetails = await Promise.all(childrenDetailsPromises);
+            console.log(childrenDetails); // This will now log the array of child details
+        }
+
+    },
+
+    // DOM Element APIs
+
+    getTag: async () => {
+
+        // Get All Elements and find first DOM Element
+        const elements = await webflow.getAllElements()
+        const DOMElement = elements.find(element => element.type === "DOM")
+
+        if (DOMElement?.type === "DOM") {
+
+            // Get DOM Element's Tag
+            const tag = await DOMElement.getTag()
+            console.log(tag)
+
+        } else {
+            console.log('No DOM Element Found')
+        }
+
+    },
+
+    setTag: async (myTag: string) => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement();
+
+        if (selectedElement?.children) {
+
+            // Create and append DOM Element
+            const DOMElement = await selectedElement.append(webflow.elementPresets.DOM);
+            console.log(DOMElement)
+
+            // Set Tag
+            await DOMElement?.setTag(myTag);
+            const tag = await DOMElement.getTag()
+        }
+
+    },
+
+    getAllAttributes: async () => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement();
+
+        if (selectedElement?.type === "DOM") {
+
+            const customAttributes = await selectedElement.getAllAttributes()
             console.log(customAttributes)
         }
 
     },
 
+    getAttribute: async (name: string) => {
+
+        // Get All Elements and find first DOM Element
+        const elements = await webflow.getAllElements()
+        const DOMElement = elements.find(element => element.type === "DOM")
+
+        if (DOMElement?.type === "DOM") {
+
+            // Get DOM Element's Attribute by Name
+            const attribute = await DOMElement.getAttribute(name)
+            console.log(attribute)
+
+        } else {
+            console.log('No DOM Element Found')
+        }
+
+
+    },
+
+    setAttribute: async (name: string, value: string) => {
+
+        // Get All Elements and find first DOM Element
+        const elements = await webflow.getAllElements()
+        const DOMElement = elements.find(element => element.type === "DOM")
+
+        if (DOMElement?.type === "DOM") {
+
+            // Set and print DOM Element's Attributes
+            await DOMElement.setAttribute(name, value)
+            const attributes = await DOMElement.getAllAttributes()
+            console.log(attributes)
+
+        } else {
+            console.log('No DOM Element Found')
+        }
+
+
+    },
+
+    removeAttribute: async (name: string) => {
+
+        // Get All Elements and find first DOM Element
+        const elements = await webflow.getAllElements()
+        const DOMElement = elements.find(element => element.type === "DOM")
+
+        if (DOMElement?.type === "DOM") {
+
+            // Remove and print DOM Element's Attributes
+            await DOMElement.removeAttribute(name)
+            const attributes = await DOMElement.getAllAttributes()
+            console.log(attributes)
+
+        } else {
+            console.log('No DOM Element Found')
+        }
+
+
+
+    },
+
+
+    // String Element APIs
+
+    getText: async () => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.textContent && selectedElement?.children) {
+
+            // Get Child Eleemnts
+            const children = await selectedElement.getChildren()
+
+            // Get string elements from children
+            const strings = children.filter(child => child.type === "String")
+
+            // Get text from child strings
+            const textContent = strings.map(myString => { if (myString.type === "String") myString.getText() })
+
+        }
+    },
+
+    typeChecking: async () => {
+        // Example: Type checking in Webflow API
+
+        // Get a selected element
+        let element = await webflow.getSelectedElement();
+
+        // Check the type of the element
+        if (element?.type === "String") {
+
+            // It's safe to use methods specific to StringElement
+            let text = element.getText();
+            console.log('Text content:', text);
+
+        } else if (element?.children) {
+
+            // Check if the element can have children
+            let imageUrl = await element.getChildren()
+            console.log('Image URL:', imageUrl);
+
+        } else {
+            // Handle other types or default case
+            console.log("Element is not a StringElement and doesn't have child properties");
+        }
+    },
 
 }
