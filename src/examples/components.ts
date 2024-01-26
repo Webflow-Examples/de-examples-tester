@@ -83,6 +83,18 @@ export const Components = {
 
     },
 
+    editComponent: async () => {
+
+        // Get Component
+        const all = await webflow.getAllComponents()
+        const firstComponent = all[0]
+
+        const root = await firstComponent?.getRootElement()
+
+        if (root?.children) await root?.append(webflow.elementPresets.DivBlock);
+
+    },
+
     // ❌ NEEDS WORK ❌
     createComponentInstance: async () => {
 
@@ -134,9 +146,13 @@ export const Components = {
     },
 
     getRootElement: async () => {
-        //  Fetch the root element 
-        const rootElement = await webflow.getRootElement();
-        console.log(rootElement?.type)
+        
+        // Get Component
+        const all = await webflow.getAllComponents()
+        const firstComponent = all[0]
+
+        // Get Root Element of Component
+        const root = await firstComponent?.getRootElement()
 
     },
 
@@ -169,9 +185,15 @@ export const Components = {
         const elements = await webflow.getAllElements()
         const componentInstance = elements.find(el => el.type === 'ComponentInstance')
 
-        // Get Component object from instance
-        const component = await componentInstance?.getComponent().getName()
-        console.log(component)
+        if (componentInstance?.type === "ComponentInstance") {
+
+            // Get Component object from instance
+            const component = await componentInstance?.getComponent()
+            const componentName = await component.getName()
+            console.log(componentName)
+        } else {
+            console.log("No component element found")
+        }
     },
 
 }

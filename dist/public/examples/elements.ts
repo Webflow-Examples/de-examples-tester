@@ -1,4 +1,5 @@
 import WebflowAPI from "@webflow/designer-extension-typings"
+import { removeIfPresent } from "typedoc/dist/lib/utils";
 
 export const Elements = {
 
@@ -125,7 +126,7 @@ export const Elements = {
 
     },
 
-    getCustomAttributes: async () => {
+    getAllCustomAttributes: async () => {
 
         // Get Selected Element
         const selectedElement = await webflow.getSelectedElement()
@@ -163,8 +164,7 @@ export const Elements = {
         if (selectedElement?.customAttributes) {
 
             // Set Custom Attribute
-            await selectedElement.setCustomAttribute(name, value)
-
+            const newAttribute = await selectedElement.setCustomAttribute(name, value)
         }
     },
 
@@ -264,6 +264,30 @@ export const Elements = {
 
     },
 
+    createAndSetStyle: async () => {
+
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.styles) {
+
+            // Create a new style
+            const newStyle = await webflow.createStyle("MyCustomStyle");
+
+            // Set properties for the style
+            newStyle.setProperties({
+                'background-color': "blue",
+                'font-size': "32px",
+                'font-weight': "bold",
+            });
+
+            // Set style on selected element
+            selectedElement.setStyles([newStyle])
+
+        }
+
+    },
+
     setTextContent: async (myText: string) => {
 
         // Get Selected Element
@@ -286,16 +310,18 @@ export const Elements = {
         const selectedElement = await webflow.getSelectedElement();
 
         if (selectedElement?.children) {
+
             // Get Children
             const children = await selectedElement.getChildren();
 
             // Get Children Details
             const childrenDetailsPromises = children.map(async (child) => {
 
+
+                // Get style details of children (This is the name of the element in the designer)
+                let styleDetails = null;
                 let childStyles = child.styles ? await child.getStyles() : null;
 
-                // Get Style Details (This is the name of the element in the designer)
-                let styleDetails = null;
                 if (childStyles) {
                     const styleNamesPromises = childStyles.map(style => style.getName());
                     styleDetails = await Promise.all(styleNamesPromises);
@@ -306,9 +332,13 @@ export const Elements = {
                 };
             });
 
-            // Await the array of promises from the map
+            // Print details of child elements
             const childrenDetails = await Promise.all(childrenDetailsPromises);
             console.log(childrenDetails); // This will now log the array of child details
+
+        } else {
+            console.log(selectedElement.prepend(webflow.elementPresets.DivBlock))
+            console.log("This element does not support child elements")
         }
 
     },
@@ -430,20 +460,78 @@ export const Elements = {
     getText: async () => {
 
         // Get Selected Element
-        const selectedElement = await webflow.getSelectedElement()
+        const selectedElement = await webflow.getSelectedElement();
 
         if (selectedElement?.textContent && selectedElement?.children) {
 
-            // Get Child Eleemnts
-            const children = await selectedElement.getChildren()
+            // Get Child Elements
+            const children = await selectedElement.getChildren();
 
-            // Get string elements from children
-            const strings = children.filter(child => child.type === "String")
+            // Filter string elements from children
+            const strings = children.filter(child => child.type === "String");
 
-            // Get text from child strings
-            const textContent = strings.map(myString => { if (myString.type === "String") myString.getText() })
+            // Initialize an array to hold text content
+            let textContent = [];
 
+            // Loop over string elements to get text
+            for (const myString of strings) {
+                if (myString.type === "String") {
+                    const text = await myString.getText();
+                    textContent.push(text);
+                }
+            }
+
+            // Print text
+            console.log(textContent);
         }
+    },
+
+    setText: async () => {
+
+        // Get all elements and find the first StringElement
+        const allElements = await webflow.getAllElements();
+        const foundElement = allElements.find(el => el.type === "String");
+
+        if (foundElement) {
+            // Check that element has the method in order to use it
+            if ('setText' in foundElement) {
+                const elementText = foundElement.setText("Hello Element 🚀"); // Set Text
+            }
+        } else {
+            console.log('Element not found on page');
+        }
+    },
+
+    // Heading Element APIs
+
+    getHeadingLevel: async () => {
+
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.type === 'Heading'){
+
+            const headingLevel = await selectedElement.getHeadingLevel()
+            console.log(headingLevel)
+
+        } else {
+            console.log("Selected Element is not a Heading Element")
+        }
+
+    },
+
+    setHeadingLevel: async () => {
+
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement?.type === 'Heading'){
+
+            const headingLevel = await selectedElement.setHeadingLevel(1)
+            console.log(headingLevel)
+
+        } else {
+            console.log("Selected Element is not a Heading Element")
+        }
+
     },
 
     typeChecking: async () => {
