@@ -93,14 +93,20 @@ export const Styles = {
             // Get Element Styles
             const styles = await selectedElement.getStyles()
             const primaryStyle = styles[0]
-            const propertyMap = {
-                'background-color': "blue",
-                'font-size': "16px",
-                'font-weight': "bold",
+
+            if (primaryStyle) {
+
+                const propertyMap = {
+                    'background-color': "blue",
+                    'font-size': "16px",
+                    'font-weight': "bold",
+                }
+
+                await primaryStyle.setProperties(propertyMap)
+
+            } else {
+                console.log('Please choose an element with styles')
             }
-
-            await primaryStyle.setProperties(propertyMap)
-
         }
     },
     getStyleProperty: async (propertyName: StyleProperty) => {

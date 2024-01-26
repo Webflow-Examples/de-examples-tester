@@ -29,12 +29,9 @@ const App = () => {
   const functionSelections = selectedExampleCategory ?
     Object.keys(examples[selectedExampleCategory]).map(key => ({ value: key, label: key })) : [];
 
-  // Event handler for changes in the function parameter input field
-
   // Event Handlers
   const handleCategoryChange = (value) => {
     setSelectedExampleCategory(value);
-    console.log(selectedExampleCategory); // Logging the selected example value
     setSelectedFunctionName(''); // Resetting the selected function name
   };
 
@@ -47,10 +44,20 @@ const App = () => {
   };
 
   const handleFunctionExecutionWithParameters = () => {
+
     const funcToExecute = examples[selectedExampleCategory][selectedFunctionName];
+
     if (funcToExecute) {
-      const paramValues = parameterNames.map(name => functionParameters[name]);
-      funcToExecute(...paramValues);
+      try {
+        
+        const paramValues = parameterNames.map(name => functionParameters[name]);
+        funcToExecute(...paramValues)
+        .then( result => console.log(result));
+
+      } catch (error) {
+        console.error("Error executing function:", error);
+
+      }
     }
   };
 
@@ -64,6 +71,7 @@ const App = () => {
 
     // Setting the size for the webflow extension
     webflow.setExtensionSize({ height: 320, width: 500 });
+
   }, [])
 
 

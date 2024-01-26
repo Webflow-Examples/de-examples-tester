@@ -1,30 +1,24 @@
 import { useState, useEffect } from 'react';
 import examples from '../examples/examples';
 
-// Prism JS for Code Styling
-import Prism from 'prismjs';
-import 'prismjs/themes/prism-atom-dark.css'; // This is an example theme, choose the one you like
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-jsx';
-
-export const useFunctionCode = (selectedFunctionName, selectedExampleValue) => {
+export const useFunctionCode = (selectedFunctionName, selectedExampleCategory) => {
 
     const [functionCode, setFunctionCode] = useState('');
     const [parameterNames, setParameterNames] = useState([]);
     const [functionParameters, setFunctionParameters] = useState({});
 
-    useEffect(() => {
+    useEffect( () => {
 
         // When there's a selected function and an example value
-        if (selectedFunctionName && selectedExampleValue) {
+        if (selectedFunctionName && selectedExampleCategory) {
 
-            // Get file selected example category
-            const filePath = `/public/examples/${selectedExampleValue.toLowerCase()}.ts`;
+            // Get file for selected example category
+            const filePath = `/public/examples/${selectedExampleCategory.toLowerCase()}.ts`;
             fetch(filePath)
                 .then(response => response.text())
                 .then(text => {
 
-                    // Extract the function code using regex
+                    // Regex for finding the selected function within the text
                     const functionRegex = new RegExp(
                         `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
                         'm'
@@ -39,23 +33,38 @@ export const useFunctionCode = (selectedFunctionName, selectedExampleValue) => {
                         const paramsRegex = new RegExp(`${selectedFunctionName}:\\s*async\\s*\\(([^)]+)\\)`);
                         const paramsMatch = match[1].match(paramsRegex);
 
-                        // When there are parameters set Parameter Names and Function Parameters
+                        // When there are parameters - set Parameter Names and Function Parameters
                         if (paramsMatch && paramsMatch[1]) {
                             const params = paramsMatch[1].split(',').map(param => param.trim());
                             setParameterNames(params);
                             setFunctionParameters(params.reduce((acc, param) => ({ ...acc, [param]: '' }), {}));
                         } else {
+
+                            // When there are NOT parameters - set Parameter Names and Function Parameters to empty
                             setParameterNames([]);
                             setFunctionParameters({});
 
                             // Get the function to execute
-                            const funcToExecute = examples[selectedExampleValue][selectedFunctionName];
+                            const funcToExecute = examples[selectedExampleCategory][selectedFunctionName];
 
                             // When there's a function, execute it
                             if (funcToExecute) {
-                                funcToExecute();
+
+                                const fetchData = async () => {
+                                    try {
+                                        const response = funcToExecute();
+                                        const data = await response;
+                                        // Process your data
+                                    } catch (error) {
+                                        console.error('Failed to fetch:', error);
+                                    }
+                                };
+
+                                fetchData()
+
                             }
                         }
+                    // Where there's no selected function - send error message
                     } else {
 
                         // Otherwise set the code to "Not Found"
@@ -70,7 +79,7 @@ export const useFunctionCode = (selectedFunctionName, selectedExampleValue) => {
             setFunctionCode('');
         }
 
-    }, [selectedFunctionName, selectedExampleValue]);
+    }, [selectedFunctionName, selectedExampleCategory]);
 
     return { functionCode, parameterNames, functionParameters, setFunctionParameters };
 };

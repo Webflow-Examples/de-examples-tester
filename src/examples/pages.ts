@@ -31,7 +31,7 @@ export const Pages = {
         await Promise.all(folders.map(async folder => {
 
             const folderName = await folder.getName()
-            console.log(`Page: ${folderName}`)
+            console.log(`Folder: ${folderName}`)
 
         }))
 
@@ -140,7 +140,7 @@ export const Pages = {
         // Set page Description
         await currentPage.setSlug(slug)
         const newSlug = await currentPage.getSlug()
-        console.log("Slug",newSlug)
+        console.log("Slug", newSlug)
     },
 
     // Page Status and Settings
@@ -271,7 +271,7 @@ export const Pages = {
         const currentPage = await webflow.getCurrentPage() as Page
 
         // Set Open Graph Title
-        await currentPage.setOpenGraphTitlegTitle(title)
+        await currentPage.setOpenGraphTitle(title)
 
         // Print results
         const openGraphTitle = await currentPage.getOpenGraphTitle()
@@ -338,24 +338,6 @@ export const Pages = {
 
     // Open Graph Image
 
-    checkOpenGraphImage: async () => {
-
-        // Get Current Page
-        const currentPage = await webflow.getCurrentPage() as Page
-
-        // Check page status
-        const isOpenGraphImageUsedForSearchEngines = await currentPage.usesOpenGraphImageAsSearchImage()
-
-        // Print page status
-        if (isOpenGraphImageUsedForSearchEngines) {
-
-            console.log('Page uses Open Graph image as Seach Engine Image')
-        } else {
-            console.log('This page has a custom Search engine image')
-        }
-
-    },
-
     getOpenGraphImage: async () => {
 
         // Get Current Page
@@ -393,6 +375,32 @@ export const Pages = {
 
     // Search Engine Title
 
+    checkTitleAsSearchTitle: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Check title
+        const usesTitle = await currentPage?.usesTitleAsSearchTitle()
+
+        if (usesTitle){
+            console.log('This page uses its Title as the Search Engine title')
+        } else {
+           console.log( "This page has a custom search engine title")
+        }
+
+    },
+
+    useTitleAsSearchTitle: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Set title as search title
+        await currentPage?.useTitleAsSearchTitle(true)
+
+    },
+
     getSearchEngineTitle: async () => {
 
         // Get Current Page
@@ -416,6 +424,32 @@ export const Pages = {
     },
 
     // Search Engine Description
+
+    checkSearchEngineDescription: async () => {
+
+        // Get current page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Check search engine description
+        const isSearchDescription = await currentPage?.usesDescriptionAsSearchDescription()
+
+        if(isSearchDescription){
+            console.log("This page uses its description as the search engine description")
+        } else {
+            console.log("This page has a custom search engine description")
+        }
+
+    },
+
+    useDescriptionAsSearchDescription: async () => {
+
+        // Get current page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Set search description
+        await currentPage.useDescriptionAsSearchDescription(true)
+
+    },
 
     getSearchEngineDescription: async () => {
 
@@ -441,6 +475,34 @@ export const Pages = {
 
     // Search Engine Image
 
+    checkOpenGraphImageIsSearch: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage() as Page
+
+        // Check page status
+        const isOpenGraphImageUsedForSearchEngines = await currentPage.usesOpenGraphImageAsSearchImage()
+
+        // Print page status
+        if (isOpenGraphImageUsedForSearchEngines) {
+
+            console.log('Page uses Open Graph image as Seach Engine Image')
+        } else {
+            console.log('This page has a custom Search engine image')
+        }
+
+    },
+
+    useOpnGraphImageInSearch: async () => {
+
+        // Get current page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Set Open Graph image as search image
+        await currentPage?.useOpenGraphImageAsSearchImage(true)
+
+    },
+
     getSearchEngineImage: async () => {
 
         // Get Current Page
@@ -463,6 +525,34 @@ export const Pages = {
         console.log(searchImage)
     },
 
+    // Exclude from Search
+
+    isExcludedFromSearch: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Check if page is excluded from search engine indexing
+        const isExcluded = await currentPage?.isExcludedFromSearch()
+
+        if (isExcluded) {
+            console.log('Current page is excluded from search engine indexing')
+        } else {
+            "Current page is included in search engine indexing"
+        }
+
+
+    },
+
+    excludeFromSearch: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage()
+
+        // Exclud from search engine indexing
+        await currentPage.excludeFromSearch(true)
+
+    }
 
 
 }

@@ -5,18 +5,17 @@ export const Elements = {
 
     getSelectedElement: async () => {
 
-        // Get Selected Element
-        const element = await webflow.getSelectedElement();
+           // Get Selected Element
+            const element = await webflow.getSelectedElement();
 
-        // Print element info
-        if (element) {
-            console.log(`Selected element ID: ${element.id}`);
-            console.log(`Element type: ${element.type}`);
+            // Print element info
+            if (element) {
+                console.log(element)
+                console.log(`Element type: ${element.type}`);
 
-            // Perform some action with the selected element
-        } else {
-            console.log("No element is currently selected.");
-        }
+            } else {
+                console.log("No element is currently selected.");
+            }
 
     },
 
@@ -30,7 +29,7 @@ export const Elements = {
             console.log("List of all elements:");
 
             allElements.forEach((element, index) => {
-                console.log(`${index + 1}. Element ID: ${element.id}, Element Type: ${element.type}`);
+                console.log(`${index + 1}. Element ID: ${JSON.stringify(element)}, Element Type: ${element.type}`);
             });
         } else {
             console.log("No elements found in the current context.");
@@ -508,7 +507,7 @@ export const Elements = {
 
         const selectedElement = await webflow.getSelectedElement()
 
-        if (selectedElement?.type === 'Heading'){
+        if (selectedElement?.type === 'Heading') {
 
             const headingLevel = await selectedElement.getHeadingLevel()
             console.log(headingLevel)
@@ -519,12 +518,12 @@ export const Elements = {
 
     },
 
-    setHeadingLevel: async (level : 2 | 1 | 3 | 4 | 5 | 6) => {
+    setHeadingLevel: async (level: 2 | 1 | 3 | 4 | 5 | 6) => {
 
         const selectedElement = await webflow.getSelectedElement()
 
-        if (selectedElement?.type === 'Heading'){
- 
+        if (selectedElement?.type === 'Heading') {
+
             const headingLevel = await selectedElement.setHeadingLevel(parseInt(level) as 2 | 1 | 3 | 4 | 5 | 6)
             console.log(headingLevel)
 
