@@ -5,11 +5,13 @@ import examples from './examples/examples'; // Importing example functions
 import Dropdown from './components/dropdown'; // Importing the Dropdown component
 import "./App.css" // Importing the main CSS for the app
 
+// Prism JS for Code Styling
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-atom-dark.css'; // This is an example theme, choose the one you like
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-jsx';
 
+import { SourceMapConsumer } from 'source-map';
 
 const App = () => {
   // State variables to manage various aspects of the app
@@ -27,7 +29,7 @@ const App = () => {
     Object.keys(examples[selectedExampleValue]).map(key => ({ value: key, label: key })) : [];
 
   // Event handler for changes in the function parameter input field
-  
+
   const handleParameterChange = (paramName, value) => {
     setFunctionParameters(prev => ({ ...prev, [paramName]: value }));
   };
@@ -55,23 +57,30 @@ const App = () => {
 
   // Effect hook to fetch and display function code and to determine if the function requires a parameter
   useEffect(() => {
+
+    // If there's a selected function and an example value
     if (selectedFunctionName && selectedExampleValue) {
+
+      // Get file selected example category
       const filePath = `/public/examples/${selectedExampleValue.toLowerCase()}.ts`;
       fetch(filePath)
         .then(response => response.text())
         .then(text => {
+
           // Extracting the function code using regex
           const functionRegex = new RegExp(
             `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
             'm'
           );
+
+          // Find the function within the text
           const match = text.match(functionRegex);
           if (match && match[1]) {
-            setFunctionCode(match[1]);
+            setFunctionCode(match[1]); // Set function code
 
             // Checking if the function requires a parameter
-            const functionString = examples[selectedExampleValue][selectedFunctionName]?.toString();
-            const paramsMatch = functionString.match(/function\s*\w*\(([^)]+)\)/);
+            const paramsRegex = new RegExp(`${selectedFunctionName}:\\s*async\\s*\\(([^)]+)\\)`);
+            const paramsMatch = match[1].match(paramsRegex);
             if (paramsMatch && paramsMatch[1]) {
               const params = paramsMatch[1].split(',').map(param => param.trim());
               setParameterNames(params);
@@ -103,17 +112,19 @@ const App = () => {
     Prism.highlightAll();
   }, [functionCode]);
 
-  useEffect( () => {
-      
+  useEffect(() => {
+
     // Setting the size for the webflow extension
-  webflow.setExtensionSize({ height: 320, width: 500 });
+    webflow.setExtensionSize({ height: 320, width: 500 });
   }, [])
+
 
   return (
     <div>
       <h1>Welcome to the <br></br>Designer API Tester!</h1>
       <p>Select a Category</p>
       {/* Dropdown for selecting an example category */}
+
       <Dropdown
         options={exampleOptions}
         selectedValue={selectedExampleValue}

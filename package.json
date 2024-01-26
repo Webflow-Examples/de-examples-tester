@@ -32,6 +32,7 @@
     "babel-plugin-prismjs": "^2.1.0",
     "prismjs": "^1.29.0",
     "react-dom": "^18.2.0",
+    "source-map": "^0.7.4",
     "typedoc": "^0.25.7"
   },
   "babel": {
