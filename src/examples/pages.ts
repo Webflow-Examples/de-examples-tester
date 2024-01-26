@@ -418,7 +418,6 @@ export const Pages = {
         console.log(searchDescription)
     },
 
-
     // Search Engine Image
 
     getSearchEngineImage: async () => {

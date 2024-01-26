@@ -56,5 +56,6 @@ module.exports = {
           // You can add more patterns here if needed
       ],
   }),
-  ]
+  ],
+  devtool: 'source-map'
 };
