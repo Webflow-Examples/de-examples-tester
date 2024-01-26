@@ -519,13 +519,13 @@ export const Elements = {
 
     },
 
-    setHeadingLevel: async () => {
+    setHeadingLevel: async (level : 2 | 1 | 3 | 4 | 5 | 6) => {
 
         const selectedElement = await webflow.getSelectedElement()
 
         if (selectedElement?.type === 'Heading'){
-
-            const headingLevel = await selectedElement.setHeadingLevel(1)
+ 
+            const headingLevel = await selectedElement.setHeadingLevel(parseInt(level) as 2 | 1 | 3 | 4 | 5 | 6)
             console.log(headingLevel)
 
         } else {

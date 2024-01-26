@@ -88,12 +88,12 @@ const App = () => {
             } else {
               setParameterNames([]);
               setFunctionParameters({});
-            }
 
-            // Executing the function (without parameters)
-            const funcToExecute = examples[selectedExampleValue][selectedFunctionName];
-            if (funcToExecute) {
-              funcToExecute();
+              // Executing the function (without parameters)
+              const funcToExecute = examples[selectedExampleValue][selectedFunctionName];
+              if (funcToExecute) {
+                funcToExecute();
+              }
             }
           } else {
             setFunctionCode('Function code not found.');
