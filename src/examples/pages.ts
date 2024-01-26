@@ -122,6 +122,27 @@ export const Pages = {
         console.log(pageDescription)
     },
 
+    getPageSlug: async () => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage() as Page
+
+        // Get page slug
+        const pageSlug = await currentPage.getSlug()
+        console.log(pageSlug)
+    },
+
+    setPageSlug: async (slug: string) => {
+
+        // Get Current Page
+        const currentPage = await webflow.getCurrentPage() as Page
+
+        // Set page Description
+        await currentPage.setSlug(slug)
+        const newSlug = await currentPage.getSlug()
+        console.log("Slug",newSlug)
+    },
+
     // Page Status and Settings
 
     checkIfDraft: async () => {
@@ -195,7 +216,7 @@ export const Pages = {
         const currentPage = await webflow.getCurrentPage() as Page
 
         // Get utily key
-        const utilityKey = currentPage.getUtilityPageKey()
+        const utilityKey = await currentPage.getUtilityPageKey()
         console.log("Utility Key", utilityKey)
 
     },
@@ -383,7 +404,7 @@ export const Pages = {
 
     },
 
-    setSearchEngineTitle: async ( title : string ) => {
+    setSearchEngineTitle: async (title: string) => {
 
         // Get Current Page
         const currentPage = await webflow.getCurrentPage() as Page
@@ -407,7 +428,7 @@ export const Pages = {
 
     },
 
-    setSearchEngineDescription: async ( description : string ) => {
+    setSearchEngineDescription: async (description: string) => {
 
         // Get Current Page
         const currentPage = await webflow.getCurrentPage() as Page
@@ -431,7 +452,7 @@ export const Pages = {
 
     },
 
-    setSearchEngineImage: async ( image : string ) => {
+    setSearchEngineImage: async (image: string) => {
 
         // Get Current Page
         const currentPage = await webflow.getCurrentPage() as Page

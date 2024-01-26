@@ -1,17 +1,19 @@
-import { WF } from "./wf"
+import { Webflow } from "./webflow"
 import { Components } from "./components"
 import { Elements } from "./elements"
 import { Styles } from "./styles"
 import { Variables } from "./variables"
 import { Pages } from "./pages"
+import { Folders } from "./folders"
 
 const examples = {
-    WF: WF,
+    Webflow: Webflow,
     Elements: Elements,
-    Components: Components,
     Styles: Styles,
+    Components: Components,
     Variables: Variables,
     Pages: Pages,
+    Folders: Folders
 }
 
 export default examples

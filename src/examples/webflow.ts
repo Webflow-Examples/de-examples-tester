@@ -2,7 +2,7 @@ import WebflowAPI from "@webflow/designer-extension-typings"
 
 /* Site information and Settings */
 
-export const WF = {
+export const Webflow = {
 
     getSiteInfo: async () => {
 
@@ -15,15 +15,12 @@ export const WF = {
         console.log('Short Name:', siteInfo.shortName)
     },
 
-    setExtensionSize: async () => {
-
-        // Set the desired size for the extension UI
-        const newSize = "large"; // You can change this to "default," "comfortable," or provide { width, height }
+    setExtensionSize: async ( extensionSize : "large" | "default" | "comfortable") => {
 
         // Set the extension UI size
-        await webflow.setExtensionSize(newSize);
+        await webflow.setExtensionSize(extensionSize);
 
-        console.log(`Extension UI size set to: ${newSize}`);
+        console.log(`Extension UI size set to: ${extensionSize}`);
 
     },
 

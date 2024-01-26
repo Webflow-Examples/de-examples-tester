@@ -2,7 +2,7 @@ import WebflowAPI from "@webflow/designer-extension-typings"
 
 /* Site information and Settings */
 
-export const WF = {
+export const Webflow = {
 
     getSiteInfo: async () => {
 
