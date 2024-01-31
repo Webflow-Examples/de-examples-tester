@@ -5,17 +5,17 @@ export const Elements = {
 
     getSelectedElement: async () => {
 
-           // Get Selected Element
-            const element = await webflow.getSelectedElement();
+        // Get Selected Element
+        const element = await webflow.getSelectedElement();
 
-            // Print element info
-            if (element) {
-                console.log(element)
-                console.log(`Element type: ${element.type}`);
+        // Print element info
+        if (element) {
+            console.log(element)
+            console.log(`Element type: ${element.type}`);
 
-            } else {
-                console.log("No element is currently selected.");
-            }
+        } else {
+            console.log("No element is currently selected.");
+        }
 
     },
 
@@ -440,6 +440,11 @@ export const Elements = {
 
         if (DOMElement?.type === "DOM") {
 
+
+            // Get Attributes
+            const customAttributes = await DOMElement.getAllAttributes()
+            console.log(customAttributes)
+
             // Remove and print DOM Element's Attributes
             await DOMElement.removeAttribute(name)
             const attributes = await DOMElement.getAllAttributes()
@@ -449,10 +454,7 @@ export const Elements = {
             console.log('No DOM Element Found')
         }
 
-
-
     },
-
 
     // String Element APIs
 

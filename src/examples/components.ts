@@ -32,7 +32,6 @@ export const Components = {
             const component = await webflow.registerComponent('MyCustomComponent', rootElement);
             console.log(`Component registered with ID: ${component.id}`);
 
-            // Now you can work with the registered component or store its reference for later use
         } else {
             console.log("No element is currently selected. Please select a root element first.");
         }
@@ -89,50 +88,27 @@ export const Components = {
         const all = await webflow.getAllComponents()
         const firstComponent = all[0]
 
-        const root = await firstComponent?.getRootElement()
+        // Get Root Element on the Component
+        const root = await firstComponent?.getRootElement() as AnyElement
 
-        if (root?.children) await root?.append(webflow.elementPresets.DivBlock);
+        if (root.children) {
+            // Append DIV block to Root element
+            await root?.append(webflow.elementPresets.DivBlock);
+        }
 
     },
 
-    // ❌ NEEDS WORK ❌
     createComponentInstance: async () => {
 
-        //Specify the name of the component
-        const myComponentName = 'Hero-Component';
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
 
-        //Find component using component name
-        const webflowComponentManager = async (componentName: string) => {
+        // Get Component
+        const allComponents = await webflow.getAllComponents()
+        const firstComponent = allComponents[0]
 
-            // Get all Components
-            const components = await webflow.getAllComponents();
-
-            for (let c in components) {
-
-                const currentComponentName = await components[c].getName();
-
-                if (componentName === currentComponentName) {
-                    return components[c];
-                }
-            }
-        }
-
-        //Find component with this component name 
-        var componentDefinition = await webflowComponentManager(myComponentName);
-
-        //If the component exists, create an Instance of this component
-        if (componentDefinition) {
-            const heroComponentInstance = webflow.createInstance(componentDefinition)
-            const selectedElement = await webflow.getSelectedElement();
-
-            if (selectedElement?.children) {
-                const newInstance = await selectedElement?.append(heroComponentInstance)
-                console.log(newInstance)
-            }
-        } else {
-            console.log(`Component with name '${myComponentName}' does not exist.`);
-        }
-
+        // Add Component instance onto a page
+            await selectedElement?.before(firstComponent)
     },
 
     exitComponent: async () => {
@@ -146,7 +122,7 @@ export const Components = {
     },
 
     getRootElement: async () => {
-        
+
         // Get Component
         const all = await webflow.getAllComponents()
         const firstComponent = all[0]

@@ -6,11 +6,20 @@ export const Variables = {
 
         // Get Collection
         const defaultVariableCollection = await webflow.getDefaultVariableCollection();
-        
+
         // Fetch all variables within the default collection
         const variables = await defaultVariableCollection?.getAllVariables();
-     
 
+
+    },
+
+    getCollectionName: async () => {
+        // Get Collection
+        const defaultVariableCollection = await webflow.getDefaultVariableCollection();
+
+        // Get Collection Name
+        const collectionName = await defaultVariableCollection?.getName()
+        console.log(collectionName)
     },
 
     getCollectionAndVariables: async () => {
@@ -42,19 +51,56 @@ export const Variables = {
         }
     },
 
-    selectVariable: async () => {
+    createColorVariable: async () => {
 
         // Get Collection
         const collection = await webflow.getDefaultVariableCollection()
 
-        if (collection) {
+        // Create Color Variable with a HEX Codre
+        const myColorVariable = await collection?.createColorVariable("primary", "#ffcc11")
+        console.log(myColorVariable)
+    },
 
-            // Get variable by ID
-            const variableById = await collection.getVariable('id-123')
+    createSizeVariable: async () => {
 
-            // Get Variable by Name
-            const variableByName = await collection.getVariableByName('Space Cadet')
-        }
+        // Get Collection
+        const collection = await webflow.getDefaultVariableCollection()
+
+        // Create Size Variable with a Size Value
+        const mySizeVariable = await collection?.createSizeVariable("Defualt Padding", { unit: "px", value: 50 })
+        console.log(mySizeVariable)
+
+    },
+
+    createFontFamilyVariable: async () => {
+
+        // Get Collection
+        const collection = await webflow.getDefaultVariableCollection()
+
+        // Create Font Family Variable with a Font Family Name
+        const myFontFamilyVariable = await collection?.createFontFamilyVariable("Default Font", "Inter")
+        console.log(myFontFamilyVariable)
+
+    },
+
+    getVariableById: async (id: string) => {
+
+        // Get Collection
+        const collection = await webflow.getDefaultVariableCollection()
+
+        // Get variable by ID
+        const variableById = await collection?.getVariable(id)
+        console.log(variableById)
+    },
+
+    getVariableByName: async (name: string) => {
+
+        // Get Collection
+        const collection = await webflow.getDefaultVariableCollection()
+
+        // Get Variable by Name
+        const variableByName = await collection?.getVariableByName(name) as ColorVariable
+        console.log(variableByName)
     },
 
     editVariable: async () => {
@@ -70,13 +116,13 @@ export const Variables = {
         }
     },
 
-    setVariable: async () => {
+    setVariable: async (name: string) => {
 
         // Get Collection
         const collection = await webflow.getDefaultVariableCollection()
 
         // Get Variable
-        const variable = await collection?.getVariable('id-123')
+        const variable = await collection?.getVariableByName(name)
 
         // Check Variable type and set color
         if (variable?.type === "Color") await variable.set("#fffcc11");

@@ -289,8 +289,6 @@ var Components = {
           case 6:
             component = _context2.sent;
             console.log("Component registered with ID: ".concat(component.id));
-
-            // Now you can work with the registered component or store its reference for later use
             _context2.next = 11;
             break;
           case 10:
@@ -396,12 +394,12 @@ var Components = {
             return webflow.getAllComponents();
           case 2:
             all = _context5.sent;
-            firstComponent = all[0];
+            firstComponent = all[0]; // Get Root Element on the Component
             _context5.next = 6;
             return firstComponent === null || firstComponent === void 0 ? void 0 : firstComponent.getRootElement();
           case 6:
             root = _context5.sent;
-            if (!(root !== null && root !== void 0 && root.children)) {
+            if (!root.children) {
               _context5.next = 10;
               break;
             }
@@ -418,86 +416,28 @@ var Components = {
     }
     return editComponent;
   }(),
-  // ❌ NEEDS WORK ❌
   createComponentInstance: function () {
-    var _createComponentInstance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-      var myComponentName, webflowComponentManager, componentDefinition, heroComponentInstance, selectedElement, newInstance;
-      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-        while (1) switch (_context7.prev = _context7.next) {
+    var _createComponentInstance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+      var selectedElement, allComponents, firstComponent;
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) switch (_context6.prev = _context6.next) {
           case 0:
-            //Specify the name of the component
-            myComponentName = 'Hero-Component'; //Find component using component name
-            webflowComponentManager = /*#__PURE__*/function () {
-              var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(componentName) {
-                var components, c, currentComponentName;
-                return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-                  while (1) switch (_context6.prev = _context6.next) {
-                    case 0:
-                      _context6.next = 2;
-                      return webflow.getAllComponents();
-                    case 2:
-                      components = _context6.sent;
-                      _context6.t0 = _regeneratorRuntime().keys(components);
-                    case 4:
-                      if ((_context6.t1 = _context6.t0()).done) {
-                        _context6.next = 13;
-                        break;
-                      }
-                      c = _context6.t1.value;
-                      _context6.next = 8;
-                      return components[c].getName();
-                    case 8:
-                      currentComponentName = _context6.sent;
-                      if (!(componentName === currentComponentName)) {
-                        _context6.next = 11;
-                        break;
-                      }
-                      return _context6.abrupt("return", components[c]);
-                    case 11:
-                      _context6.next = 4;
-                      break;
-                    case 13:
-                    case "end":
-                      return _context6.stop();
-                  }
-                }, _callee6);
-              }));
-              return function webflowComponentManager(_x) {
-                return _ref.apply(this, arguments);
-              };
-            }(); //Find component with this component name 
-            _context7.next = 4;
-            return webflowComponentManager(myComponentName);
-          case 4:
-            componentDefinition = _context7.sent;
-            if (!componentDefinition) {
-              _context7.next = 17;
-              break;
-            }
-            heroComponentInstance = webflow.createInstance(componentDefinition);
-            _context7.next = 9;
+            _context6.next = 2;
             return webflow.getSelectedElement();
+          case 2:
+            selectedElement = _context6.sent;
+            _context6.next = 5;
+            return webflow.getAllComponents();
+          case 5:
+            allComponents = _context6.sent;
+            firstComponent = allComponents[0]; // Add Component instance onto a page
+            _context6.next = 9;
+            return selectedElement === null || selectedElement === void 0 ? void 0 : selectedElement.before(firstComponent);
           case 9:
-            selectedElement = _context7.sent;
-            if (!(selectedElement !== null && selectedElement !== void 0 && selectedElement.children)) {
-              _context7.next = 15;
-              break;
-            }
-            _context7.next = 13;
-            return selectedElement === null || selectedElement === void 0 ? void 0 : selectedElement.append(heroComponentInstance);
-          case 13:
-            newInstance = _context7.sent;
-            console.log(newInstance);
-          case 15:
-            _context7.next = 18;
-            break;
-          case 17:
-            console.log("Component with name '".concat(myComponentName, "' does not exist."));
-          case 18:
           case "end":
-            return _context7.stop();
+            return _context6.stop();
         }
-      }, _callee7);
+      }, _callee6);
     }));
     function createComponentInstance() {
       return _createComponentInstance.apply(this, arguments);
@@ -505,25 +445,25 @@ var Components = {
     return createComponentInstance;
   }(),
   exitComponent: function () {
-    var _exitComponent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+    var _exitComponent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
       var rootElement, rootElementType;
-      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-        while (1) switch (_context8.prev = _context8.next) {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
           case 0:
-            _context8.next = 2;
+            _context7.next = 2;
             return webflow.exitComponent();
           case 2:
-            _context8.next = 4;
+            _context7.next = 4;
             return webflow.getRootElement();
           case 4:
-            rootElement = _context8.sent;
+            rootElement = _context7.sent;
             rootElementType = rootElement === null || rootElement === void 0 ? void 0 : rootElement.type; // Print Root Element Type. If element type is Body, the designer has exited out of the Component context
             console.log("Element Type: ".concat(rootElementType));
           case 7:
           case "end":
-            return _context8.stop();
+            return _context7.stop();
         }
-      }, _callee8);
+      }, _callee7);
     }));
     function exitComponent() {
       return _exitComponent.apply(this, arguments);
@@ -531,25 +471,25 @@ var Components = {
     return exitComponent;
   }(),
   getRootElement: function () {
-    var _getRootElement = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+    var _getRootElement = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
       var all, firstComponent, root;
-      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-        while (1) switch (_context9.prev = _context9.next) {
+      return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        while (1) switch (_context8.prev = _context8.next) {
           case 0:
-            _context9.next = 2;
+            _context8.next = 2;
             return webflow.getAllComponents();
           case 2:
-            all = _context9.sent;
+            all = _context8.sent;
             firstComponent = all[0]; // Get Root Element of Component
-            _context9.next = 6;
+            _context8.next = 6;
             return firstComponent === null || firstComponent === void 0 ? void 0 : firstComponent.getRootElement();
           case 6:
-            root = _context9.sent;
+            root = _context8.sent;
           case 7:
           case "end":
-            return _context9.stop();
+            return _context8.stop();
         }
-      }, _callee9);
+      }, _callee8);
     }));
     function getRootElement() {
       return _getRootElement.apply(this, arguments);
@@ -557,37 +497,37 @@ var Components = {
     return getRootElement;
   }(),
   getName: function () {
-    var _getName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+    var _getName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
       var myComponentName, components, c, currentComponentName;
-      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-        while (1) switch (_context10.prev = _context10.next) {
+      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        while (1) switch (_context9.prev = _context9.next) {
           case 0:
             myComponentName = "Hero-Component";
-            _context10.next = 3;
+            _context9.next = 3;
             return webflow.getAllComponents();
           case 3:
-            components = _context10.sent;
-            _context10.t0 = _regeneratorRuntime().keys(components);
+            components = _context9.sent;
+            _context9.t0 = _regeneratorRuntime().keys(components);
           case 5:
-            if ((_context10.t1 = _context10.t0()).done) {
-              _context10.next = 13;
+            if ((_context9.t1 = _context9.t0()).done) {
+              _context9.next = 13;
               break;
             }
-            c = _context10.t1.value;
-            _context10.next = 9;
+            c = _context9.t1.value;
+            _context9.next = 9;
             return components[c].getName();
           case 9:
-            currentComponentName = _context10.sent;
+            currentComponentName = _context9.sent;
             if (myComponentName === currentComponentName) {
               console.log("Found Hero Component");
             }
-            _context10.next = 5;
+            _context9.next = 5;
             break;
           case 13:
           case "end":
-            return _context10.stop();
+            return _context9.stop();
         }
-      }, _callee10);
+      }, _callee9);
     }));
     function getName() {
       return _getName.apply(this, arguments);
@@ -595,23 +535,23 @@ var Components = {
     return getName;
   }(),
   setName: function () {
-    var _setName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
+    var _setName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
       var components, myComponent;
-      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-        while (1) switch (_context11.prev = _context11.next) {
+      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        while (1) switch (_context10.prev = _context10.next) {
           case 0:
-            _context11.next = 2;
+            _context10.next = 2;
             return webflow.getAllComponents();
           case 2:
-            components = _context11.sent;
+            components = _context10.sent;
             myComponent = components[0]; // Set Component Name
-            _context11.next = 6;
+            _context10.next = 6;
             return myComponent.setName("My New Component Name");
           case 6:
           case "end":
-            return _context11.stop();
+            return _context10.stop();
         }
-      }, _callee11);
+      }, _callee10);
     }));
     function setName() {
       return _setName.apply(this, arguments);
@@ -619,40 +559,40 @@ var Components = {
     return setName;
   }(),
   getComponent: function () {
-    var _getComponent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+    var _getComponent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
       var elements, componentInstance, component, componentName;
-      return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-        while (1) switch (_context12.prev = _context12.next) {
+      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+        while (1) switch (_context11.prev = _context11.next) {
           case 0:
-            _context12.next = 2;
+            _context11.next = 2;
             return webflow.getAllElements();
           case 2:
-            elements = _context12.sent;
+            elements = _context11.sent;
             componentInstance = elements.find(function (el) {
               return el.type === 'ComponentInstance';
             });
             if (!((componentInstance === null || componentInstance === void 0 ? void 0 : componentInstance.type) === "ComponentInstance")) {
-              _context12.next = 14;
+              _context11.next = 14;
               break;
             }
-            _context12.next = 7;
+            _context11.next = 7;
             return componentInstance === null || componentInstance === void 0 ? void 0 : componentInstance.getComponent();
           case 7:
-            component = _context12.sent;
-            _context12.next = 10;
+            component = _context11.sent;
+            _context11.next = 10;
             return component.getName();
           case 10:
-            componentName = _context12.sent;
+            componentName = _context11.sent;
             console.log(componentName);
-            _context12.next = 15;
+            _context11.next = 15;
             break;
           case 14:
             console.log("No component element found");
           case 15:
           case "end":
-            return _context12.stop();
+            return _context11.stop();
         }
-      }, _callee12);
+      }, _callee11);
     }));
     function getComponent() {
       return _getComponent.apply(this, arguments);
@@ -1541,7 +1481,7 @@ var Elements = {
   }(),
   removeAttribute: function () {
     var _removeAttribute = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27(name) {
-      var elements, DOMElement, attributes;
+      var elements, DOMElement, customAttributes, attributes;
       return _regeneratorRuntime().wrap(function _callee27$(_context27) {
         while (1) switch (_context27.prev = _context27.next) {
           case 0:
@@ -1553,22 +1493,29 @@ var Elements = {
               return element.type === "DOM";
             });
             if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === "DOM")) {
-              _context27.next = 13;
+              _context27.next = 17;
               break;
             }
             _context27.next = 7;
-            return DOMElement.removeAttribute(name);
-          case 7:
-            _context27.next = 9;
             return DOMElement.getAllAttributes();
-          case 9:
+          case 7:
+            customAttributes = _context27.sent;
+            console.log(customAttributes);
+
+            // Remove and print DOM Element's Attributes
+            _context27.next = 11;
+            return DOMElement.removeAttribute(name);
+          case 11:
+            _context27.next = 13;
+            return DOMElement.getAllAttributes();
+          case 13:
             attributes = _context27.sent;
             console.log(attributes);
-            _context27.next = 14;
+            _context27.next = 18;
             break;
-          case 13:
+          case 17:
             console.log('No DOM Element Found');
-          case 14:
+          case 18:
           case "end":
             return _context27.stop();
         }
@@ -3913,9 +3860,9 @@ var Variables = {
     }
     return getCollection;
   }(),
-  getCollectionAndVariables: function () {
-    var _getCollectionAndVariables = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      var defaultVariableCollection, variables, i;
+  getCollectionName: function () {
+    var _getCollectionName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var defaultVariableCollection, collectionName;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
@@ -3923,100 +3870,93 @@ var Variables = {
             return webflow.getDefaultVariableCollection();
           case 2:
             defaultVariableCollection = _context2.sent;
-            if (!defaultVariableCollection) {
-              _context2.next = 28;
-              break;
-            }
-            // Print Collection ID
-            console.log("Default Variable Collection ID:", defaultVariableCollection.id);
-
-            // Fetch all variables within the default collection
-            _context2.next = 7;
-            return defaultVariableCollection.getAllVariables();
+            _context2.next = 5;
+            return defaultVariableCollection === null || defaultVariableCollection === void 0 ? void 0 : defaultVariableCollection.getName();
+          case 5:
+            collectionName = _context2.sent;
+            console.log(collectionName);
           case 7:
-            variables = _context2.sent;
-            if (!(variables.length > 0)) {
-              _context2.next = 25;
-              break;
-            }
-            console.log("List of Variables in Default Collection:");
-
-            // Print variable details
-            _context2.t0 = _regeneratorRuntime().keys(variables);
-          case 11:
-            if ((_context2.t1 = _context2.t0()).done) {
-              _context2.next = 22;
-              break;
-            }
-            i = _context2.t1.value;
-            _context2.t2 = console;
-            _context2.t3 = "".concat(i, ". Variable Name: ");
-            _context2.next = 17;
-            return variables[i].getName();
-          case 17:
-            _context2.t4 = _context2.sent;
-            _context2.t5 = _context2.t3.concat.call(_context2.t3, _context2.t4, ", Variable ID: ").concat(variables[i].id);
-            _context2.t2.log.call(_context2.t2, _context2.t5);
-            _context2.next = 11;
-            break;
-          case 22:
-            ;
-            _context2.next = 26;
-            break;
-          case 25:
-            console.log("No variables found in the default collection.");
-          case 26:
-            _context2.next = 29;
-            break;
-          case 28:
-            console.log("Default Variable Collection not found.");
-          case 29:
           case "end":
             return _context2.stop();
         }
       }, _callee2);
     }));
-    function getCollectionAndVariables() {
-      return _getCollectionAndVariables.apply(this, arguments);
+    function getCollectionName() {
+      return _getCollectionName.apply(this, arguments);
     }
-    return getCollectionAndVariables;
+    return getCollectionName;
   }(),
-  selectVariable: function () {
-    var _selectVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-      var collection, variableById, variableByName;
+  getCollectionAndVariables: function () {
+    var _getCollectionAndVariables = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var defaultVariableCollection, variables, i;
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
             return webflow.getDefaultVariableCollection();
           case 2:
-            collection = _context3.sent;
-            if (!collection) {
-              _context3.next = 10;
+            defaultVariableCollection = _context3.sent;
+            if (!defaultVariableCollection) {
+              _context3.next = 28;
               break;
             }
-            _context3.next = 6;
-            return collection.getVariable('id-123');
-          case 6:
-            variableById = _context3.sent;
-            _context3.next = 9;
-            return collection.getVariableByName('Space Cadet');
-          case 9:
-            variableByName = _context3.sent;
-          case 10:
+            // Print Collection ID
+            console.log("Default Variable Collection ID:", defaultVariableCollection.id);
+
+            // Fetch all variables within the default collection
+            _context3.next = 7;
+            return defaultVariableCollection.getAllVariables();
+          case 7:
+            variables = _context3.sent;
+            if (!(variables.length > 0)) {
+              _context3.next = 25;
+              break;
+            }
+            console.log("List of Variables in Default Collection:");
+
+            // Print variable details
+            _context3.t0 = _regeneratorRuntime().keys(variables);
+          case 11:
+            if ((_context3.t1 = _context3.t0()).done) {
+              _context3.next = 22;
+              break;
+            }
+            i = _context3.t1.value;
+            _context3.t2 = console;
+            _context3.t3 = "".concat(i, ". Variable Name: ");
+            _context3.next = 17;
+            return variables[i].getName();
+          case 17:
+            _context3.t4 = _context3.sent;
+            _context3.t5 = _context3.t3.concat.call(_context3.t3, _context3.t4, ", Variable ID: ").concat(variables[i].id);
+            _context3.t2.log.call(_context3.t2, _context3.t5);
+            _context3.next = 11;
+            break;
+          case 22:
+            ;
+            _context3.next = 26;
+            break;
+          case 25:
+            console.log("No variables found in the default collection.");
+          case 26:
+            _context3.next = 29;
+            break;
+          case 28:
+            console.log("Default Variable Collection not found.");
+          case 29:
           case "end":
             return _context3.stop();
         }
       }, _callee3);
     }));
-    function selectVariable() {
-      return _selectVariable.apply(this, arguments);
+    function getCollectionAndVariables() {
+      return _getCollectionAndVariables.apply(this, arguments);
     }
-    return selectVariable;
+    return getCollectionAndVariables;
   }(),
-  editVariable: function () {
-    var _editVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-      var collection, variable;
+  createColorVariable: function () {
+    var _createColorVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var collection, myColorVariable;
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -4024,30 +3964,25 @@ var Variables = {
             return webflow.getDefaultVariableCollection();
           case 2:
             collection = _context4.sent;
-            if (!collection) {
-              _context4.next = 9;
-              break;
-            }
-            _context4.next = 6;
-            return collection.getVariableByName("Space Cadet");
-          case 6:
-            variable = _context4.sent;
-            _context4.next = 9;
-            return variable === null || variable === void 0 ? void 0 : variable.setName('Our awesome bg color');
-          case 9:
+            _context4.next = 5;
+            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable("primary", "#ffcc11");
+          case 5:
+            myColorVariable = _context4.sent;
+            console.log(myColorVariable);
+          case 7:
           case "end":
             return _context4.stop();
         }
       }, _callee4);
     }));
-    function editVariable() {
-      return _editVariable.apply(this, arguments);
+    function createColorVariable() {
+      return _createColorVariable.apply(this, arguments);
     }
-    return editVariable;
+    return createColorVariable;
   }(),
-  setVariable: function () {
-    var _setVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-      var collection, variable;
+  createSizeVariable: function () {
+    var _createSizeVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+      var collection, mySizeVariable;
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) switch (_context5.prev = _context5.next) {
           case 0:
@@ -4056,29 +3991,27 @@ var Variables = {
           case 2:
             collection = _context5.sent;
             _context5.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.getVariable('id-123');
+            return collection === null || collection === void 0 ? void 0 : collection.createSizeVariable("Defualt Padding", {
+              unit: "px",
+              value: 50
+            });
           case 5:
-            variable = _context5.sent;
-            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === "Color")) {
-              _context5.next = 9;
-              break;
-            }
-            _context5.next = 9;
-            return variable.set("#fffcc11");
-          case 9:
+            mySizeVariable = _context5.sent;
+            console.log(mySizeVariable);
+          case 7:
           case "end":
             return _context5.stop();
         }
       }, _callee5);
     }));
-    function setVariable() {
-      return _setVariable.apply(this, arguments);
+    function createSizeVariable() {
+      return _createSizeVariable.apply(this, arguments);
     }
-    return setVariable;
+    return createSizeVariable;
   }(),
-  applyVariableToStyle: function () {
-    var _applyVariableToStyle = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(styleName, variableName) {
-      var collection, style, variable;
+  createFontFamilyVariable: function () {
+    var _createFontFamilyVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+      var collection, myFontFamilyVariable;
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
           case 0:
@@ -4087,35 +4020,24 @@ var Variables = {
           case 2:
             collection = _context6.sent;
             _context6.next = 5;
-            return webflow.getStyleByName(styleName);
+            return collection === null || collection === void 0 ? void 0 : collection.createFontFamilyVariable("Default Font", "Inter");
           case 5:
-            style = _context6.sent;
-            _context6.next = 8;
-            return collection === null || collection === void 0 ? void 0 : collection.getVariable(variableName);
-          case 8:
-            variable = _context6.sent;
-            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === 'Size')) {
-              _context6.next = 12;
-              break;
-            }
-            _context6.next = 12;
-            return style === null || style === void 0 ? void 0 : style.setProperties({
-              "font-size": variable
-            });
-          case 12:
+            myFontFamilyVariable = _context6.sent;
+            console.log(myFontFamilyVariable);
+          case 7:
           case "end":
             return _context6.stop();
         }
       }, _callee6);
     }));
-    function applyVariableToStyle(_x, _x2) {
-      return _applyVariableToStyle.apply(this, arguments);
+    function createFontFamilyVariable() {
+      return _createFontFamilyVariable.apply(this, arguments);
     }
-    return applyVariableToStyle;
+    return createFontFamilyVariable;
   }(),
-  variableAlias: function () {
-    var _variableAlias = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-      var collection, firstVariable, secondVariable;
+  getVariableById: function () {
+    var _getVariableById = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(id) {
+      var collection, variableById;
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) switch (_context7.prev = _context7.next) {
           case 0:
@@ -4124,31 +4046,24 @@ var Variables = {
           case 2:
             collection = _context7.sent;
             _context7.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable('Default Color', 'red');
+            return collection === null || collection === void 0 ? void 0 : collection.getVariable(id);
           case 5:
-            firstVariable = _context7.sent;
-            if (!firstVariable) {
-              _context7.next = 10;
-              break;
-            }
-            _context7.next = 9;
-            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable('Space Cadet', firstVariable);
-          case 9:
-            secondVariable = _context7.sent;
-          case 10:
+            variableById = _context7.sent;
+            console.log(variableById);
+          case 7:
           case "end":
             return _context7.stop();
         }
       }, _callee7);
     }));
-    function variableAlias() {
-      return _variableAlias.apply(this, arguments);
+    function getVariableById(_x) {
+      return _getVariableById.apply(this, arguments);
     }
-    return variableAlias;
+    return getVariableById;
   }(),
-  removeVariable: function () {
-    var _removeVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-      var collection, variable;
+  getVariableByName: function () {
+    var _getVariableByName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(name) {
+      var collection, variableByName;
       return _regeneratorRuntime().wrap(function _callee8$(_context8) {
         while (1) switch (_context8.prev = _context8.next) {
           case 0:
@@ -4157,16 +4072,174 @@ var Variables = {
           case 2:
             collection = _context8.sent;
             _context8.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.getVariable('id-123');
+            return collection === null || collection === void 0 ? void 0 : collection.getVariableByName(name);
           case 5:
-            variable = _context8.sent;
-            _context8.next = 8;
-            return variable === null || variable === void 0 ? void 0 : variable.remove();
-          case 8:
+            variableByName = _context8.sent;
+            console.log(variableByName);
+          case 7:
           case "end":
             return _context8.stop();
         }
       }, _callee8);
+    }));
+    function getVariableByName(_x2) {
+      return _getVariableByName.apply(this, arguments);
+    }
+    return getVariableByName;
+  }(),
+  editVariable: function () {
+    var _editVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+      var collection, variable;
+      return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        while (1) switch (_context9.prev = _context9.next) {
+          case 0:
+            _context9.next = 2;
+            return webflow.getDefaultVariableCollection();
+          case 2:
+            collection = _context9.sent;
+            if (!collection) {
+              _context9.next = 9;
+              break;
+            }
+            _context9.next = 6;
+            return collection.getVariableByName("Space Cadet");
+          case 6:
+            variable = _context9.sent;
+            _context9.next = 9;
+            return variable === null || variable === void 0 ? void 0 : variable.setName('Our awesome bg color');
+          case 9:
+          case "end":
+            return _context9.stop();
+        }
+      }, _callee9);
+    }));
+    function editVariable() {
+      return _editVariable.apply(this, arguments);
+    }
+    return editVariable;
+  }(),
+  setVariable: function () {
+    var _setVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(name) {
+      var collection, variable;
+      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        while (1) switch (_context10.prev = _context10.next) {
+          case 0:
+            _context10.next = 2;
+            return webflow.getDefaultVariableCollection();
+          case 2:
+            collection = _context10.sent;
+            _context10.next = 5;
+            return collection === null || collection === void 0 ? void 0 : collection.getVariableByName(name);
+          case 5:
+            variable = _context10.sent;
+            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === "Color")) {
+              _context10.next = 9;
+              break;
+            }
+            _context10.next = 9;
+            return variable.set("#fffcc11");
+          case 9:
+          case "end":
+            return _context10.stop();
+        }
+      }, _callee10);
+    }));
+    function setVariable(_x3) {
+      return _setVariable.apply(this, arguments);
+    }
+    return setVariable;
+  }(),
+  applyVariableToStyle: function () {
+    var _applyVariableToStyle = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(styleName, variableName) {
+      var collection, style, variable;
+      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+        while (1) switch (_context11.prev = _context11.next) {
+          case 0:
+            _context11.next = 2;
+            return webflow.getDefaultVariableCollection();
+          case 2:
+            collection = _context11.sent;
+            _context11.next = 5;
+            return webflow.getStyleByName(styleName);
+          case 5:
+            style = _context11.sent;
+            _context11.next = 8;
+            return collection === null || collection === void 0 ? void 0 : collection.getVariable(variableName);
+          case 8:
+            variable = _context11.sent;
+            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === 'Size')) {
+              _context11.next = 12;
+              break;
+            }
+            _context11.next = 12;
+            return style === null || style === void 0 ? void 0 : style.setProperties({
+              "font-size": variable
+            });
+          case 12:
+          case "end":
+            return _context11.stop();
+        }
+      }, _callee11);
+    }));
+    function applyVariableToStyle(_x4, _x5) {
+      return _applyVariableToStyle.apply(this, arguments);
+    }
+    return applyVariableToStyle;
+  }(),
+  variableAlias: function () {
+    var _variableAlias = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+      var collection, firstVariable, secondVariable;
+      return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+        while (1) switch (_context12.prev = _context12.next) {
+          case 0:
+            _context12.next = 2;
+            return webflow.getDefaultVariableCollection();
+          case 2:
+            collection = _context12.sent;
+            _context12.next = 5;
+            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable('Default Color', 'red');
+          case 5:
+            firstVariable = _context12.sent;
+            if (!firstVariable) {
+              _context12.next = 10;
+              break;
+            }
+            _context12.next = 9;
+            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable('Space Cadet', firstVariable);
+          case 9:
+            secondVariable = _context12.sent;
+          case 10:
+          case "end":
+            return _context12.stop();
+        }
+      }, _callee12);
+    }));
+    function variableAlias() {
+      return _variableAlias.apply(this, arguments);
+    }
+    return variableAlias;
+  }(),
+  removeVariable: function () {
+    var _removeVariable = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
+      var collection, variable;
+      return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+        while (1) switch (_context13.prev = _context13.next) {
+          case 0:
+            _context13.next = 2;
+            return webflow.getDefaultVariableCollection();
+          case 2:
+            collection = _context13.sent;
+            _context13.next = 5;
+            return collection === null || collection === void 0 ? void 0 : collection.getVariable('id-123');
+          case 5:
+            variable = _context13.sent;
+            _context13.next = 8;
+            return variable === null || variable === void 0 ? void 0 : variable.remove();
+          case 8:
+          case "end":
+            return _context13.stop();
+        }
+      }, _callee13);
     }));
     function removeVariable() {
       return _removeVariable.apply(this, arguments);
