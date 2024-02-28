@@ -16,10 +16,8 @@ export const Webflow = {
     console.log('Short Name:', siteInfo.shortName)
   },
 
-  setExtensionSize: async (
-    extensionSize: ExtensionSize,
-  ) => {
-    // Set the extension UI size
+  setExtensionSize: async (extensionSize: ExtensionSize) => {
+    // Set the extension UI size to "default", "comfortable", or "large"
     await webflow.setExtensionSize(extensionSize)
 
     console.log(`Extension UI size set to: ${extensionSize}`)
