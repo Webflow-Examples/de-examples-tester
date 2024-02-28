@@ -1,85 +1,92 @@
-import { useState, useEffect } from 'react';
-import examples from '../examples/examples';
+import { useState, useEffect } from 'react'
+import examples from '../examples/examples'
 
-export const useFunctionCode = (selectedFunctionName, selectedExampleCategory) => {
+export const useFunctionCode = (
+  selectedFunctionName,
+  selectedExampleCategory,
+) => {
+  const [functionCode, setFunctionCode] = useState('')
+  const [parameterNames, setParameterNames] = useState([])
+  const [functionParameters, setFunctionParameters] = useState({})
 
-    const [functionCode, setFunctionCode] = useState('');
-    const [parameterNames, setParameterNames] = useState([]);
-    const [functionParameters, setFunctionParameters] = useState({});
+  useEffect(() => {
+    // When there's a selected function and an example value
+    if (selectedFunctionName && selectedExampleCategory) {
+      // Get file for selected example category
+      const filePath = `https://main--thriving-zuccutto-5ad917.netlify.app/examples/${selectedExampleCategory.toLowerCase()}.ts`
+      console.log(filePath)
+      fetch(filePath)
+        .then((response) => response.text())
+        .then((text) => {
+          // Regex for finding the selected function within the text
+          const functionRegex = new RegExp(
+            `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
+            'm',
+          )
 
-    useEffect( () => {
+          // Find the function within the text
+          const match = text.match(functionRegex)
+          if (match && match[1]) {
+            setFunctionCode(match[1]) // Set function code
 
-        // When there's a selected function and an example value
-        if (selectedFunctionName && selectedExampleCategory) {
+            // Get function parameters
+            const paramsRegex = new RegExp(
+              `${selectedFunctionName}:\\s*async\\s*\\(([^)]+)\\)`,
+            )
+            const paramsMatch = match[1].match(paramsRegex)
 
-            // Get file for selected example category
-            const filePath = `/public/examples/${selectedExampleCategory.toLowerCase()}.ts`;
-            fetch(filePath)
-                .then(response => response.text())
-                .then(text => {
+            // When there are parameters - set Parameter Names and Function Parameters
+            if (paramsMatch && paramsMatch[1]) {
+              const params = paramsMatch[1]
+                .split(',')
+                .map((param) => param.trim())
+              setParameterNames(params)
+              setFunctionParameters(
+                params.reduce((acc, param) => ({ ...acc, [param]: '' }), {}),
+              )
+            } else {
+              // When there are NOT parameters - set Parameter Names and Function Parameters to empty
+              setParameterNames([])
+              setFunctionParameters({})
 
-                    // Regex for finding the selected function within the text
-                    const functionRegex = new RegExp(
-                        `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
-                        'm'
-                    );
+              // Get the function to execute
+              const funcToExecute =
+                examples[selectedExampleCategory][selectedFunctionName]
 
-                    // Find the function within the text
-                    const match = text.match(functionRegex);
-                    if (match && match[1]) {
-                        setFunctionCode(match[1]); // Set function code
+              // When there's a function, execute it
+              if (funcToExecute) {
+                const fetchData = async () => {
+                  try {
+                    const response = funcToExecute()
+                    const data = await response
+                    // Process your data
+                  } catch (error) {
+                    console.error('Failed to fetch:', error)
+                  }
+                }
 
-                        // Get function parameters
-                        const paramsRegex = new RegExp(`${selectedFunctionName}:\\s*async\\s*\\(([^)]+)\\)`);
-                        const paramsMatch = match[1].match(paramsRegex);
+                fetchData()
+              }
+            }
+            // Where there's no selected function - send error message
+          } else {
+            // Otherwise set the code to "Not Found"
+            setFunctionCode('Function code not found.')
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to fetch function source:', error)
+          setFunctionCode('')
+        })
+    } else {
+      setFunctionCode('')
+    }
+  }, [selectedFunctionName, selectedExampleCategory])
 
-                        // When there are parameters - set Parameter Names and Function Parameters
-                        if (paramsMatch && paramsMatch[1]) {
-                            const params = paramsMatch[1].split(',').map(param => param.trim());
-                            setParameterNames(params);
-                            setFunctionParameters(params.reduce((acc, param) => ({ ...acc, [param]: '' }), {}));
-                        } else {
-
-                            // When there are NOT parameters - set Parameter Names and Function Parameters to empty
-                            setParameterNames([]);
-                            setFunctionParameters({});
-
-                            // Get the function to execute
-                            const funcToExecute = examples[selectedExampleCategory][selectedFunctionName];
-
-                            // When there's a function, execute it
-                            if (funcToExecute) {
-
-                                const fetchData = async () => {
-                                    try {
-                                        const response = funcToExecute();
-                                        const data = await response;
-                                        // Process your data
-                                    } catch (error) {
-                                        console.error('Failed to fetch:', error);
-                                    }
-                                };
-
-                                fetchData()
-
-                            }
-                        }
-                    // Where there's no selected function - send error message
-                    } else {
-
-                        // Otherwise set the code to "Not Found"
-                        setFunctionCode('Function code not found.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Failed to fetch function source:', error);
-                    setFunctionCode('');
-                });
-        } else {
-            setFunctionCode('');
-        }
-
-    }, [selectedFunctionName, selectedExampleCategory]);
-
-    return { functionCode, parameterNames, functionParameters, setFunctionParameters };
-};
+  return {
+    functionCode,
+    parameterNames,
+    functionParameters,
+    setFunctionParameters,
+  }
+}

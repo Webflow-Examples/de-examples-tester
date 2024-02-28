@@ -1,14 +1,19 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react'
 
 // Define the types for the props
 type ParameterInputProps = {
-  name: string;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
-};
+  name: string
+  value: string
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  placeholder: string
+}
 
-const ParameterInput: React.FC<ParameterInputProps> = ({ name, value, onChange, placeholder }) => (
+const ParameterInput: React.FC<ParameterInputProps> = ({
+  name,
+  value,
+  onChange,
+  placeholder,
+}) => (
   <input
     key={name}
     type="text"
@@ -16,6 +21,6 @@ const ParameterInput: React.FC<ParameterInputProps> = ({ name, value, onChange, 
     onChange={onChange}
     placeholder={placeholder}
   />
-);
+)
 
-export default ParameterInput;
+export default ParameterInput

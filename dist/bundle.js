@@ -49,7 +49,8 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
     // When there's a selected function and an example value
     if (selectedFunctionName && selectedExampleCategory) {
       // Get file for selected example category
-      var filePath = "/public/examples/".concat(selectedExampleCategory.toLowerCase(), ".ts");
+      var filePath = "https://main--thriving-zuccutto-5ad917.netlify.app/examples/".concat(selectedExampleCategory.toLowerCase(), ".ts");
+      console.log(filePath);
       fetch(filePath).then(function (response) {
         return response.text();
       }).then(function (text) {
@@ -239,7 +240,7 @@ var Components = {
               _context.next = 16;
               break;
             }
-            console.log("List of registered components:");
+            console.log('List of registered components:');
             _context.t0 = _regeneratorRuntime().keys(components);
           case 6:
             if ((_context.t1 = _context.t0()).done) {
@@ -258,7 +259,7 @@ var Components = {
             _context.next = 17;
             break;
           case 16:
-            console.log("No components are currently registered.");
+            console.log('No components are currently registered.');
           case 17:
           case "end":
             return _context.stop();
@@ -292,7 +293,7 @@ var Components = {
             _context2.next = 11;
             break;
           case 10:
-            console.log("No element is currently selected. Please select a root element first.");
+            console.log('No element is currently selected. Please select a root element first.');
           case 11:
           case "end":
             return _context2.stop();
@@ -328,7 +329,7 @@ var Components = {
             _context3.next = 12;
             break;
           case 11:
-            console.log("No element is currently selected. Please select a root element first.");
+            console.log('No element is currently selected. Please select a root element first.');
           case 12:
           case "end":
             return _context3.stop();
@@ -350,14 +351,14 @@ var Components = {
             return webflow.getSelectedElement();
           case 2:
             selectedElement = _context4.sent;
-            if (!(selectedElement && selectedElement.type === "ComponentInstance")) {
+            if (!(selectedElement && selectedElement.type === 'ComponentInstance')) {
               _context4.next = 13;
               break;
             }
             _context4.next = 6;
             return webflow.enterComponent(selectedElement);
           case 6:
-            console.log("Successfully entered the component context.");
+            console.log('Successfully entered the component context.');
 
             // Step 3: After entering the component's context, fetch the root element
             _context4.next = 9;
@@ -365,14 +366,14 @@ var Components = {
           case 9:
             rootElement = _context4.sent;
             if (rootElement) {
-              console.log("Root element of the component:", rootElement);
+              console.log('Root element of the component:', rootElement);
             } else {
-              console.log("No root element found in this component context.");
+              console.log('No root element found in this component context.');
             }
             _context4.next = 14;
             break;
           case 13:
-            console.log("The selected element is not a ComponentElement.");
+            console.log('The selected element is not a ComponentElement.');
           case 14:
           case "end":
             return _context4.stop();
@@ -485,7 +486,8 @@ var Components = {
             return firstComponent === null || firstComponent === void 0 ? void 0 : firstComponent.getRootElement();
           case 6:
             root = _context8.sent;
-          case 7:
+            console.log(root);
+          case 8:
           case "end":
             return _context8.stop();
         }
@@ -497,39 +499,38 @@ var Components = {
     return getRootElement;
   }(),
   getName: function () {
-    var _getName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-      var myComponentName, components, c, currentComponentName;
+    var _getName = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(name) {
+      var components, c, currentComponentName;
       return _regeneratorRuntime().wrap(function _callee9$(_context9) {
         while (1) switch (_context9.prev = _context9.next) {
           case 0:
-            myComponentName = "Hero-Component";
-            _context9.next = 3;
+            _context9.next = 2;
             return webflow.getAllComponents();
-          case 3:
+          case 2:
             components = _context9.sent;
             _context9.t0 = _regeneratorRuntime().keys(components);
-          case 5:
+          case 4:
             if ((_context9.t1 = _context9.t0()).done) {
-              _context9.next = 13;
+              _context9.next = 12;
               break;
             }
             c = _context9.t1.value;
-            _context9.next = 9;
+            _context9.next = 8;
             return components[c].getName();
-          case 9:
+          case 8:
             currentComponentName = _context9.sent;
-            if (myComponentName === currentComponentName) {
-              console.log("Found Hero Component");
+            if (name === currentComponentName) {
+              console.log("Found ".concat(name, " Component"));
             }
-            _context9.next = 5;
+            _context9.next = 4;
             break;
-          case 13:
+          case 12:
           case "end":
             return _context9.stop();
         }
       }, _callee9);
     }));
-    function getName() {
+    function getName(_x) {
       return _getName.apply(this, arguments);
     }
     return getName;
@@ -546,7 +547,7 @@ var Components = {
             components = _context10.sent;
             myComponent = components[0]; // Set Component Name
             _context10.next = 6;
-            return myComponent.setName("My New Component Name");
+            return myComponent.setName('My New Component Name');
           case 6:
           case "end":
             return _context10.stop();
@@ -571,7 +572,7 @@ var Components = {
             componentInstance = elements.find(function (el) {
               return el.type === 'ComponentInstance';
             });
-            if (!((componentInstance === null || componentInstance === void 0 ? void 0 : componentInstance.type) === "ComponentInstance")) {
+            if (!((componentInstance === null || componentInstance === void 0 ? void 0 : componentInstance.type) === 'ComponentInstance')) {
               _context11.next = 14;
               break;
             }
@@ -587,7 +588,7 @@ var Components = {
             _context11.next = 15;
             break;
           case 14:
-            console.log("No component element found");
+            console.log('No component element found');
           case 15:
           case "end":
             return _context11.stop();
@@ -637,7 +638,7 @@ var Elements = {
               console.log(element);
               console.log("Element type: ".concat(element.type));
             } else {
-              console.log("No element is currently selected.");
+              console.log('No element is currently selected.');
             }
           case 4:
           case "end":
@@ -662,12 +663,12 @@ var Elements = {
             allElements = _context2.sent;
             // Print element list
             if (allElements.length > 0) {
-              console.log("List of all elements:");
+              console.log('List of all elements:');
               allElements.forEach(function (element, index) {
                 console.log("".concat(index + 1, ". Element ID: ").concat(JSON.stringify(element), ", Element Type: ").concat(element.type));
               });
             } else {
-              console.log("No elements found in the current context.");
+              console.log('No elements found in the current context.');
             }
           case 4:
           case "end":
@@ -1154,14 +1155,14 @@ var Elements = {
               break;
             }
             _context18.next = 6;
-            return webflow.createStyle("MyCustomStyle");
+            return webflow.createStyle('MyCustomStyle');
           case 6:
             newStyle = _context18.sent;
             // Set properties for the style
             newStyle.setProperties({
-              'background-color': "blue",
-              'font-size': "32px",
-              'font-weight': "bold"
+              'background-color': 'blue',
+              'font-size': '32px',
+              'font-weight': 'bold'
             });
 
             // Set style on selected element
@@ -1282,7 +1283,7 @@ var Elements = {
             break;
           case 14:
             console.log(selectedElement.prepend(webflow.elementPresets.DivBlock));
-            console.log("This element does not support child elements");
+            console.log('This element does not support child elements');
           case 16:
           case "end":
             return _context21.stop();
@@ -1307,9 +1308,9 @@ var Elements = {
           case 2:
             elements = _context22.sent;
             DOMElement = elements.find(function (element) {
-              return element.type === "DOM";
+              return element.type === 'DOM';
             });
-            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === "DOM")) {
+            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === 'DOM')) {
               _context22.next = 11;
               break;
             }
@@ -1382,7 +1383,7 @@ var Elements = {
             return webflow.getSelectedElement();
           case 2:
             selectedElement = _context24.sent;
-            if (!((selectedElement === null || selectedElement === void 0 ? void 0 : selectedElement.type) === "DOM")) {
+            if (!((selectedElement === null || selectedElement === void 0 ? void 0 : selectedElement.type) === 'DOM')) {
               _context24.next = 8;
               break;
             }
@@ -1413,9 +1414,9 @@ var Elements = {
           case 2:
             elements = _context25.sent;
             DOMElement = elements.find(function (element) {
-              return element.type === "DOM";
+              return element.type === 'DOM';
             });
-            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === "DOM")) {
+            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === 'DOM')) {
               _context25.next = 11;
               break;
             }
@@ -1450,9 +1451,9 @@ var Elements = {
           case 2:
             elements = _context26.sent;
             DOMElement = elements.find(function (element) {
-              return element.type === "DOM";
+              return element.type === 'DOM';
             });
-            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === "DOM")) {
+            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === 'DOM')) {
               _context26.next = 13;
               break;
             }
@@ -1490,9 +1491,9 @@ var Elements = {
           case 2:
             elements = _context27.sent;
             DOMElement = elements.find(function (element) {
-              return element.type === "DOM";
+              return element.type === 'DOM';
             });
-            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === "DOM")) {
+            if (!((DOMElement === null || DOMElement === void 0 ? void 0 : DOMElement.type) === 'DOM')) {
               _context27.next = 17;
               break;
             }
@@ -1548,7 +1549,7 @@ var Elements = {
             children = _context28.sent;
             // Filter string elements from children
             strings = children.filter(function (child) {
-              return child.type === "String";
+              return child.type === 'String';
             }); // Initialize an array to hold text content
             textContent = []; // Loop over string elements to get text
             _iterator = _createForOfIteratorHelper(strings);
@@ -1560,7 +1561,7 @@ var Elements = {
               break;
             }
             myString = _step.value;
-            if (!(myString.type === "String")) {
+            if (!(myString.type === 'String')) {
               _context28.next = 19;
               break;
             }
@@ -1608,12 +1609,12 @@ var Elements = {
           case 2:
             allElements = _context29.sent;
             foundElement = allElements.find(function (el) {
-              return el.type === "String";
+              return el.type === 'String';
             });
             if (foundElement) {
               // Check that element has the method in order to use it
               if ('setText' in foundElement) {
-                elementText = foundElement.setText("Hello Element 🚀"); // Set Text
+                elementText = foundElement.setText('Hello Element 🚀'); // Set Text
               }
             } else {
               console.log('Element not found on page');
@@ -1653,7 +1654,7 @@ var Elements = {
             _context30.next = 11;
             break;
           case 10:
-            console.log("Selected Element is not a Heading Element");
+            console.log('Selected Element is not a Heading Element');
           case 11:
           case "end":
             return _context30.stop();
@@ -1687,7 +1688,7 @@ var Elements = {
             _context31.next = 11;
             break;
           case 10:
-            console.log("Selected Element is not a Heading Element");
+            console.log('Selected Element is not a Heading Element');
           case 11:
           case "end":
             return _context31.stop();
@@ -1709,7 +1710,7 @@ var Elements = {
             return webflow.getSelectedElement();
           case 2:
             element = _context32.sent;
-            if (!((element === null || element === void 0 ? void 0 : element.type) === "String")) {
+            if (!((element === null || element === void 0 ? void 0 : element.type) === 'String')) {
               _context32.next = 8;
               break;
             }
@@ -1936,7 +1937,7 @@ var Folders = {
             return folder.getSlug();
           case 10:
             folderSlug = _context4.sent;
-            console.log("Slug", folderSlug);
+            console.log('Slug', folderSlug);
           case 12:
             _context4.next = 6;
             break;
@@ -1979,7 +1980,7 @@ var Folders = {
             return newFolder.getSlug();
           case 7:
             newSlug = _context5.sent;
-            console.log("Slug", newSlug);
+            console.log('Slug', newSlug);
           case 9:
           case "end":
             return _context5.stop();
@@ -2160,7 +2161,7 @@ var Pages = {
             pagesAndFolders = _context4.sent;
             // Print Page Details
             pages = pagesAndFolders === null || pagesAndFolders === void 0 ? void 0 : pagesAndFolders.filter(function (i) {
-              return i.type === "Page";
+              return i.type === 'Page';
             });
             _context4.next = 6;
             return Promise.all(pages.map( /*#__PURE__*/function () {
@@ -2186,7 +2187,7 @@ var Pages = {
             }()));
           case 6:
             folders = pagesAndFolders === null || pagesAndFolders === void 0 ? void 0 : pagesAndFolders.filter(function (i) {
-              return i.type === "PageFolder";
+              return i.type === 'PageFolder';
             });
             _context4.next = 9;
             return Promise.all(folders.map( /*#__PURE__*/function () {
@@ -2232,7 +2233,7 @@ var Pages = {
           case 2:
             pagesAndFolders = _context5.sent;
             pages = pagesAndFolders === null || pagesAndFolders === void 0 ? void 0 : pagesAndFolders.filter(function (i) {
-              return i.type === "Page";
+              return i.type === 'Page';
             }); // Switch Page
             newPage = pages[2];
             _context5.next = 7;
@@ -2470,7 +2471,7 @@ var Pages = {
             return currentPage.getSlug();
           case 7:
             newSlug = _context14.sent;
-            console.log("Slug", newSlug);
+            console.log('Slug', newSlug);
           case 9:
           case "end":
             return _context14.stop();
@@ -2619,7 +2620,7 @@ var Pages = {
             return currentPage.getUtilityPageKey();
           case 5:
             utilityKey = _context19.sent;
-            console.log("Utility Key", utilityKey);
+            console.log('Utility Key', utilityKey);
           case 7:
           case "end":
             return _context19.stop();
@@ -2707,7 +2708,7 @@ var Pages = {
             return currentPage.getOpenGraphTitle();
           case 5:
             openGraphTitle = _context22.sent;
-            console.log("Open Graph Title", openGraphTitle);
+            console.log('Open Graph Title', openGraphTitle);
           case 7:
           case "end":
             return _context22.stop();
@@ -2736,7 +2737,7 @@ var Pages = {
             return currentPage.getOpenGraphTitle();
           case 7:
             openGraphTitle = _context23.sent;
-            console.log("Open Graph Title", openGraphTitle);
+            console.log('Open Graph Title', openGraphTitle);
           case 9:
           case "end":
             return _context23.stop();
@@ -2824,7 +2825,7 @@ var Pages = {
             return currentPage.getOpenGraphDescription();
           case 5:
             openGraphDescription = _context26.sent;
-            console.log("Open Graph Description", openGraphDescription);
+            console.log('Open Graph Description', openGraphDescription);
           case 7:
           case "end":
             return _context26.stop();
@@ -2853,7 +2854,7 @@ var Pages = {
             return currentPage.getOpenGraphDescription();
           case 7:
             openGraphDescription = _context27.sent;
-            console.log("Open Graph Description", openGraphDescription);
+            console.log('Open Graph Description', openGraphDescription);
           case 9:
           case "end":
             return _context27.stop();
@@ -2919,8 +2920,8 @@ var Pages = {
     }
     return setOpenGraphImage;
   }(),
-  setOpenGraphImageAsSeachImage: function () {
-    var _setOpenGraphImageAsSeachImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee30() {
+  setOpenGraphImageAsSearchImage: function () {
+    var _setOpenGraphImageAsSearchImage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee30() {
       var currentPage, searchImage;
       return _regeneratorRuntime().wrap(function _callee30$(_context30) {
         while (1) switch (_context30.prev = _context30.next) {
@@ -2940,10 +2941,10 @@ var Pages = {
         }
       }, _callee30);
     }));
-    function setOpenGraphImageAsSeachImage() {
-      return _setOpenGraphImageAsSeachImage.apply(this, arguments);
+    function setOpenGraphImageAsSearchImage() {
+      return _setOpenGraphImageAsSearchImage.apply(this, arguments);
     }
-    return setOpenGraphImageAsSeachImage;
+    return setOpenGraphImageAsSearchImage;
   }(),
   // Search Engine Title
 
@@ -2964,7 +2965,7 @@ var Pages = {
             if (usesTitle) {
               console.log('This page uses its Title as the Search Engine title');
             } else {
-              console.log("This page has a custom search engine title");
+              console.log('This page has a custom search engine title');
             }
           case 7:
           case "end":
@@ -3070,9 +3071,9 @@ var Pages = {
           case 5:
             isSearchDescription = _context35.sent;
             if (isSearchDescription) {
-              console.log("This page uses its description as the search engine description");
+              console.log('This page uses its description as the search engine description');
             } else {
-              console.log("This page has a custom search engine description");
+              console.log('This page has a custom search engine description');
             }
           case 7:
           case "end":
@@ -3179,7 +3180,7 @@ var Pages = {
             isOpenGraphImageUsedForSearchEngines = _context39.sent;
             // Print page status
             if (isOpenGraphImageUsedForSearchEngines) {
-              console.log('Page uses Open Graph image as Seach Engine Image');
+              console.log('Page uses Open Graph image as Search Engine Image');
             } else {
               console.log('This page has a custom Search engine image');
             }
@@ -3289,7 +3290,8 @@ var Pages = {
             if (isExcluded) {
               console.log('Current page is excluded from search engine indexing');
             } else {
-              "Current page is included in search engine indexing";
+              ;
+              'Current page is included in search engine indexing';
             }
           case 7:
           case "end":
@@ -3360,7 +3362,7 @@ var Styles = {
             allStyles = _context2.sent;
             // List Styles
             if (allStyles.length > 0) {
-              console.log("List of all styles:");
+              console.log('List of all styles:');
               allStyles.forEach( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(style, index) {
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -3385,7 +3387,7 @@ var Styles = {
                 };
               }());
             } else {
-              console.log("No styles found in the current context.");
+              console.log('No styles found in the current context.');
             }
           case 4:
           case "end":
@@ -3416,7 +3418,7 @@ var Styles = {
             return retrievedStyle.getProperties();
           case 6:
             styleProperties = _context3.sent;
-            console.log("Style properties:", styleProperties);
+            console.log('Style properties:', styleProperties);
             _context3.next = 11;
             break;
           case 10:
@@ -3444,9 +3446,9 @@ var Styles = {
             newStyle = _context4.sent;
             // Set properties for the style
             newStyle.setProperties({
-              "background-color": "blue",
-              "font-size": "16px",
-              "font-weight": "bold"
+              'background-color': 'blue',
+              'font-size': '16px',
+              'font-weight': 'bold'
             });
 
             // Get Selected Element
@@ -3464,7 +3466,7 @@ var Styles = {
             _context4.next = 13;
             break;
           case 12:
-            console.log("No element selected");
+            console.log('No element selected');
           case 13:
           case "end":
             return _context4.stop();
@@ -3568,9 +3570,9 @@ var Styles = {
               break;
             }
             propertyMap = {
-              'background-color': "blue",
-              'font-size': "16px",
-              'font-weight': "bold"
+              'background-color': 'blue',
+              'font-size': '16px',
+              'font-weight': 'bold'
             };
             _context6.next = 12;
             return primaryStyle.setProperties(propertyMap);
@@ -3753,7 +3755,7 @@ var Styles = {
           case 6:
             styles = _context12.sent;
             primaryStyle = styles[0];
-            properties = ['background-color', 'accent-color', "font-family"];
+            properties = ['background-color', 'accent-color', 'font-family'];
             _context12.next = 11;
             return primaryStyle.removeProperties(properties);
           case 11:
@@ -3778,7 +3780,7 @@ var Styles = {
           case 2:
             selectedElement = _context13.sent;
             _context13.next = 5;
-            return webflow.createStyle("My Custom Style");
+            return webflow.createStyle('My Custom Style');
           case 5:
             newStyle = _context13.sent;
             _context13.next = 8;
@@ -3792,8 +3794,8 @@ var Styles = {
             // Create a PropertyMap object
             propertyMap = {
               'background-color': webflowBlue,
-              'font-size': "16px",
-              'font-weight': "bold"
+              'font-size': '16px',
+              'font-weight': 'bold'
             }; // Set style properties
             _context13.next = 15;
             return newStyle.setProperties(propertyMap);
@@ -3897,11 +3899,11 @@ var Variables = {
           case 2:
             defaultVariableCollection = _context3.sent;
             if (!defaultVariableCollection) {
-              _context3.next = 28;
+              _context3.next = 27;
               break;
             }
             // Print Collection ID
-            console.log("Default Variable Collection ID:", defaultVariableCollection.id);
+            console.log('Default Variable Collection ID:', defaultVariableCollection.id);
 
             // Fetch all variables within the default collection
             _context3.next = 7;
@@ -3909,10 +3911,10 @@ var Variables = {
           case 7:
             variables = _context3.sent;
             if (!(variables.length > 0)) {
-              _context3.next = 25;
+              _context3.next = 24;
               break;
             }
-            console.log("List of Variables in Default Collection:");
+            console.log('List of Variables in Default Collection:');
 
             // Print variable details
             _context3.t0 = _regeneratorRuntime().keys(variables);
@@ -3933,17 +3935,16 @@ var Variables = {
             _context3.next = 11;
             break;
           case 22:
-            ;
-            _context3.next = 26;
+            _context3.next = 25;
             break;
+          case 24:
+            console.log('No variables found in the default collection.');
           case 25:
-            console.log("No variables found in the default collection.");
-          case 26:
-            _context3.next = 29;
+            _context3.next = 28;
             break;
+          case 27:
+            console.log('Default Variable Collection not found.');
           case 28:
-            console.log("Default Variable Collection not found.");
-          case 29:
           case "end":
             return _context3.stop();
         }
@@ -3965,7 +3966,7 @@ var Variables = {
           case 2:
             collection = _context4.sent;
             _context4.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable("primary", "#ffcc11");
+            return collection === null || collection === void 0 ? void 0 : collection.createColorVariable('primary', '#ffcc11');
           case 5:
             myColorVariable = _context4.sent;
             console.log(myColorVariable);
@@ -3991,8 +3992,8 @@ var Variables = {
           case 2:
             collection = _context5.sent;
             _context5.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.createSizeVariable("Defualt Padding", {
-              unit: "px",
+            return collection === null || collection === void 0 ? void 0 : collection.createSizeVariable('Defualt Padding', {
+              unit: 'px',
               value: 50
             });
           case 5:
@@ -4020,7 +4021,7 @@ var Variables = {
           case 2:
             collection = _context6.sent;
             _context6.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.createFontFamilyVariable("Default Font", "Inter");
+            return collection === null || collection === void 0 ? void 0 : collection.createFontFamilyVariable('Default Font', 'Inter');
           case 5:
             myFontFamilyVariable = _context6.sent;
             console.log(myFontFamilyVariable);
@@ -4102,7 +4103,7 @@ var Variables = {
               break;
             }
             _context9.next = 6;
-            return collection.getVariableByName("Space Cadet");
+            return collection.getVariableByName('Space Cadet');
           case 6:
             variable = _context9.sent;
             _context9.next = 9;
@@ -4132,12 +4133,12 @@ var Variables = {
             return collection === null || collection === void 0 ? void 0 : collection.getVariableByName(name);
           case 5:
             variable = _context10.sent;
-            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === "Color")) {
+            if (!((variable === null || variable === void 0 ? void 0 : variable.type) === 'Color')) {
               _context10.next = 9;
               break;
             }
             _context10.next = 9;
-            return variable.set("#fffcc11");
+            return variable.set('#fffcc11');
           case 9:
           case "end":
             return _context10.stop();
@@ -4173,7 +4174,7 @@ var Variables = {
             }
             _context11.next = 12;
             return style === null || style === void 0 ? void 0 : style.setProperties({
-              "font-size": variable
+              'font-size': variable
             });
           case 12:
           case "end":
@@ -4266,7 +4267,12 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 /* Site information and Settings */
-
+var ExtensionSize = /*#__PURE__*/function (ExtensionSize) {
+  ExtensionSize["Large"] = "large";
+  ExtensionSize["Default"] = "default";
+  ExtensionSize["Comfortable"] = "comfortable";
+  return ExtensionSize;
+}(ExtensionSize || {});
 var Webflow = {
   getSiteInfo: function () {
     var _getSiteInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -4327,25 +4333,25 @@ var Webflow = {
             _context3.next = _context3.t0 === 'xxl' ? 6 : _context3.t0 === 'xl' ? 8 : _context3.t0 === 'large' ? 10 : _context3.t0 === 'main' ? 12 : _context3.t0 === 'medium' ? 14 : _context3.t0 === 'small' ? 16 : _context3.t0 === 'tiny' ? 18 : 20;
             break;
           case 6:
-            console.log("The current view is for very large screens or high-resolution monitors.");
+            console.log('The current view is for very large screens or high-resolution monitors.');
             return _context3.abrupt("break", 20);
           case 8:
-            console.log("The current view is suitable for large desktop monitors.");
+            console.log('The current view is suitable for large desktop monitors.');
             return _context3.abrupt("break", 20);
           case 10:
-            console.log("The current view fits standard desktop monitors.");
+            console.log('The current view fits standard desktop monitors.');
             return _context3.abrupt("break", 20);
           case 12:
-            console.log("The current view is suitable for smaller desktops or large tablets.");
+            console.log('The current view is suitable for smaller desktops or large tablets.');
             return _context3.abrupt("break", 20);
           case 14:
-            console.log("The current view is suitable for tablets and some large phones.");
+            console.log('The current view is suitable for tablets and some large phones.');
             return _context3.abrupt("break", 20);
           case 16:
-            console.log("The current view is designed for larger mobile devices.");
+            console.log('The current view is designed for larger mobile devices.');
             return _context3.abrupt("break", 20);
           case 18:
-            console.log("The current view is for the smallest mobile devices.");
+            console.log('The current view is for the smallest mobile devices.');
             return _context3.abrupt("break", 20);
           case 20:
           case "end":
@@ -4386,24 +4392,24 @@ var Webflow = {
       return _regeneratorRuntime().wrap(function _callee5$(_context5) {
         while (1) switch (_context5.prev = _context5.next) {
           case 0:
-            // General notification
-            webflow.notify({
+            _context5.next = 2;
+            return webflow.notify({
               type: 'Info',
               message: 'Great work!'
             });
-
-            // Error notification
-            webflow.notify({
+          case 2:
+            _context5.next = 4;
+            return webflow.notify({
               type: 'Error',
               message: 'Something went wrong, try again!'
             });
-
-            // Success notification
-            webflow.notify({
+          case 4:
+            _context5.next = 6;
+            return webflow.notify({
               type: 'Success',
               message: 'Successfully did something!'
             });
-          case 3:
+          case 6:
           case "end":
             return _context5.stop();
         }
@@ -4446,31 +4452,31 @@ var Webflow = {
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) switch (_context7.prev = _context7.next) {
           case 0:
-            unsubscribeMediaQuery = webflow.subscribe("mediaquery", function (breakpoint) {
+            unsubscribeMediaQuery = webflow.subscribe('mediaquery', function (breakpoint) {
               switch (breakpoint) {
                 case 'xxl':
-                  console.log("The current view is for very large screens or high-resolution monitors.");
+                  console.log('The current view is for very large screens or high-resolution monitors.');
                   break;
                 case 'xl':
-                  console.log("The current view is suitable for large desktop monitors.");
+                  console.log('The current view is suitable for large desktop monitors.');
                   break;
                 case 'large':
-                  console.log("The current view fits standard desktop monitors.");
+                  console.log('The current view fits standard desktop monitors.');
                   break;
                 case 'main':
-                  console.log("The current view is suitable for smaller desktops or large tablets.");
+                  console.log('The current view is suitable for smaller desktops or large tablets.');
                   break;
                 case 'medium':
-                  console.log("The current view is suitable for tablets and some large phones.");
+                  console.log('The current view is suitable for tablets and some large phones.');
                   break;
                 case 'small':
-                  console.log("The current view is designed for larger mobile devices.");
+                  console.log('The current view is designed for larger mobile devices.');
                   break;
                 case 'tiny':
-                  console.log("The current view is for the smallest mobile devices.");
+                  console.log('The current view is for the smallest mobile devices.');
                   break;
                 default:
-                  console.log("Unknown breakpoint:", breakpoint);
+                  console.log('Unknown breakpoint:', breakpoint);
               }
             });
           case 1:
@@ -4547,132 +4553,6 @@ var Webflow = {
     return subscribePageChange;
   }()
 };
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/@fontsource/inter/index.css":
-/*!****************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/@fontsource/inter/index.css ***!
-  \****************************************************************************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css-loader/dist/runtime/sourceMaps.js */ "./node_modules/css-loader/dist/runtime/sourceMaps.js");
-/* harmony import */ var _css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
-/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../css-loader/dist/runtime/getUrl.js */ "./node_modules/css-loader/dist/runtime/getUrl.js");
-/* harmony import */ var _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2__);
-// Imports
-
-
-
-var ___CSS_LOADER_URL_IMPORT_0___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-cyrillic-ext-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_1___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-cyrillic-ext-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_2___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-cyrillic-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_3___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-cyrillic-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_4___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-greek-ext-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_5___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-greek-ext-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_6___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-greek-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_7___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-greek-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_8___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-vietnamese-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_9___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-vietnamese-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_10___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-latin-ext-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_11___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-latin-ext-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_12___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-latin-400-normal.woff2 */ "./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2"), __webpack_require__.b);
-var ___CSS_LOADER_URL_IMPORT_13___ = new URL(/* asset import */ __webpack_require__(/*! ./files/inter-latin-400-normal.woff */ "./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff"), __webpack_require__.b);
-var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
-var ___CSS_LOADER_URL_REPLACEMENT_0___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_0___);
-var ___CSS_LOADER_URL_REPLACEMENT_1___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_1___);
-var ___CSS_LOADER_URL_REPLACEMENT_2___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_2___);
-var ___CSS_LOADER_URL_REPLACEMENT_3___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_3___);
-var ___CSS_LOADER_URL_REPLACEMENT_4___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_4___);
-var ___CSS_LOADER_URL_REPLACEMENT_5___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_5___);
-var ___CSS_LOADER_URL_REPLACEMENT_6___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_6___);
-var ___CSS_LOADER_URL_REPLACEMENT_7___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_7___);
-var ___CSS_LOADER_URL_REPLACEMENT_8___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_8___);
-var ___CSS_LOADER_URL_REPLACEMENT_9___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_9___);
-var ___CSS_LOADER_URL_REPLACEMENT_10___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_10___);
-var ___CSS_LOADER_URL_REPLACEMENT_11___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_11___);
-var ___CSS_LOADER_URL_REPLACEMENT_12___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_12___);
-var ___CSS_LOADER_URL_REPLACEMENT_13___ = _css_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_2___default()(___CSS_LOADER_URL_IMPORT_13___);
-// Module
-___CSS_LOADER_EXPORT___.push([module.id, `/* inter-cyrillic-ext-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_0___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_1___}) format('woff');
-  unicode-range: U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
-}
-
-/* inter-cyrillic-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_2___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_3___}) format('woff');
-  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
-}
-
-/* inter-greek-ext-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_4___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_5___}) format('woff');
-  unicode-range: U+1F00-1FFF;
-}
-
-/* inter-greek-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_6___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_7___}) format('woff');
-  unicode-range: U+0370-03FF;
-}
-
-/* inter-vietnamese-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_8___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_9___}) format('woff');
-  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
-}
-
-/* inter-latin-ext-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_10___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_11___}) format('woff');
-  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;
-}
-
-/* inter-latin-400-normal */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400;
-  src: url(${___CSS_LOADER_URL_REPLACEMENT_12___}) format('woff2'), url(${___CSS_LOADER_URL_REPLACEMENT_13___}) format('woff');
-  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}`, "",{"version":3,"sources":["webpack://./node_modules/@fontsource/inter/index.css"],"names":[],"mappings":"AAAA,kCAAkC;AAClC;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,oHAAqI;EACrI,iFAAiF;AACnF;;AAEA,8BAA8B;AAC9B;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,oHAA6H;EAC7H,gEAAgE;AAClE;;AAEA,+BAA+B;AAC/B;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,oHAA+H;EAC/H,0BAA0B;AAC5B;;AAEA,2BAA2B;AAC3B;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,oHAAuH;EACvH,0BAA0B;AAC5B;;AAEA,gCAAgC;AAChC;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,oHAAiI;EACjI,2JAA2J;AAC7J;;AAEA,+BAA+B;AAC/B;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,sHAA+H;EAC/H,qIAAqI;AACvI;;AAEA,2BAA2B;AAC3B;EACE,oBAAoB;EACpB,kBAAkB;EAClB,kBAAkB;EAClB,gBAAgB;EAChB,sHAAuH;EACvH,8KAA8K;AAChL","sourcesContent":["/* inter-cyrillic-ext-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-cyrillic-ext-400-normal.woff2) format('woff2'), url(./files/inter-cyrillic-ext-400-normal.woff) format('woff');\n  unicode-range: U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;\n}\n\n/* inter-cyrillic-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-cyrillic-400-normal.woff2) format('woff2'), url(./files/inter-cyrillic-400-normal.woff) format('woff');\n  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;\n}\n\n/* inter-greek-ext-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-greek-ext-400-normal.woff2) format('woff2'), url(./files/inter-greek-ext-400-normal.woff) format('woff');\n  unicode-range: U+1F00-1FFF;\n}\n\n/* inter-greek-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-greek-400-normal.woff2) format('woff2'), url(./files/inter-greek-400-normal.woff) format('woff');\n  unicode-range: U+0370-03FF;\n}\n\n/* inter-vietnamese-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-vietnamese-400-normal.woff2) format('woff2'), url(./files/inter-vietnamese-400-normal.woff) format('woff');\n  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;\n}\n\n/* inter-latin-ext-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-latin-ext-400-normal.woff2) format('woff2'), url(./files/inter-latin-ext-400-normal.woff) format('woff');\n  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;\n}\n\n/* inter-latin-400-normal */\n@font-face {\n  font-family: 'Inter';\n  font-style: normal;\n  font-display: swap;\n  font-weight: 400;\n  src: url(./files/inter-latin-400-normal.woff2) format('woff2'), url(./files/inter-latin-400-normal.woff) format('woff');\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}"],"sourceRoot":""}]);
-// Exports
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
-
 
 /***/ }),
 
@@ -4866,130 +4746,155 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, `:root{
-    /* Webflow colors */
---background1: #1E1E1E;
---background2: #2E2E2E;
---background3: #383838;
---background4: #373737;
---background5: #444444;
---backgroundInactive: #2E2E2E;
---backgroundInverse: #EBEBEB;
---backgroundInput: rgba(0, 0, 0, 0.15);
+___CSS_LOADER_EXPORT___.push([module.id, `:root {
+  /* Webflow colors */
+  --background1: #1e1e1e;
+  --background2: #2e2e2e;
+  --background3: #383838;
+  --background4: #373737;
+  --background5: #444444;
+  --backgroundInactive: #2e2e2e;
+  --backgroundInverse: #ebebeb;
+  --backgroundInput: rgba(0, 0, 0, 0.15);
 
---actionPrimaryBackground: #006ACC;
---actionPrimaryBackgroundHover: #187CD9;
---actionSecondaryBackground: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.10) 100%);
---actionSecondaryBackgroundHover: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%);
---actionPrimaryText: #FFFFFF;
---actionPrimaryTextHover: #FFFFFF;
---actionSecondaryText: #E0E0E0;
---actionSecondaryTextHover: #E0E0E0;
+  --actionPrimaryBackground: #006acc;
+  --actionPrimaryBackgroundHover: #187cd9;
+  --actionSecondaryBackground: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  --actionSecondaryBackgroundHover: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  --actionPrimaryText: #ffffff;
+  --actionPrimaryTextHover: #ffffff;
+  --actionSecondaryText: #e0e0e0;
+  --actionSecondaryTextHover: #e0e0e0;
 
---border1: rgba(255, 255, 255, 0.13);
---border2: rgba(255, 255, 255, 0.14);
---border3: rgba(182, 85, 85, 0.19);
+  --border1: rgba(255, 255, 255, 0.13);
+  --border2: rgba(255, 255, 255, 0.14);
+  --border3: rgba(182, 85, 85, 0.19);
 
---text1: #F5F5F5;
---text2: #BDBDBD;
---text3: #A3A3A3;
---textInactive: #757575;
---textInverse: #1E1E1E;
+  --text1: #f5f5f5;
+  --text2: #bdbdbd;
+  --text3: #a3a3a3;
+  --textInactive: #757575;
+  --textInverse: #1e1e1e;
 
---blueText: #8AC2FF;
---blueIcon: #8AC2FF;
---blueBorder: #007DF0;
+  --blueText: #8ac2ff;
+  --blueIcon: #8ac2ff;
+  --blueBorder: #007df0;
 
---greenBackground: #007A41;
---greenBackgroundHover: #0D8A4F;
---greenText: #63D489;
---greenIcon: #63D489;
---greenBorder: #259D4D;
---yellowBackground: #946B00;
+  --greenBackground: #007a41;
+  --greenBackgroundHover: #0d8a4f;
+  --greenText: #63d489;
+  --greenIcon: #63d489;
+  --greenBorder: #259d4d;
+  --yellowBackground: #946b00;
 
---yellowBackgroundHover: #AF7F00;
---yellowText: #F3C831;
---yellowIcon: #F3C831;
---yellowBorder: #D7A220;
+  --yellowBackgroundHover: #af7f00;
+  --yellowText: #f3c831;
+  --yellowIcon: #f3c831;
+  --yellowBorder: #d7a220;
 
---redBackground: #CF313B;
---redBackgroundHover: #CB3535;
---redText: #FF8A8A;
---redIcon: #FF8A8A;
---redBorder: #E42F3A;
+  --redBackground: #cf313b;
+  --redBackgroundHover: #cb3535;
+  --redText: #ff8a8a;
+  --redIcon: #ff8a8a;
+  --redBorder: #e42f3a;
 
---orangeBackground: #BF4704;
---orangeBackgroundHover: #DC95616;
---orangeText: #EBA267;
---orangeIcon: #EBA267;
---orangeBorder: #DF640C;
+  --orangeBackground: #bf4704;
+  --orangeBackgroundHover: #DC95616;
+  --orangeText: #eba267;
+  --orangeIcon: #eba267;
+  --orangeBorder: #df640c;
 
---purpleBackground: #734CE0;
---purpleBackgroundHover: #815BEB;
---purpleText: #B89EFF;
---purpleIcon: #B89EFF;
---purpleBorder: #875FFD;
+  --purpleBackground: #734ce0;
+  --purpleBackgroundHover: #815beb;
+  --purpleText: #b89eff;
+  --purpleIcon: #b89eff;
+  --purpleBorder: #875ffd;
 
-/* Box shadows for buttons and inputs */
---boxShadows-action-colored: 0px 0.5px 1px 0px rgba(0, 0, 0, 0.8),0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.20) inset;
---boxShadows-action-secondary: 0px 0.5px 1px rgba(0, 0, 0, 0.8),inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.12);
---boxShadows-input-inner: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;
+  /* Box shadows for buttons and inputs */
+  --boxShadows-action-colored: 0px 0.5px 1px 0px rgba(0, 0, 0, 0.8),
+    0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.2) inset;
+  --boxShadows-action-secondary: 0px 0.5px 1px rgba(0, 0, 0, 0.8),
+    inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.12);
+  --boxShadows-input-inner: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,
+    0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,
+    0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,
+    0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,
+    0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,
+    0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;
 
---boxShadows-menu: 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset, 0px 12px 24px 8px rgba(0, 0, 0, 0.04), 0px 8px 16px 4px rgba(0, 0, 0, 0.04), 0px 4px 8px 2px rgba(0, 0, 0, 0.04), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 1px 0px rgba(0, 0, 0, 0.25);
+  --boxShadows-menu: 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset,
+    0px 12px 24px 8px rgba(0, 0, 0, 0.04), 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
+    0px 4px 8px 2px rgba(0, 0, 0, 0.04), 0px 2px 6px 0px rgba(0, 0, 0, 0.04),
+    0px 0px 1px 0px rgba(0, 0, 0, 0.25);
 
---input-inner-shadow: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset, 0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset, 0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset, 0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset, 0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset, 0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;
+  --input-inner-shadow: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,
+    0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,
+    0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,
+    0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,
+    0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,
+    0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;
 
---menu-shadow: 0px 12px 24px 8px rgba(0, 0, 0, 0.08), 0px 8px 16px 4px rgba(0, 0, 0, 0.08), 0px 4px 8px 2px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.08), 0px -0.5px 0.5px 0px rgba(0, 0, 0, 0.12) inset, 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset;
+  --menu-shadow: 0px 12px 24px 8px rgba(0, 0, 0, 0.08),
+    0px 8px 16px 4px rgba(0, 0, 0, 0.08), 0px 4px 8px 2px rgba(0, 0, 0, 0.08),
+    0px 2px 6px 0px rgba(0, 0, 0, 0.08),
+    0px -0.5px 0.5px 0px rgba(0, 0, 0, 0.12) inset,
+    0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset;
 
-/* TYPOGRAPHY */
---font-stack: 'Inter', sans-serif;
---font-size-small: 11.5px;
---font-size-small-letter-spacing: -0.115px;
---font-size-large: 12.5px;
---font-weight-normal: 400;
---font-weight-medium: 600;
---border-radius: 4px;
+  /* TYPOGRAPHY */
+  --font-stack: 'Inter', sans-serif;
+  --font-size-small: 11.5px;
+  --font-size-small-letter-spacing: -0.115px;
+  --font-size-large: 12.5px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 600;
+  --border-radius: 4px;
 }
 
-button{
-    color: var(--actionPrimaryText);
-    border-color: var(--blueBorder);
-    background-color: var(--actionPrimaryBackground);
-    border-radius: var(--border-radius);
-    padding: 3px 3px 3px 3px;
-    margin: 3px 3px;
-
-
+button {
+  color: var(--actionPrimaryText);
+  border-color: var(--blueBorder);
+  background-color: var(--actionPrimaryBackground);
+  border-radius: var(--border-radius);
+  padding: 3px 3px 3px 3px;
+  margin: 3px 3px;
 }
 
-button:hover{
-    background-color: var(--actionPrimaryBackgroundHover);
-
+button:hover {
+  background-color: var(--actionPrimaryBackgroundHover);
 }
 
-select{
-    padding: 3px 3px 3px 3px;
-    margin: 3px 3px;
+select {
+  padding: 3px 3px 3px 3px;
+  margin: 3px 3px;
 }
 
-body{
-    color: var(--actionPrimaryText);
-    background-color: var(--background1);
-    font-family: var(--font-stack);
+body {
+  color: var(--actionPrimaryText);
+  background-color: var(--background1);
+  font-family: var(--font-stack);
 }
 
-input{
-    padding: 3px 3px 3px 3px;
-    margin: 3px 3px;
+input {
+  padding: 3px 3px 3px 3px;
+  margin: 3px 3px;
 }
 
 /* In your CSS file */
 .small-code-block {
-    font-size: 12px; /* Smaller font size */
-    padding: 5px; /* Reduced padding */
-    max-width: 100%; /* Set a max width if needed */
-    overflow-x: auto; /* Enable horizontal scrolling for longer lines */
-}`, "",{"version":3,"sources":["webpack://./src/App.css"],"names":[],"mappings":"AAAA;IACI,mBAAmB;AACvB,sBAAsB;AACtB,sBAAsB;AACtB,sBAAsB;AACtB,sBAAsB;AACtB,sBAAsB;AACtB,6BAA6B;AAC7B,4BAA4B;AAC5B,sCAAsC;;AAEtC,kCAAkC;AAClC,uCAAuC;AACvC,kHAAkH;AAClH,uHAAuH;AACvH,4BAA4B;AAC5B,iCAAiC;AACjC,8BAA8B;AAC9B,mCAAmC;;AAEnC,oCAAoC;AACpC,oCAAoC;AACpC,kCAAkC;;AAElC,gBAAgB;AAChB,gBAAgB;AAChB,gBAAgB;AAChB,uBAAuB;AACvB,sBAAsB;;AAEtB,mBAAmB;AACnB,mBAAmB;AACnB,qBAAqB;;AAErB,0BAA0B;AAC1B,+BAA+B;AAC/B,oBAAoB;AACpB,oBAAoB;AACpB,sBAAsB;AACtB,2BAA2B;;AAE3B,gCAAgC;AAChC,qBAAqB;AACrB,qBAAqB;AACrB,uBAAuB;;AAEvB,wBAAwB;AACxB,6BAA6B;AAC7B,kBAAkB;AAClB,kBAAkB;AAClB,oBAAoB;;AAEpB,2BAA2B;AAC3B,iCAAiC;AACjC,qBAAqB;AACrB,qBAAqB;AACrB,uBAAuB;;AAEvB,2BAA2B;AAC3B,gCAAgC;AAChC,qBAAqB;AACrB,qBAAqB;AACrB,uBAAuB;;AAEvB,uCAAuC;AACvC,qHAAqH;AACrH,+GAA+G;AAC/G,iSAAiS;;AAEjS,kQAAkQ;;AAElQ,kSAAkS;;AAElS,yQAAyQ;;AAEzQ,eAAe;AACf,iCAAiC;AACjC,yBAAyB;AACzB,0CAA0C;AAC1C,yBAAyB;AACzB,yBAAyB;AACzB,yBAAyB;AACzB,oBAAoB;AACpB;;AAEA;IACI,+BAA+B;IAC/B,+BAA+B;IAC/B,gDAAgD;IAChD,mCAAmC;IACnC,wBAAwB;IACxB,eAAe;;;AAGnB;;AAEA;IACI,qDAAqD;;AAEzD;;AAEA;IACI,wBAAwB;IACxB,eAAe;AACnB;;AAEA;IACI,+BAA+B;IAC/B,oCAAoC;IACpC,8BAA8B;AAClC;;AAEA;IACI,wBAAwB;IACxB,eAAe;AACnB;;AAEA,qBAAqB;AACrB;IACI,eAAe,EAAE,sBAAsB;IACvC,YAAY,EAAE,oBAAoB;IAClC,eAAe,EAAE,8BAA8B;IAC/C,gBAAgB,EAAE,iDAAiD;AACvE","sourcesContent":[":root{\n    /* Webflow colors */\n--background1: #1E1E1E;\n--background2: #2E2E2E;\n--background3: #383838;\n--background4: #373737;\n--background5: #444444;\n--backgroundInactive: #2E2E2E;\n--backgroundInverse: #EBEBEB;\n--backgroundInput: rgba(0, 0, 0, 0.15);\n\n--actionPrimaryBackground: #006ACC;\n--actionPrimaryBackgroundHover: #187CD9;\n--actionSecondaryBackground: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.10) 100%);\n--actionSecondaryBackgroundHover: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%);\n--actionPrimaryText: #FFFFFF;\n--actionPrimaryTextHover: #FFFFFF;\n--actionSecondaryText: #E0E0E0;\n--actionSecondaryTextHover: #E0E0E0;\n\n--border1: rgba(255, 255, 255, 0.13);\n--border2: rgba(255, 255, 255, 0.14);\n--border3: rgba(182, 85, 85, 0.19);\n\n--text1: #F5F5F5;\n--text2: #BDBDBD;\n--text3: #A3A3A3;\n--textInactive: #757575;\n--textInverse: #1E1E1E;\n\n--blueText: #8AC2FF;\n--blueIcon: #8AC2FF;\n--blueBorder: #007DF0;\n\n--greenBackground: #007A41;\n--greenBackgroundHover: #0D8A4F;\n--greenText: #63D489;\n--greenIcon: #63D489;\n--greenBorder: #259D4D;\n--yellowBackground: #946B00;\n\n--yellowBackgroundHover: #AF7F00;\n--yellowText: #F3C831;\n--yellowIcon: #F3C831;\n--yellowBorder: #D7A220;\n\n--redBackground: #CF313B;\n--redBackgroundHover: #CB3535;\n--redText: #FF8A8A;\n--redIcon: #FF8A8A;\n--redBorder: #E42F3A;\n\n--orangeBackground: #BF4704;\n--orangeBackgroundHover: #DC95616;\n--orangeText: #EBA267;\n--orangeIcon: #EBA267;\n--orangeBorder: #DF640C;\n\n--purpleBackground: #734CE0;\n--purpleBackgroundHover: #815BEB;\n--purpleText: #B89EFF;\n--purpleIcon: #B89EFF;\n--purpleBorder: #875FFD;\n\n/* Box shadows for buttons and inputs */\n--boxShadows-action-colored: 0px 0.5px 1px 0px rgba(0, 0, 0, 0.8),0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.20) inset;\n--boxShadows-action-secondary: 0px 0.5px 1px rgba(0, 0, 0, 0.8),inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.12);\n--boxShadows-input-inner: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;\n\n--boxShadows-menu: 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset, 0px 12px 24px 8px rgba(0, 0, 0, 0.04), 0px 8px 16px 4px rgba(0, 0, 0, 0.04), 0px 4px 8px 2px rgba(0, 0, 0, 0.04), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 1px 0px rgba(0, 0, 0, 0.25);\n\n--input-inner-shadow: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset, 0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset, 0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset, 0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset, 0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset, 0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;\n\n--menu-shadow: 0px 12px 24px 8px rgba(0, 0, 0, 0.08), 0px 8px 16px 4px rgba(0, 0, 0, 0.08), 0px 4px 8px 2px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.08), 0px -0.5px 0.5px 0px rgba(0, 0, 0, 0.12) inset, 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset;\n\n/* TYPOGRAPHY */\n--font-stack: 'Inter', sans-serif;\n--font-size-small: 11.5px;\n--font-size-small-letter-spacing: -0.115px;\n--font-size-large: 12.5px;\n--font-weight-normal: 400;\n--font-weight-medium: 600;\n--border-radius: 4px;\n}\n\nbutton{\n    color: var(--actionPrimaryText);\n    border-color: var(--blueBorder);\n    background-color: var(--actionPrimaryBackground);\n    border-radius: var(--border-radius);\n    padding: 3px 3px 3px 3px;\n    margin: 3px 3px;\n\n\n}\n\nbutton:hover{\n    background-color: var(--actionPrimaryBackgroundHover);\n\n}\n\nselect{\n    padding: 3px 3px 3px 3px;\n    margin: 3px 3px;\n}\n\nbody{\n    color: var(--actionPrimaryText);\n    background-color: var(--background1);\n    font-family: var(--font-stack);\n}\n\ninput{\n    padding: 3px 3px 3px 3px;\n    margin: 3px 3px;\n}\n\n/* In your CSS file */\n.small-code-block {\n    font-size: 12px; /* Smaller font size */\n    padding: 5px; /* Reduced padding */\n    max-width: 100%; /* Set a max width if needed */\n    overflow-x: auto; /* Enable horizontal scrolling for longer lines */\n}"],"sourceRoot":""}]);
+  font-size: 12px; /* Smaller font size */
+  padding: 5px; /* Reduced padding */
+  max-width: 100%; /* Set a max width if needed */
+  overflow-x: auto; /* Enable horizontal scrolling for longer lines */
+}
+`, "",{"version":3,"sources":["webpack://./src/App.css"],"names":[],"mappings":"AAAA;EACE,mBAAmB;EACnB,sBAAsB;EACtB,sBAAsB;EACtB,sBAAsB;EACtB,sBAAsB;EACtB,sBAAsB;EACtB,6BAA6B;EAC7B,4BAA4B;EAC5B,sCAAsC;;EAEtC,kCAAkC;EAClC,uCAAuC;EACvC;;;;GAIC;EACD;;;;GAIC;EACD,4BAA4B;EAC5B,iCAAiC;EACjC,8BAA8B;EAC9B,mCAAmC;;EAEnC,oCAAoC;EACpC,oCAAoC;EACpC,kCAAkC;;EAElC,gBAAgB;EAChB,gBAAgB;EAChB,gBAAgB;EAChB,uBAAuB;EACvB,sBAAsB;;EAEtB,mBAAmB;EACnB,mBAAmB;EACnB,qBAAqB;;EAErB,0BAA0B;EAC1B,+BAA+B;EAC/B,oBAAoB;EACpB,oBAAoB;EACpB,sBAAsB;EACtB,2BAA2B;;EAE3B,gCAAgC;EAChC,qBAAqB;EACrB,qBAAqB;EACrB,uBAAuB;;EAEvB,wBAAwB;EACxB,6BAA6B;EAC7B,kBAAkB;EAClB,kBAAkB;EAClB,oBAAoB;;EAEpB,2BAA2B;EAC3B,iCAAiC;EACjC,qBAAqB;EACrB,qBAAqB;EACrB,uBAAuB;;EAEvB,2BAA2B;EAC3B,gCAAgC;EAChC,qBAAqB;EACrB,qBAAqB;EACrB,uBAAuB;;EAEvB,uCAAuC;EACvC;sDACoD;EACpD;mDACiD;EACjD;;;;;iDAK+C;;EAE/C;;;uCAGqC;;EAErC;;;;;iDAK+C;;EAE/C;;;;uDAIqD;;EAErD,eAAe;EACf,iCAAiC;EACjC,yBAAyB;EACzB,0CAA0C;EAC1C,yBAAyB;EACzB,yBAAyB;EACzB,yBAAyB;EACzB,oBAAoB;AACtB;;AAEA;EACE,+BAA+B;EAC/B,+BAA+B;EAC/B,gDAAgD;EAChD,mCAAmC;EACnC,wBAAwB;EACxB,eAAe;AACjB;;AAEA;EACE,qDAAqD;AACvD;;AAEA;EACE,wBAAwB;EACxB,eAAe;AACjB;;AAEA;EACE,+BAA+B;EAC/B,oCAAoC;EACpC,8BAA8B;AAChC;;AAEA;EACE,wBAAwB;EACxB,eAAe;AACjB;;AAEA,qBAAqB;AACrB;EACE,eAAe,EAAE,sBAAsB;EACvC,YAAY,EAAE,oBAAoB;EAClC,eAAe,EAAE,8BAA8B;EAC/C,gBAAgB,EAAE,iDAAiD;AACrE","sourcesContent":[":root {\n  /* Webflow colors */\n  --background1: #1e1e1e;\n  --background2: #2e2e2e;\n  --background3: #383838;\n  --background4: #373737;\n  --background5: #444444;\n  --backgroundInactive: #2e2e2e;\n  --backgroundInverse: #ebebeb;\n  --backgroundInput: rgba(0, 0, 0, 0.15);\n\n  --actionPrimaryBackground: #006acc;\n  --actionPrimaryBackgroundHover: #187cd9;\n  --actionSecondaryBackground: linear-gradient(\n    180deg,\n    rgba(255, 255, 255, 0.12) 0%,\n    rgba(255, 255, 255, 0.1) 100%\n  );\n  --actionSecondaryBackgroundHover: linear-gradient(\n    180deg,\n    rgba(255, 255, 255, 0.18) 0%,\n    rgba(255, 255, 255, 0.16) 100%\n  );\n  --actionPrimaryText: #ffffff;\n  --actionPrimaryTextHover: #ffffff;\n  --actionSecondaryText: #e0e0e0;\n  --actionSecondaryTextHover: #e0e0e0;\n\n  --border1: rgba(255, 255, 255, 0.13);\n  --border2: rgba(255, 255, 255, 0.14);\n  --border3: rgba(182, 85, 85, 0.19);\n\n  --text1: #f5f5f5;\n  --text2: #bdbdbd;\n  --text3: #a3a3a3;\n  --textInactive: #757575;\n  --textInverse: #1e1e1e;\n\n  --blueText: #8ac2ff;\n  --blueIcon: #8ac2ff;\n  --blueBorder: #007df0;\n\n  --greenBackground: #007a41;\n  --greenBackgroundHover: #0d8a4f;\n  --greenText: #63d489;\n  --greenIcon: #63d489;\n  --greenBorder: #259d4d;\n  --yellowBackground: #946b00;\n\n  --yellowBackgroundHover: #af7f00;\n  --yellowText: #f3c831;\n  --yellowIcon: #f3c831;\n  --yellowBorder: #d7a220;\n\n  --redBackground: #cf313b;\n  --redBackgroundHover: #cb3535;\n  --redText: #ff8a8a;\n  --redIcon: #ff8a8a;\n  --redBorder: #e42f3a;\n\n  --orangeBackground: #bf4704;\n  --orangeBackgroundHover: #DC95616;\n  --orangeText: #eba267;\n  --orangeIcon: #eba267;\n  --orangeBorder: #df640c;\n\n  --purpleBackground: #734ce0;\n  --purpleBackgroundHover: #815beb;\n  --purpleText: #b89eff;\n  --purpleIcon: #b89eff;\n  --purpleBorder: #875ffd;\n\n  /* Box shadows for buttons and inputs */\n  --boxShadows-action-colored: 0px 0.5px 1px 0px rgba(0, 0, 0, 0.8),\n    0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.2) inset;\n  --boxShadows-action-secondary: 0px 0.5px 1px rgba(0, 0, 0, 0.8),\n    inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.12);\n  --boxShadows-input-inner: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,\n    0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,\n    0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,\n    0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,\n    0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,\n    0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;\n\n  --boxShadows-menu: 0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset,\n    0px 12px 24px 8px rgba(0, 0, 0, 0.04), 0px 8px 16px 4px rgba(0, 0, 0, 0.04),\n    0px 4px 8px 2px rgba(0, 0, 0, 0.04), 0px 2px 6px 0px rgba(0, 0, 0, 0.04),\n    0px 0px 1px 0px rgba(0, 0, 0, 0.25);\n\n  --input-inner-shadow: 0px 1px 1px -1px rgba(0, 0, 0, 0.13) inset,\n    0px 3px 3px -3px rgba(0, 0, 0, 0.17) inset,\n    0px 4px 4px -4px rgba(0, 0, 0, 0.17) inset,\n    0px 8px 8px -8px rgba(0, 0, 0, 0.17) inset,\n    0px 12px 12px -12px rgba(0, 0, 0, 0.13) inset,\n    0px 16px 16px -16px rgba(0, 0, 0, 0.13) inset;\n\n  --menu-shadow: 0px 12px 24px 8px rgba(0, 0, 0, 0.08),\n    0px 8px 16px 4px rgba(0, 0, 0, 0.08), 0px 4px 8px 2px rgba(0, 0, 0, 0.08),\n    0px 2px 6px 0px rgba(0, 0, 0, 0.08),\n    0px -0.5px 0.5px 0px rgba(0, 0, 0, 0.12) inset,\n    0px 0.5px 0.5px 0px rgba(255, 255, 255, 0.12) inset;\n\n  /* TYPOGRAPHY */\n  --font-stack: 'Inter', sans-serif;\n  --font-size-small: 11.5px;\n  --font-size-small-letter-spacing: -0.115px;\n  --font-size-large: 12.5px;\n  --font-weight-normal: 400;\n  --font-weight-medium: 600;\n  --border-radius: 4px;\n}\n\nbutton {\n  color: var(--actionPrimaryText);\n  border-color: var(--blueBorder);\n  background-color: var(--actionPrimaryBackground);\n  border-radius: var(--border-radius);\n  padding: 3px 3px 3px 3px;\n  margin: 3px 3px;\n}\n\nbutton:hover {\n  background-color: var(--actionPrimaryBackgroundHover);\n}\n\nselect {\n  padding: 3px 3px 3px 3px;\n  margin: 3px 3px;\n}\n\nbody {\n  color: var(--actionPrimaryText);\n  background-color: var(--background1);\n  font-family: var(--font-stack);\n}\n\ninput {\n  padding: 3px 3px 3px 3px;\n  margin: 3px 3px;\n}\n\n/* In your CSS file */\n.small-code-block {\n  font-size: 12px; /* Smaller font size */\n  padding: 5px; /* Reduced padding */\n  max-width: 100%; /* Set a max width if needed */\n  overflow-x: auto; /* Enable horizontal scrolling for longer lines */\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -5087,42 +4992,6 @@ module.exports = function (cssWithMappingToString) {
     }
   };
   return list;
-};
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/runtime/getUrl.js":
-/*!********************************************************!*\
-  !*** ./node_modules/css-loader/dist/runtime/getUrl.js ***!
-  \********************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = function (url, options) {
-  if (!options) {
-    options = {};
-  }
-  if (!url) {
-    return url;
-  }
-  url = String(url.__esModule ? url.default : url);
-
-  // If url is already wrapped in quotes, remove them
-  if (/^['"].*['"]$/.test(url)) {
-    url = url.slice(1, -1);
-  }
-  if (options.hash) {
-    url += options.hash;
-  }
-
-  // Should url be wrapped?
-  // See https://drafts.csswg.org/css-values-3/#urls
-  if (/["'() \t\n]|(%20)/.test(url) || options.needQuotes) {
-    return "\"".concat(url.replace(/"/g, '\\"').replace(/\n/g, "\\n"), "\"");
-  }
-  return url;
 };
 
 /***/ }),
@@ -40713,61 +40582,6 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "./node_modules/@fontsource/inter/index.css":
-/*!**************************************************!*\
-  !*** ./node_modules/@fontsource/inter/index.css ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
-/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../../style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
-/* harmony import */ var _style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
-/* harmony import */ var _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
-/* harmony import */ var _style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../../style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
-/* harmony import */ var _style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../../style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
-/* harmony import */ var _style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _css_loader_dist_cjs_js_index_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js!./index.css */ "./node_modules/css-loader/dist/cjs.js!./node_modules/@fontsource/inter/index.css");
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-var options = {};
-
-options.styleTagTransform = (_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
-options.setAttributes = (_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
-
-      options.insert = _style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
-    
-options.domAPI = (_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
-options.insertStyleElement = (_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
-
-var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_index_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
-
-
-
-
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_index_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _css_loader_dist_cjs_js_index_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _css_loader_dist_cjs_js_index_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
-
-
-/***/ }),
-
 /***/ "./node_modules/prismjs/themes/prism-atom-dark.css":
 /*!*********************************************************!*\
   !*** ./node_modules/prismjs/themes/prism-atom-dark.css ***!
@@ -41149,160 +40963,6 @@ function styleTagTransform(css, styleElement) {
 }
 module.exports = styleTagTransform;
 
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff":
-/*!*****************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff ***!
-  \*****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "fa67b2dd0048a5433bd5.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff2":
-/*!******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff2 ***!
-  \******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "fa78d8d6788399bf6527.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff ***!
-  \*********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "cd2ad378115f549d3c5b.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff2":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff2 ***!
-  \**********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "ac62c8eba7f954b48546.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff":
-/*!**************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff ***!
-  \**************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "1eeaf1d0bde712085ffc.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff2":
-/*!***************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-greek-400-normal.woff2 ***!
-  \***************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "be0e76b30a7663adf9eb.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff":
-/*!******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff ***!
-  \******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "708f2f7425851a3b7633.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff2":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff2 ***!
-  \*******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "1e2b9039d9ecdbea5d80.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff":
-/*!**************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff ***!
-  \**************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "08a02fd275ecea6ef662.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2":
-/*!***************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2 ***!
-  \***************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "f1535355a7df553be385.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff":
-/*!******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff ***!
-  \******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "40b3b0d5e09a90fb6e3e.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff2":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff2 ***!
-  \*******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "0f9e8d4e940df8f6edfe.woff2";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff ***!
-  \*******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "6eab7f5e6cae783b49bf.woff";
-
-/***/ }),
-
-/***/ "./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff2":
-/*!********************************************************************************!*\
-  !*** ./node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff2 ***!
-  \********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-module.exports = __webpack_require__.p + "5952d3d3c5df5a2f8e09.woff2";
-
 /***/ })
 
 /******/ 	});
@@ -41333,9 +40993,6 @@ module.exports = __webpack_require__.p + "5952d3d3c5df5a2f8e09.woff2";
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
@@ -41399,55 +41056,6 @@ module.exports = __webpack_require__.p + "5952d3d3c5df5a2f8e09.woff2";
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	(() => {
-/******/ 		var scriptUrl;
-/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
-/******/ 		var document = __webpack_require__.g.document;
-/******/ 		if (!scriptUrl && document) {
-/******/ 			if (document.currentScript)
-/******/ 				scriptUrl = document.currentScript.src;
-/******/ 			if (!scriptUrl) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				if(scripts.length) {
-/******/ 					var i = scripts.length - 1;
-/******/ 					while (i > -1 && !scriptUrl) scriptUrl = scripts[i--].src;
-/******/ 				}
-/******/ 			}
-/******/ 		}
-/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
-/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
-/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
-/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
-/******/ 		__webpack_require__.p = scriptUrl;
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
-/******/ 		__webpack_require__.b = document.baseURI || self.location.href;
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"main": 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		// no on chunks loaded
-/******/ 		
-/******/ 		// no jsonp function
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/nonce */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nc = undefined;
@@ -41470,14 +41078,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_dropdown__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/dropdown */ "./src/components/dropdown.tsx");
 /* harmony import */ var _components_parameterInput__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/parameterInput */ "./src/components/parameterInput.tsx");
 /* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./App.css */ "./src/App.css");
-/* harmony import */ var _fontsource_inter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fontsource/inter */ "./node_modules/@fontsource/inter/index.css");
-/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! prismjs */ "./node_modules/prismjs/prism.js");
-/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(prismjs__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var prismjs_themes_prism_atom_dark_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! prismjs/themes/prism-atom-dark.css */ "./node_modules/prismjs/themes/prism-atom-dark.css");
-/* harmony import */ var prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! prismjs/components/prism-typescript */ "./node_modules/prismjs/components/prism-typescript.js");
-/* harmony import */ var prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! prismjs/components/prism-jsx */ "./node_modules/prismjs/components/prism-jsx.js");
-/* harmony import */ var prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! prismjs */ "./node_modules/prismjs/prism.js");
+/* harmony import */ var prismjs__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(prismjs__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var prismjs_themes_prism_atom_dark_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! prismjs/themes/prism-atom-dark.css */ "./node_modules/prismjs/themes/prism-atom-dark.css");
+/* harmony import */ var prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! prismjs/components/prism-typescript */ "./node_modules/prismjs/components/prism-typescript.js");
+/* harmony import */ var prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(prismjs_components_prism_typescript__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! prismjs/components/prism-jsx */ "./node_modules/prismjs/components/prism-jsx.js");
+/* harmony import */ var prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(prismjs_components_prism_jsx__WEBPACK_IMPORTED_MODULE_10__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -41507,7 +41114,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 // Import Styling
  // Importing the main CSS for the app
- // Importing the Inter font
 
  // This is an example theme, choose the one you like
 
@@ -41566,14 +41172,14 @@ var App = function App() {
           return console.log(result);
         });
       } catch (error) {
-        console.error("Error executing function:", error);
+        console.error('Error executing function:', error);
       }
     }
   };
 
   // Load Prism styling
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    prismjs__WEBPACK_IMPORTED_MODULE_8___default().highlightAll();
+    prismjs__WEBPACK_IMPORTED_MODULE_7___default().highlightAll();
   }, [functionCode]);
 
   // Set extension size on load
@@ -41604,7 +41210,7 @@ var App = function App() {
     });
   }), parameterNames.length > 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: handleFunctionExecutionWithParameters
-  }, "Run Function"), selectedFunctionName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h4", null, "Source Code:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("pre", {
+  }, "Run Function"), selectedFunctionName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h4", null, "Source Code:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("small", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", null, "Open your browser\u2019s console to view the output of the function."))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("pre", {
     className: "small-code-block"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("code", {
     className: "language-typescript"

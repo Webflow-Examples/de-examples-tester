@@ -1,9 +1,7 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-
+const path = require('path')
 
 module.exports = {
-  entry: './src/main.js', 
+  entry: './src/main.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -16,8 +14,6 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         },
-
-
       },
       {
         test: /\.(ts|tsx)$/,
@@ -37,7 +33,7 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
-    ]
+    ],
   },
   devServer: {
     static: {
@@ -46,16 +42,8 @@ module.exports = {
     compress: true,
     port: 1337,
   },
-  resolve:{
-    extensions: ['.tsx', '.ts', '.js', '.jsx']
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
-  plugins:[
-    new CopyPlugin({
-      patterns: [
-          { from: 'src/examples', to: 'public/examples' },
-          // You can add more patterns here if needed
-      ],
-  }),
-  ],
-  devtool: 'source-map'
-};
+  devtool: 'source-map',
+}
