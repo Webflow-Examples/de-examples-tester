@@ -10,7 +10,7 @@ import Dropdown from './components/dropdown' // Importing the Dropdown component
 import ParameterInput from './components/parameterInput'
 
 // Import Styling
-import './App.css' // Importing the main CSS for the app
+// import './App.css' // Importing the main CSS for the app
 import Prism from 'prismjs'
 import 'prismjs/themes/prism-atom-dark.css' // This is an example theme, choose the one you like
 import 'prismjs/components/prism-typescript'
@@ -81,50 +81,52 @@ const App = () => {
   }, [])
 
   return (
-    <div>
-      <h1>
-        Welcome to the <br></br>Designer API Tester!
-      </h1>
-      <p>Select a Category</p>
-      {/* Dropdown for selecting an example category */}
-      <Dropdown
-        options={exampleCategories}
-        selectedValue={selectedExampleCategory}
-        onValueChange={handleCategoryChange}
-      />
-      <p>Select Function to Run</p>
-      {/* Dropdown for selecting a function to run */}
-      <Dropdown
-        options={functionSelections}
-        selectedValue={selectedFunctionName}
-        onValueChange={handleFunctionChange}
-      />
-      {/* Input and button for functions that require a parameter */}
-      {parameterNames.length > 0 &&
-        parameterNames.map((name) => (
-          <ParameterInput
-            key={name}
-            name={name}
-            value={functionParameters[name]}
-            onChange={(e) => handleParameterChange(name, e.target.value)}
-            placeholder={`Enter ${name}`}
-          />
-        ))}
-      {parameterNames.length > 0 && (
-        <button onClick={handleFunctionExecutionWithParameters}>
-          Run Function
-        </button>
-      )}
-      {/* Displaying the source code of the selected function */}
-      {selectedFunctionName && (
-        <div>
-          <h4>Source Code:</h4>
-          <p><small><i>Open your browser’s console to view the output of the function.</i></small></p>
-          <pre className="small-code-block">
-            <code className="language-typescript">{functionCode}</code>
-          </pre>
-        </div>
-      )}
+    <div id="container" className={`container u-pt-1`}>
+      <div>
+        <h1 className={`strong h2`}>
+          Welcome to the <br></br>Designer API Playground!
+        </h1>
+        <p>Select a Category</p>
+        {/* Dropdown for selecting an example category */}
+        <Dropdown
+          options={exampleCategories}
+          selectedValue={selectedExampleCategory}
+          onValueChange={handleCategoryChange}
+        />
+        <p>Select Function to Run</p>
+        {/* Dropdown for selecting a function to run */}
+        <Dropdown
+          options={functionSelections}
+          selectedValue={selectedFunctionName}
+          onValueChange={handleFunctionChange}
+        />
+        {/* Input and button for functions that require a parameter */}
+        {parameterNames.length > 0 &&
+          parameterNames.map((name) => (
+            <ParameterInput
+              key={name}
+              name={name}
+              value={functionParameters[name]}
+              onChange={(e) => handleParameterChange(name, e.target.value)}
+              placeholder={`Enter ${name}`}
+            />
+          ))}
+        {parameterNames.length > 0 && (
+          <button onClick={handleFunctionExecutionWithParameters} className={`button cc-primary`}>
+            Run Function
+          </button>
+        )}
+        {/* Displaying the source code of the selected function */}
+        {selectedFunctionName && (
+          <div>
+            <h4 className={`h4`}>Source Code:</h4>
+            <p><small><i>Open your browser’s console to view the output of the function.</i></small></p>
+            <pre className="small-code-block">
+              <code className="language-typescript">{functionCode}</code>
+            </pre>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

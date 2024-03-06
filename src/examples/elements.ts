@@ -14,6 +14,26 @@ export const Elements = {
     }
   },
 
+  setSelectedElement: async () => {
+
+    // Get the Root Element
+    const rootElement = await webflow.getRootElement();
+
+    if (rootElement) {
+
+      // Select the root element
+      const selectedElement = await webflow.setSelectedElement(rootElement);
+
+      if (selectedElement?.children) {
+
+        // Start building elements on the selected element
+        await selectedElement?.append(webflow.elementPresets.DOM)
+
+      }
+    }
+
+  },
+
   getAllElements: async () => {
     // Retrieve all elements in the current context
     const allElements = await webflow.getAllElements()
@@ -23,9 +43,8 @@ export const Elements = {
       console.log('List of all elements:')
 
       allElements.forEach((element, index) => {
-        console.log(
-          `${index + 1}. Element ID: ${JSON.stringify(element)}, Element Type: ${element.type}`,
-        )
+        console.log(index + 1, 'Element ID:', JSON.stringify( element ), 'Element Type:', element.type)
+
       })
     } else {
       console.log('No elements found in the current context.')

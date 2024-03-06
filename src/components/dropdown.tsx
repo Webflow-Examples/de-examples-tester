@@ -13,7 +13,7 @@ function Dropdown({ options, selectedValue, onValueChange }: DropdownProps) {
 
   return (
     <div>
-      <select value={selectedValue} onChange={handleChange}>
+      <select value={selectedValue} onChange={handleChange} className={`w-input`}>
         <option value="">Select an option</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>

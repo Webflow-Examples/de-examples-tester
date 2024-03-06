@@ -14,7 +14,6 @@ export const useFunctionCode = (
     if (selectedFunctionName && selectedExampleCategory) {
       // Get file for selected example category
       const filePath = `https://main--thriving-zuccutto-5ad917.netlify.app/examples/${selectedExampleCategory.toLowerCase()}.ts`
-      console.log(filePath)
       fetch(filePath)
         .then((response) => response.text())
         .then((text) => {
