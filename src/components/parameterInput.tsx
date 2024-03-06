@@ -20,6 +20,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     value={value}
     onChange={onChange}
     placeholder={placeholder}
+    className={`w-input`}
   />
 )
 

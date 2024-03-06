@@ -12,7 +12,6 @@ import ParameterInput from './components/parameterInput'
 // Import Styling
 // import './App.css' // Importing the main CSS for the app
 import Prism from 'prismjs'
-import 'prismjs/themes/prism-atom-dark.css' // This is an example theme, choose the one you like
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-jsx'
 
@@ -34,9 +33,9 @@ const App = () => {
   }))
   const functionSelections = selectedExampleCategory
     ? Object.keys(examples[selectedExampleCategory]).map((key) => ({
-        value: key,
-        label: key,
-      }))
+      value: key,
+      label: key,
+    }))
     : []
 
   // Event Handlers
@@ -77,23 +76,22 @@ const App = () => {
   // Set extension size on load
   useEffect(() => {
     // Setting the size for the webflow extension
-    webflow.setExtensionSize({ height: 320, width: 500 })
+    webflow.setExtensionSize({ height: 425, width: 500 })
   }, [])
 
   return (
     <div id="container" className={`container u-pt-1`}>
-      <div>
         <h1 className={`strong h2`}>
-          Welcome to the <br></br>Designer API Playground!
+          Webflow <br></br>Designer API Playground
         </h1>
-        <p>Select a Category</p>
+        <p>Select an API category</p>
         {/* Dropdown for selecting an example category */}
         <Dropdown
           options={exampleCategories}
           selectedValue={selectedExampleCategory}
           onValueChange={handleCategoryChange}
         />
-        <p>Select Function to Run</p>
+        <p>Select an API method</p>
         {/* Dropdown for selecting a function to run */}
         <Dropdown
           options={functionSelections}
@@ -101,32 +99,34 @@ const App = () => {
           onValueChange={handleFunctionChange}
         />
         {/* Input and button for functions that require a parameter */}
-        {parameterNames.length > 0 &&
-          parameterNames.map((name) => (
-            <ParameterInput
-              key={name}
-              name={name}
-              value={functionParameters[name]}
-              onChange={(e) => handleParameterChange(name, e.target.value)}
-              placeholder={`Enter ${name}`}
-            />
-          ))}
-        {parameterNames.length > 0 && (
-          <button onClick={handleFunctionExecutionWithParameters} className={`button cc-primary`}>
-            Run Function
-          </button>
-        )}
+        <div id="inputs" className={`w-container`}>
+          {parameterNames.length > 0 &&
+            parameterNames.map((name) => (
+              <ParameterInput
+                key={name}
+                name={name}
+                value={functionParameters[name]}
+                onChange={(e) => handleParameterChange(name, e.target.value)}
+                placeholder={`Enter ${name}`}
+              />
+            ))}
+          {parameterNames.length > 0 && (
+            <button onClick={handleFunctionExecutionWithParameters} className={`button cc-primary`}>
+              Run Function
+            </button>
+          )}
+        </div>
         {/* Displaying the source code of the selected function */}
         {selectedFunctionName && (
-          <div>
-            <h4 className={`h4`}>Source Code:</h4>
+          <div id="code" className={`w-container`}>
+            <div className={`u-pt-1`}></div>
+            <label>Source Code</label>
             <p><small><i>Open your browser’s console to view the output of the function.</i></small></p>
             <pre className="small-code-block">
               <code className="language-typescript">{functionCode}</code>
             </pre>
           </div>
         )}
-      </div>
     </div>
   )
 }
