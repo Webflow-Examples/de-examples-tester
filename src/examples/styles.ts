@@ -50,6 +50,23 @@ export const Styles = {
       console.log('No element selected')
     }
   },
+  removeStyle: async (styleName: string) => {
+
+    // Retrieve the style by name
+    const retrievedStyle = await webflow.getStyleByName(styleName)
+
+    if (retrievedStyle) {
+        
+        // Remove Style
+        await webflow.removeStyle(retrievedStyle)
+        console.log(`Style: ${styleName} was removed`)
+        
+    } else {
+      console.log(`Style ${styleName} not found.`)
+    }
+
+  },
+
   getStyleProperties: async () => {
     // Get selected element
     const element = await webflow.getSelectedElement()

@@ -1,0 +1,5 @@
+{
+  "name": "My Amazing App",
+  "publicDir": "dist",
+  "apiVersion": "2"
+}
