@@ -5,6 +5,7 @@ import { Styles } from './styles'
 import { Variables } from './variables'
 import { Pages } from './pages'
 import { Folders } from './folders'
+import { Payments } from './payments'
 
 const examples = {
   Webflow: Webflow,
@@ -14,6 +15,7 @@ const examples = {
   Variables: Variables,
   Pages: Pages,
   Folders: Folders,
+  Payments: Payments
 }
 
 export default examples

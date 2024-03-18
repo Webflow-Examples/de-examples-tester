@@ -80,7 +80,14 @@ export const useFunctionCode = (
     } else {
       setFunctionCode('')
     }
+
   }, [selectedFunctionName, selectedExampleCategory])
+
+  useEffect(() => {
+
+    webflow.setExtensionSize({ height: 600,width : 500 })
+
+  },[selectedFunctionName])
 
   return {
     functionCode,

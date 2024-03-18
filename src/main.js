@@ -74,7 +74,7 @@ const App = () => {
   }, [functionCode])
 
   // Set extension size on load
-  useEffect(() => {
+  useEffect( () => {
     // Setting the size for the webflow extension
     webflow.setExtensionSize({ height: 425, width: 500 })
   }, [])
