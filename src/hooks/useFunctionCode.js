@@ -10,13 +10,28 @@ export const useFunctionCode = (
   const [functionParameters, setFunctionParameters] = useState({})
 
   useEffect(() => {
+
     // When there's a selected function and an example value
     if (selectedFunctionName && selectedExampleCategory) {
+      
       // Get file for selected example category
       const filePath = `https://main--thriving-zuccutto-5ad917.netlify.app/examples/${selectedExampleCategory.toLowerCase()}.ts`
       fetch(filePath)
-        .then((response) => response.text())
+        .then((response) => {
+
+          if (!response.ok){
+            console.error('File not found')
+            setFunctionCode(null)
+          }
+
+          response.text()
+        })
         .then((text) => {
+
+          if(!functionCode){
+            return
+          }
+
           // Regex for finding the selected function within the text
           const functionRegex = new RegExp(
             `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
