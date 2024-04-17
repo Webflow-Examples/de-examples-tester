@@ -27,7 +27,12 @@ const inputConfig: InputConfigType = {
     className: 'w-select',
     onChange: (name, onChange) => (e: ChangeEvent<HTMLSelectElement>) => onChange(name, e.target.value),
     placeholder: "Select or type a file type",
-  }
+  },
+  number: {
+    type: 'number',
+    className: 'w-input',
+    onChange: (name, onChange) => (e: ChangeEvent<HTMLInputElement>) => onChange(name, e.target.value)
+    },
 };
 
 type ParameterInputProps = {
