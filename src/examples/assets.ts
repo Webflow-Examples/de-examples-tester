@@ -42,4 +42,21 @@ export const Assets = {
     const asset = await webflow.createAsset(file);
     console.log(asset)
   },
+  getAssetById: async (asset_id: string) => {
+
+    const asset = await webflow.getAssetById(asset_id)
+    console.log(asset_id)
+
+  },
+  getAssetURL: async (asset_id: string) => {
+
+    // Get Asset by ID
+    const asset = await webflow.getAssetById(asset_id)
+
+    if (asset) {
+      const url = await asset.getUrl()
+      console.log(`Asset URL: ${url}`)
+    }
+
+  },
 }

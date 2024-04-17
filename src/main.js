@@ -27,6 +27,7 @@ const App = () => {
     parameterTypes,
     functionParameters,
     setFunctionParameters,
+    setParameterNames
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
 
   // Creating options for the dropdowns
@@ -45,6 +46,7 @@ const App = () => {
   const handleCategoryChange = (value) => {
     setSelectedExampleCategory(value);
     setSelectedFunctionName('');
+    setParameterNames([])
   };
 
   const handleFunctionChange = (value) => {

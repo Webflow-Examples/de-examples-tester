@@ -67,6 +67,7 @@ export const useFunctionCode = (
     parameterNames,
     parameterTypes, // Expose parameter types as part of the hook's return value
     functionParameters,
+    setParameterNames,
     setFunctionParameters,
   }
 }

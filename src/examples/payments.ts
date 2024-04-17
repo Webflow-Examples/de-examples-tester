@@ -5,5 +5,5 @@ export const Payments = {
         const subcriptions = await webflow.getAppSubscriptions()
         console.log(`Subscriptions: ${subcriptions}`)
 
-    }
+    },
 }
