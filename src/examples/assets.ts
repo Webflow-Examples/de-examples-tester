@@ -1,23 +1,45 @@
+export enum ValidFileTypesEnum {
+  JPEG = "image/jpeg",
+  JPG = "image/jpg",
+  PNG = "image/png",
+  GIF = "image/gif",
+  SVG = "image/svg+xml",
+  BMP = "image/bmp",
+  WEBP = "image/webp",
+  PDF = "application/pdf",
+  MSWORD = "application/msword",
+  MSEXCEL = "application/vnd.ms-excel",
+  MSPOWERPOINT = "application/vnd.ms-powerpoint",
+  WORD_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  EXCEL_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  POWERPOINT_PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  PLAIN_TEXT = "text/plain",
+  CSV = "text/csv",
+  ODT = "application/vnd.oasis.opendocument.text",
+  ODS = "application/vnd.oasis.opendocument.spreadsheet",
+  ODP = "application/vnd.oasis.opendocument.presentation",
+  JSON = "application/json"
+}
+
 export const Assets = {
-  
-  createAsset: async () => {
-    
-    // Create File Input
-    const codeDiv = document.getElementById('code')
+  createAssetFromFileUpload: async (file: File) => {
+    if (file) {
+      const asset = await webflow.createAsset(file)
 
-    console.log('hello world')
-    console.log(`Code: ${codeDiv}`)
-
-    if (codeDiv) {
-      const fileInput = document.createElement('input')
-
-      fileInput.type = 'file' // Set the type attribute to 'file'
-      fileInput.id = 'myFileInput' // Set the id attribute
-      fileInput.name = 'myFile' // Set the name attribute
-      fileInput.accept = '.jpg, .png, .gif' // Set accepted file types
-
-      // Step 3: Insert the element into the DOM
-      document.body.appendChild(fileInput)
+      console.log(`Asset ID: ${asset.id}`)
     }
+  },
+  createAssetFromURL: async (url: string, fileName: string, fileTypeEnum: ValidFileTypesEnum) => {
+    
+    // Fetch image from remote source and buil a Blob object
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const file = new File([blob], fileName, {
+      type: 'image/png',
+    })
+
+    // Create and upload the asset to webflow
+    const asset = await webflow.createAsset(file);
+    console.log(asset)
   },
 }

@@ -8,6 +8,8 @@ import { useFunctionCode } from './hooks/useFunctionCode'
 import examples from './examples/examples'
 import Dropdown from './components/dropdown' // Importing the Dropdown component
 import ParameterInput from './components/parameterInput'
+import enums from './examples/enums';
+
 
 // Import Styling
 // import './App.css' // Importing the main CSS for the app
@@ -22,6 +24,7 @@ const App = () => {
   const {
     functionCode,
     parameterNames,
+    parameterTypes,
     functionParameters,
     setFunctionParameters,
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
@@ -40,98 +43,87 @@ const App = () => {
 
   // Event Handlers
   const handleCategoryChange = (value) => {
-    setSelectedExampleCategory(value)
-    setSelectedFunctionName('') // Resetting the selected function name
-  }
+    setSelectedExampleCategory(value);
+    setSelectedFunctionName('');
+  };
 
   const handleFunctionChange = (value) => {
-    setSelectedFunctionName(value)
-  }
+    setSelectedFunctionName(value);
+  };
 
   const handleParameterChange = (paramName, value) => {
-    setFunctionParameters((prev) => ({ ...prev, [paramName]: value }))
-  }
+    setFunctionParameters((prev) => ({ ...prev, [paramName]: value }));
+  };
 
   const handleFunctionExecutionWithParameters = () => {
-    const funcToExecute =
-      examples[selectedExampleCategory][selectedFunctionName]
-
+    const funcToExecute = examples[selectedExampleCategory][selectedFunctionName];
     if (funcToExecute) {
       try {
-        const paramValues = parameterNames.map(
-          (name) => functionParameters[name],
-        )
-        funcToExecute(...paramValues).then((result) => console.log(result))
+        const paramValues = parameterNames.map((name) => functionParameters[name]);
+        funcToExecute(...paramValues);
       } catch (error) {
-        console.error('Error executing function:', error)
+        console.error('Error executing function:', error);
       }
     }
-  }
+  };
 
-  // Load Prism styling
+const enumToArray = (enumObj) => Object.values(enumObj);
+
   useEffect(() => {
-    Prism.highlightAll()
-  }, [functionCode])
+    Prism.highlightAll();
+  }, [functionCode]);
 
-  // Set extension size on load
-  useEffect( () => {
-    // Setting the size for the webflow extension
-    webflow.setExtensionSize({ height: 425, width: 500 })
-  }, [])
+  useEffect(() => {
+    webflow.setExtensionSize({ height: 425, width: 500 });
+  }, []);
 
   return (
-    <div id="container" className={`container u-pt-1`}>
-        <h1 className={`strong h2`}>
-          Webflow <br></br>Designer API Playground
-        </h1>
-        <p>Select an API category</p>
-        {/* Dropdown for selecting an example category */}
-        <Dropdown
-          options={exampleCategories}
-          selectedValue={selectedExampleCategory}
-          onValueChange={handleCategoryChange}
-        />
-        <p>Select an API method</p>
-        {/* Dropdown for selecting a function to run */}
-        <Dropdown
-          options={functionSelections}
-          selectedValue={selectedFunctionName}
-          onValueChange={handleFunctionChange}
-        />
-        {/* Input and button for functions that require a parameter */}
-        <div id="inputs" className={`w-container`}>
-          {parameterNames.length > 0 &&
-            parameterNames.map((name) => (
-              <ParameterInput
-                key={name}
-                name={name}
-                value={functionParameters[name]}
-                onChange={(e) => handleParameterChange(name, e.target.value)}
-                placeholder={`Enter ${name}`}
-              />
-            ))}
-          {parameterNames.length > 0 && (
-            <button onClick={handleFunctionExecutionWithParameters} className={`button cc-primary`}>
-              Run Function
-            </button>
-          )}
-        </div>
-        {/* Displaying the source code of the selected function */}
-        {selectedFunctionName && (
-          <div id="code" className={`w-container`}>
-            <div className={`u-pt-1`}></div>
-            <label>Source Code</label>
-            <p><small><i>Open your browser’s console to view the output of the function.</i></small></p>
-            <pre className="small-code-block">
-              <code className="language-typescript">{functionCode}</code>
-            </pre>
-          </div>
+    <div id="container" className="container u-pt-1">
+      <h1 className="strong h2">Webflow <br/>Designer API Playground</h1>
+      <p>Select an API category</p>
+      <Dropdown
+        options={exampleCategories}
+        selectedValue={selectedExampleCategory}
+        onValueChange={handleCategoryChange}
+      />
+      <p>Select an API method</p>
+      <Dropdown
+        options={functionSelections}
+        selectedValue={selectedFunctionName}
+        onValueChange={handleFunctionChange}
+      />
+      <div id="inputs" className="w-container">
+        {parameterNames.length > 0 && parameterNames.map((name, index) => (
+          <ParameterInput
+            key={name}
+            name={name}
+            inputType={parameterTypes[index].includes('Enum') ? 'enum' : parameterTypes[index]}
+            placeholder={`Enter ${name}`}
+            onChange={handleParameterChange}
+            datalistId={parameterTypes[index].includes('Enum') ? `${name}` : undefined}
+            options={parameterTypes[index].includes('Enum') ? enumToArray(enums[parameterNames[index]]) : undefined} // Adjust options based on real enum values
+          />
+        ))}
+        {parameterNames.length > 0 && (
+          <button onClick={handleFunctionExecutionWithParameters} className="button cc-primary">
+            Run Function
+          </button>
         )}
+      </div>
+      {selectedFunctionName && (
+        <div id="code" className="w-container">
+          <div className="u-pt-1"></div>
+          <label>Source Code</label>
+          <p><small><i>Open your browser’s console to view the output of the function.</i></small></p>
+          <pre className="small-code-block">
+            <code className="language-typescript">{functionCode}</code>
+          </pre>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-// Rendering the App component into the root element
-const container = document.getElementById('root')
-const root = createRoot(container)
-root.render(<App />)
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);

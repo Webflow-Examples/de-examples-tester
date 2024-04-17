@@ -7,106 +7,65 @@ export const useFunctionCode = (
 ) => {
   const [functionCode, setFunctionCode] = useState('')
   const [parameterNames, setParameterNames] = useState([])
+  const [parameterTypes, setParameterTypes] = useState([]) // New state to store parameter types
   const [functionParameters, setFunctionParameters] = useState({})
 
   useEffect(() => {
-
-    // When there's a selected function and an example value
     if (selectedFunctionName && selectedExampleCategory) {
-      
-      // Get file for selected example category
       const filePath = `https://main--thriving-zuccutto-5ad917.netlify.app/examples/${selectedExampleCategory.toLowerCase()}.ts`
       fetch(filePath)
-        .then((response) => {
-
-          if (!response.ok){
-            console.error('File not found')
-            setFunctionCode(null)
-          }
-
-          response.text()
-        })
-        .then((text) => {
-
-          if(!functionCode){
-            return
-          }
-
-          // Regex for finding the selected function within the text
+        .then(response => response.text())
+        .then(text => {
           const functionRegex = new RegExp(
-            `(\\s*${selectedFunctionName}:\\s*async\\s*\\(.*?\\)\\s*=>\\s*{[\\s\\S]*?},)`,
-            'm',
-          )
+            `\\s*${selectedFunctionName}:\\s*async\\s*\\((.*?)\\)\\s*=>\\s*{[\\s\\S]*?},`,
+            'm'
+          );
 
-          // Find the function within the text
-          const match = text.match(functionRegex)
-          if (match && match[1]) {
-            setFunctionCode(match[1]) // Set function code
+          const match = text.match(functionRegex);
+          if (match) {
+            setFunctionCode(match[0]);
 
-            // Get function parameters
-            const paramsRegex = new RegExp(
-              `${selectedFunctionName}:\\s*async\\s*\\(([^)]+)\\)`,
-            )
-            const paramsMatch = match[1].match(paramsRegex)
+            // Modified regex to capture parameter names and types
+            const paramsRegex = new RegExp(`\\s*(\\w+)\\s*:\\s*(\\w+)`, 'g');
+            const params = [];
+            const types = [];
+            let paramMatch;
 
-            // When there are parameters - set Parameter Names and Function Parameters
-            if (paramsMatch && paramsMatch[1]) {
-              const params = paramsMatch[1]
-                .split(',')
-                .map((param) => param.trim())
-              setParameterNames(params)
-              setFunctionParameters(
-                params.reduce((acc, param) => ({ ...acc, [param]: '' }), {}),
-              )
-            } else {
-              // When there are NOT parameters - set Parameter Names and Function Parameters to empty
-              setParameterNames([])
-              setFunctionParameters({})
-
-              // Get the function to execute
-              const funcToExecute =
-                examples[selectedExampleCategory][selectedFunctionName]
-
-              // When there's a function, execute it
-              if (funcToExecute) {
-                const fetchData = async () => {
-                  try {
-                    const response = funcToExecute()
-                    const data = await response
-                    // Process your data
-                  } catch (error) {
-                    console.error('Failed to fetch:', error)
-                  }
-                }
-
-                fetchData()
-              }
+            // Using regex.exec in a loop to find all matches
+            while ((paramMatch = paramsRegex.exec(match[1]))) {
+              params.push(paramMatch[1]);
+              types.push(paramMatch[2]);
             }
-            // Where there's no selected function - send error message
+            setParameterNames(params);
+            setParameterTypes(types);
+            setFunctionParameters(
+              params.reduce((acc, param) => ({ ...acc, [param]: '' }), {})
+            );
           } else {
-            // Otherwise set the code to "Not Found"
-            setFunctionCode('Function code not found.')
+            setFunctionCode('Function code not found.');
+            setParameterNames([]);
+            setParameterTypes([]);
+            setFunctionParameters({});
           }
         })
-        .catch((error) => {
-          console.error('Failed to fetch function source:', error)
-          setFunctionCode('')
-        })
-    } else {
-      setFunctionCode('')
+        .catch(error => {
+          console.error('Failed to fetch function source:', error);
+          setFunctionCode('');
+          setParameterNames([]);
+          setParameterTypes([]);
+          setFunctionParameters({});
+        });
     }
-
-  }, [selectedFunctionName, selectedExampleCategory])
+  }, [selectedFunctionName, selectedExampleCategory]);
 
   useEffect(() => {
-
-    webflow.setExtensionSize({ height: 600,width : 500 })
-
-  },[selectedFunctionName])
+    webflow.setExtensionSize({ height: 600, width: 500 })
+  }, [selectedFunctionName]);
 
   return {
     functionCode,
     parameterNames,
+    parameterTypes, // Expose parameter types as part of the hook's return value
     functionParameters,
     setFunctionParameters,
   }

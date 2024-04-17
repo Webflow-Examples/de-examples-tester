@@ -1,5 +1,5 @@
 /* Site information and Settings */
-enum ExtensionSize {
+export enum ExtensionSizeEnum {
   Large = "large",
   Default = "default",
   Comfortable = "comfortable",
@@ -16,11 +16,11 @@ export const Webflow = {
     console.log('Short Name:', siteInfo.shortName)
   },
 
-  setExtensionSize: async (extensionSize: ExtensionSize) => {
+  setExtensionSize: async (extensionSizeEnum: ExtensionSizeEnum) => {
     // Set the extension UI size to "default", "comfortable", or "large"
-    await webflow.setExtensionSize(extensionSize)
+    await webflow.setExtensionSize(extensionSizeEnum)
 
-    console.log(`Extension UI size set to: ${extensionSize}`)
+    console.log(`Extension UI size set to: ${extensionSizeEnum}`)
   },
 
   displayCurrentMediaQuery: async () => {
