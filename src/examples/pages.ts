@@ -49,6 +49,8 @@ export const Pages = {
     await webflow.switchPage(newPage)
   },
 
+  // Page Information
+
   getPageName: async () => {
     // Get Current Page
     const currentPage = (await webflow.getCurrentPage()) as Page
@@ -120,6 +122,32 @@ export const Pages = {
     await currentPage.setSlug(slug)
     const newSlug = await currentPage.getSlug()
     console.log('Slug', newSlug)
+  },
+
+  getCollectionId: async () => {
+    try {
+      // Get Current Page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // Get Collection ID if page belongs to a collection
+      const collectionId = await currentPage.getCollectionId()
+      console.log(collectionId)
+    } catch (error) {
+      console.error([error.cause.tag, error.message])
+    }
+  },
+
+  getCollectionName: async () => {
+    try {
+      // Get Current Page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // Get Collection ID if page belongs to a collection
+      const collectionName = await currentPage.getCollectionName()
+      console.log(collectionName)
+    } catch (error) {
+      console.error([error.cause.tag, error.message])
+    }
   },
 
   // Page Status and Settings

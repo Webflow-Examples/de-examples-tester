@@ -159,5 +159,5 @@ export const Webflow = {
       'currentpage',
       selectedPageCallback,
     )
-  }
+  },
 }

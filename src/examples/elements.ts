@@ -15,23 +15,18 @@ export const Elements = {
   },
 
   setSelectedElement: async () => {
-
     // Get the Root Element
-    const rootElement = await webflow.getRootElement();
+    const rootElement = await webflow.getRootElement()
 
     if (rootElement) {
-
       // Select the root element
-      const selectedElement = await webflow.setSelectedElement(rootElement);
+      const selectedElement = await webflow.setSelectedElement(rootElement)
 
       if (selectedElement?.children) {
-
         // Start building elements on the selected element
         await selectedElement?.append(webflow.elementPresets.DOM)
-
       }
     }
-
   },
 
   getAllElements: async () => {
@@ -43,8 +38,13 @@ export const Elements = {
       console.log('List of all elements:')
 
       allElements.forEach((element, index) => {
-        console.log(index + 1, 'Element ID:', JSON.stringify( element ), 'Element Type:', element.type)
-
+        console.log(
+          index + 1,
+          'Element ID:',
+          JSON.stringify(element),
+          'Element Type:',
+          element.type,
+        )
       })
     } else {
       console.log('No elements found in the current context.')
@@ -65,6 +65,50 @@ export const Elements = {
 
     // Remove the selected element
     await el?.remove()
+  },
+
+  createElementWithElementBuilder: async () => {
+    
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Build an element. We only support DOM elements and append for now.
+    const rootBuilderEl = webflow.elementBuilder(webflow.elementPresets.DOM)
+
+    // Append a DOM element to the element structure.
+    const childEl = rootBuilderEl.append(webflow.elementPresets.DOM)
+    childEl.setTag('iframe')
+
+    // "Save" the changes to the Designer
+    if (el?.children) {
+      const newElement = await el?.append(rootBuilderEl)
+
+      // Style Element
+      const newStyle = await webflow.getStyleByName('RickRoll')
+      // await webflow.createStyle('RickRoll')
+      newStyle?.setProperties({
+        'background-color': "rgba(20, 110, 245, 1)",
+        'font-size': '4em',
+        'font-weight': 'bold',
+        'color': 'white'
+      })
+      if (newElement.styles) newElement?.setStyles([newStyle])
+      console.log(childEl)
+      const attribues = {
+        height: 315,
+        width: 560,
+        src:"https://www.youtube.com/embed/dQw4w9WgXcQ",
+        frameborder:0,
+        allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      }
+      Object.values(attribues).forEach( async (key, value) => {
+        await childEl.setAttribute(key, value)
+      })
+
+      // Set the selected Element
+      webflow.setSelectedElement(newElement)
+    }
+
   },
 
   insertElementBefore: async () => {
