@@ -552,6 +552,7 @@ export const Elements = {
       if (imgEl.type === 'Image') {
         // Get asset from Image element
         const myAsset = await imgEl.getAsset()
+        console.log(myAsset)
       }
     }
   },
