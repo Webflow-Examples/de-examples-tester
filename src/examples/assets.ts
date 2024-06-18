@@ -22,6 +22,52 @@ export enum ValidFileTypesEnum {
 }
 
 export const Assets = {
+  getAllAssets: async () => {
+    // Get all assets
+    const assets = await webflow.getAllAssets()
+
+    // Loop to list assets in the console
+    for (const asset of assets) {
+      const name = await asset.getName()
+      const mimeType = await asset.getMimeType()
+      console.log(name, mimeType)
+    }
+  },
+  getAssetName: async () => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Check if element is selected and its type
+    if (!el || el.type !== 'Image') {
+      console.error('Please select an Image element on the canvas')
+      await webflow.notify({
+        type: 'Error',
+        message: 'Please select an Image element on the canvas',
+      })
+    } else {
+      const asset = await el.getAsset() // Get Asset
+      const assetName = await asset?.getName() // Get Asset Name
+      console.log(`Asset Name: ${assetName}`)
+    }
+  },
+
+  getAssetMimeType: async () => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Check if element is selected and its type
+    if (!el || el.type !== 'Image') {
+      console.error('Please select an Image element on the canvas')
+      await webflow.notify({
+        type: 'Error',
+        message: 'Please select an Image element on the canvas',
+      })
+    } else {
+      const asset = await el.getAsset() // Get Asset
+      const assetMimeType = await asset?.getMimeType() // Get Asset MIME Type
+      console.log(`Asset MIME type: ${assetMimeType}`)
+    }
+  },
   createAssetFromFileUpload: async (file: File) => {
     if (file) {
       const asset = await webflow.createAsset(file)
@@ -73,8 +119,22 @@ export const Assets = {
 
     if (asset) {
       // Get asset URL
-      const url = await asset.getAltText()
-      console.log(`Asset Alt Text: ${url}`)
+      const altText = await asset.getAltText()
+      console.log(`Asset Alt Text: ${altText}`)
+    }
+  },
+  setAltText: async (assetId: string, altText: string) => {
+    // Get Asset by ID
+    const asset = await webflow.getAssetById(assetId)
+    console.log(asset)
+
+    if (asset) {
+      // Get asset URL
+      const originalAltText = await asset.getAltText()
+      await asset.setAltText(altText)
+      const newAltText = await asset.getAltText()
+      console.log(`Original Asset Alt Text: ${originalAltText}`)
+      console.log(`New Asset Alt Text: ${newAltText}`)
     }
   },
   addAssetToCanvas: async (assetId: string) => {

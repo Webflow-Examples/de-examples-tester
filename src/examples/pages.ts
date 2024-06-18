@@ -51,6 +51,15 @@ export const Pages = {
 
   // Page Information
 
+  getPageKind: async () => {
+    // Get Current Page
+    const currentPage = (await webflow.getCurrentPage()) as Page
+
+    // Get the page
+    const pageKind = await currentPage.getKind()
+    console.log(`Page Category: ${pageKind}`)
+  },
+
   getPageName: async () => {
     // Get Current Page
     const currentPage = (await webflow.getCurrentPage()) as Page

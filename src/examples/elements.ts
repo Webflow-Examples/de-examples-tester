@@ -100,7 +100,10 @@ export const Elements = {
 
     // Append a DOM element to the element structure.
     const rectElement = svgElement.append(webflow.elementPresets.DOM)
+    const styles = await webflow.getAllStyles()
     rectElement.setTag('rect')
+    rectElement.setAttribute('hello', 'world')
+    rectElement.setStyles([styles[0]])
     childElementIds.push(rectElement)
 
     if (selectedElement?.children) {
