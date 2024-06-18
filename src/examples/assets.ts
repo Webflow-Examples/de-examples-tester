@@ -55,9 +55,9 @@ export const Assets = {
     console.log('check')
     console.log(asset)
   },
-  getAssetURL: async (asset_id: string) => {
+  getAssetURL: async (assetId: string) => {
     // Get Asset by ID
-    const asset = await webflow.getAssetById(asset_id)
+    const asset = await webflow.getAssetById(assetId)
     console.log(asset)
 
     if (asset) {
@@ -66,8 +66,18 @@ export const Assets = {
       console.log(`Asset URL: ${url}`)
     }
   },
-  addAssetToCanvas: async (assetId: string) => {
+  getAltText: async (assetId: string) => {
+    // Get Asset by ID
+    const asset = await webflow.getAssetById(assetId)
+    console.log(asset)
 
+    if (asset) {
+      // Get asset URL
+      const url = await asset.getAltText()
+      console.log(`Asset Alt Text: ${url}`)
+    }
+  },
+  addAssetToCanvas: async (assetId: string) => {
     // Get Asset URL
     const asset = await webflow.getAssetById(assetId)
     const assetUrl = await asset?.getUrl()

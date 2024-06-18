@@ -67,48 +67,80 @@ export const Elements = {
     await el?.remove()
   },
 
-  createElementWithElementBuilder: async () => {
-    
+  BulkAddElements: async () => {
     // Get Selected Element
-    const el = await webflow.getSelectedElement()
+    const selectedElement = await webflow.getSelectedElement()
 
     // Build an element. We only support DOM elements and append for now.
-    const rootBuilderEl = webflow.elementBuilder(webflow.elementPresets.DOM)
+    const rootElement = webflow.elementBuilder(webflow.elementPresets.DOM)
 
     // Append a DOM element to the element structure.
-    const childEl = rootBuilderEl.append(webflow.elementPresets.DOM)
-    childEl.setTag('iframe')
+    const childElement = rootElement.append(webflow.elementPresets.DOM)
+    childElement.setTag('svg')
 
-    // "Save" the changes to the Designer
-    if (el?.children) {
-      const newElement = await el?.append(rootBuilderEl)
-
-      // Style Element
-      const newStyle = await webflow.getStyleByName('RickRoll')
-      // await webflow.createStyle('RickRoll')
-      newStyle?.setProperties({
-        'background-color': "rgba(20, 110, 245, 1)",
-        'font-size': '4em',
-        'font-weight': 'bold',
-        'color': 'white'
-      })
-      if (newElement.styles) newElement?.setStyles([newStyle])
-      console.log(childEl)
-      const attribues = {
-        height: 315,
-        width: 560,
-        src:"https://www.youtube.com/embed/dQw4w9WgXcQ",
-        frameborder:0,
-        allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      }
-      Object.values(attribues).forEach( async (key, value) => {
-        await childEl.setAttribute(key, value)
-      })
-
-      // Set the selected Element
-      webflow.setSelectedElement(newElement)
+    if (selectedElement?.children) {
+      // Add root element to the deisgner by appending to selected Element
+      await selectedElement.append(rootElement)
     }
+  },
 
+  BulkAddElementSVG: async () => {
+    const childElementIds = []
+
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    // Build an element. We only support DOM elements and append for now.
+    const rootElement = webflow.elementBuilder(webflow.elementPresets.DOM)
+
+    // Append a DOM element to the element structure.
+    const svgElement = rootElement.append(webflow.elementPresets.DOM)
+    svgElement.setTag('svg')
+    childElementIds.push(svgElement)
+
+    // Append a DOM element to the element structure.
+    const rectElement = svgElement.append(webflow.elementPresets.DOM)
+    rectElement.setTag('rect')
+    childElementIds.push(rectElement)
+
+    if (selectedElement?.children) {
+      // Add root element to the deisgner by appending to selected Element
+      const newEl = await selectedElement.append(rootElement)
+
+      // get the children of the newly appended element
+      if (newEl.children) {
+        const newElChildren = await newEl.getChildren()
+
+        const promises = []
+
+        // loop through child elements that we added to the array during creation
+        // and create an array of promises to later await
+        for (let i = 0; i < childElementIds.length; i++) {
+          const childEl = newElChildren.find(
+            (x) => x.id.element === childElementIds[i].id,
+          )
+          console.log(childEl)
+          switch (childEl?.getTag()) {
+            case 'svg':
+              promises.push(
+                childEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg'),
+              )
+              break
+            case 'rect':
+              promises.push(childEl.setAttribute('width', '200'))
+              promises.push(childEl.setAttribute('height', '100'))
+              promises.push(childEl.setAttribute('x', '10'))
+              promises.push(childEl.setAttribute('y', '10'))
+              promises.push(childEl.setAttribute('rx', '20'))
+              promises.push(childEl.setAttribute('ry', '20'))
+              promises.push(childEl.setAttribute('fill', 'blue'))
+              break
+          }
+        }
+
+        await Promise.all(promises)
+      }
+    }
   },
 
   insertElementBefore: async () => {
@@ -500,6 +532,80 @@ export const Elements = {
       console.log(headingLevel)
     } else {
       console.log('Selected Element is not a Heading Element')
+    }
+  },
+
+  /* IMAGE ELEMENT METHODS */
+  getAsset: async () => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Check if element can have children
+    if (el?.children) {
+      // Create a new Image Element using Element Presets
+      const imgEl = await el.append(webflow.elementPresets.Image)
+
+      // Check element type
+      if (imgEl.type === 'Image') {
+        // Get asset from Image element
+        const myAsset = await imgEl.getAsset()
+      }
+    }
+  },
+
+  setAsset: async (assetId: string) => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Check if element can have children
+    if (el?.children) {
+      // Create a new Image Element using Element Presets
+      const imgEl = await el.append(webflow.elementPresets.Image)
+
+      // Get asset by ID
+      const asset = await webflow.getAssetById(assetId)
+
+      // Check element type
+      if (imgEl.type === 'Image') {
+        // Set asset as the "src" of the Image Element
+        await imgEl.setAsset(asset)
+      }
+    }
+  },
+
+  getAltText: async () => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+    if (el?.type === 'Image') {
+      // Get alt text
+      const alt = await el.getAltText()
+      console.log(alt)
+    } else {
+      console.error('Please select an image element')
+      await webflow.notify({
+        type: 'Error',
+        message: 'Please select an Image Element',
+      })
+    }
+  },
+
+  setAltText: async (altText: string) => {
+    // Get Selected Element
+    const el = await webflow.getSelectedElement()
+
+    // Check element type
+    if (el?.type === 'Image') {
+      // Set alt text. If a null is passed, the API will set the alt text as "decorative"
+      await el.setAltText(altText)
+      // Get alt text
+      const alt = await el.getAltText()
+      console.log(alt) // true
+    } else {
+      console.error('Please select an Image Element')
+      await webflow.notify({
+        type: 'Error',
+        message: 'Please select an Image Element',
+      })
     }
   },
 
