@@ -613,6 +613,33 @@ export const Elements = {
     }
   },
 
+  /* LINK BLOCK ELEMENT METHODS */
+  setLinkBlockSettings: async (
+    mode: LinkModeSettings,
+    value: string,
+    metadata?: { openInNewTab?: boolean; subject?: string },
+  ) => {
+    // Get Selected Element
+    const element = await webflow.getSelectedElement()
+
+    if (element) {
+      const newLink = await element.after(webflow.elementPresets.LinkBlock) // Create new link element
+      await newLink.setSettings(mode, value, metadata) // Set link element settings
+      const targetValue = await newLink.getTarget() // Get target value
+    }
+  },
+
+  getLinkTarget: async () => {
+    const elements = await webflow.getAllElements() // Get All Elements
+    const links = elements.filter((element) => element.type === 'Link') // Filter for Link elements
+
+    // Print target value of each link element
+    for (const link of links) {
+      const targetValue = await link.getTarget()
+      console.log(`ID: ${link.id.element}, Target Value: ${targetValue}`)
+    }
+  },
+
   typeChecking: async () => {
     // Example: Type checking in Webflow API
 
@@ -635,4 +662,13 @@ export const Elements = {
       )
     }
   },
+}
+
+export enum LinkModeSettings {
+  url = 'url',
+  page = 'page',
+  pageSection = 'pageSection',
+  email = 'email',
+  phone = 'phone',
+  attachment = 'attachment',
 }
