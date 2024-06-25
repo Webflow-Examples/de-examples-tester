@@ -614,11 +614,8 @@ export const Elements = {
   },
 
   /* LINK BLOCK ELEMENT METHODS */
-  setLinkBlockSettings: async (
-    mode: LinkModeSettings,
-    value: string,
-    metadata?: { openInNewTab?: boolean; subject?: string },
-  ) => {
+
+  setLinkBlockSettings: async (mode: LinkModeSettings, value: string) => {
     // Get Selected Element
     const element = await webflow.getSelectedElement()
 
