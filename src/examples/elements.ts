@@ -623,6 +623,7 @@ export const Elements = {
       const newLink = await element.after(webflow.elementPresets.LinkBlock) // Create new link element
       await newLink.setSettings(mode, value, metadata) // Set link element settings
       const targetValue = await newLink.getTarget() // Get target value
+      console.log(targetValue)
     }
   },
 
