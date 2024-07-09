@@ -615,13 +615,14 @@ export const Elements = {
 
   /* LINK BLOCK ELEMENT METHODS */
 
-  setLinkBlockSettings: async (mode: LinkModeSettings, value: string) => {
+  setLinkBlockSettings: async (mode: LinkModeSettings, target: string) => {
     // Get Selected Element
     const element = await webflow.getSelectedElement()
 
     if (element) {
       const newLink = await element.after(webflow.elementPresets.LinkBlock) // Create new link element
-      await newLink.setSettings(mode, value, metadata) // Set link element settings
+      const metadata = {openInNewTab: true}
+      await newLink.setSettings(mode, target, metadata) // Set link element settings
       const targetValue = await newLink.getTarget() // Get target value
       console.log(targetValue)
     }
