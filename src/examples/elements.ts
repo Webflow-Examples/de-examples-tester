@@ -497,7 +497,7 @@ export const Elements = {
     }
   },
 
-  setText: async () => {
+  setText: async (myText: string) => {
     // Get all elements and find the first StringElement
     const allElements = await webflow.getAllElements()
     const foundElement = allElements.find((el) => el.type === 'String')
@@ -505,7 +505,7 @@ export const Elements = {
     if (foundElement) {
       // Check that element has the method in order to use it
       if ('setText' in foundElement) {
-        const elementText = foundElement.setText('Hello Element 🚀') // Set Text
+        const elementText = foundElement.setText(myText) // Set Text
       }
     } else {
       console.log('Element not found on page')
