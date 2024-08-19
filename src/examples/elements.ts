@@ -176,6 +176,57 @@ export const Elements = {
     }
   },
 
+  insertElementIfAllowed: async () => {
+    /* This example uses App Modes to check if the designer is the correct mode to insert an element */
+
+    const capabilities = await webflow.canForAppMode([
+      webflow.appModes.canDesign,
+      webflow.appModes.canEdit,
+    ])
+
+    if (capabilities.canDesign) {
+      try {
+        // Get Selected Element
+        const selectedElement = await webflow.getSelectedElement()
+
+        if (selectedElement) {
+          // Insert DIV before selected element
+          const newDiv = await selectedElement.before(
+            webflow.elementPresets.DivBlock,
+          )
+
+          // Print element details
+          console.log(`Element inserted: ${JSON.stringify(newDiv)}`)
+
+          // Notify success
+          await webflow.notify({
+            type: 'Success',
+            message: 'Element inserted successfully!',
+          })
+        } else {
+          // Notifiy error: No selected element
+          await webflow.notify({
+            type: 'Error',
+            message: 'No element selected. Please select an element.',
+          })
+        }
+      } catch (error) {
+        // Notify error
+        await webflow.notify({
+          type: 'Error',
+          message: 'Failed to insert element.',
+        })
+      }
+    } else {
+      // Notify error: User does not have the required capabilities
+      await webflow.notify({
+        type: 'Error',
+        message:
+          'This action cannot be performed right now. Ensure you are working in the Primary Locale and the Main Branch, and in design mode.',
+      })
+    }
+  },
+
   appendElement: async () => {
     // Get Selected Element
     const el = await webflow.getSelectedElement()
@@ -621,7 +672,7 @@ export const Elements = {
 
     if (element) {
       const newLink = await element.after(webflow.elementPresets.LinkBlock) // Create new link element
-      const metadata = {openInNewTab: true}
+      const metadata = { openInNewTab: true }
       await newLink.setSettings(mode, target, metadata) // Set link element settings
       const targetValue = await newLink.getTarget() // Get target value
       console.log(targetValue)

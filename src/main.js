@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { createRoot } from 'react-dom/client'
 
 // Import hooks
@@ -9,6 +9,7 @@ import examples from './examples/examples'
 import Dropdown from './components/dropdown'
 import ParameterInput from './components/parameterInput'
 import enums from './examples/enums'
+import PermissionsContext from './components/permissions'
 
 // Import Styling
 import Prism from 'prismjs'
@@ -31,6 +32,8 @@ const App = () => {
     value: key,
     label: key,
   }))
+
+  const permissions = useContext(PermissionsContext)
 
   const functionSelections = selectedExampleCategory
     ? Object.keys(examples[selectedExampleCategory]).map((key) => ({
@@ -117,10 +120,10 @@ const App = () => {
   }
   const enumToArray = (enumObj) => {
     // Create an array from the enum object's values
-    const valuesArray = Object.values(enumObj);
-  
+    const valuesArray = Object.values(enumObj)
+
     // Prepend the placeholder item to the beginning of the array
-    return ["Select an option", ...valuesArray];
+    return ['Select an option', ...valuesArray]
   }
   return (
     <div id="container" className="container u-pt-1">
@@ -166,6 +169,7 @@ const App = () => {
         {parameterNames.length > 0 && (
           <button
             onClick={handleFunctionExecutionWithParameters}
+            disabled={!permissions.canEdit}
             className="button cc-primary"
           >
             Run Function

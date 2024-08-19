@@ -1,8 +1,8 @@
 /* Site information and Settings */
 export enum ExtensionSizeEnum {
-  Large = "large",
-  Default = "default",
-  Comfortable = "comfortable",
+  Large = 'large',
+  Default = 'default',
+  Comfortable = 'comfortable',
 }
 
 export const Webflow = {
@@ -65,6 +65,15 @@ export const Webflow = {
     console.log(idToken)
   },
 
+  checkAppMode: async () => {
+    const capabilities = await webflow.canForAppMode([
+      webflow.appModes.canEdit,
+      webflow.appModes.canDesign,
+    ])
+
+    console.log(capabilities)
+  },
+
   notifyUser: async () => {
     // General notification
     await webflow.notify({ type: 'Info', message: 'Great work!' })
@@ -76,7 +85,10 @@ export const Webflow = {
     })
 
     // Success notification
-    await webflow.notify({ type: 'Success', message: 'Successfully did something!' })
+    await webflow.notify({
+      type: 'Success',
+      message: 'Successfully did something!',
+    })
   },
 
   subscribeSelect: async () => {
