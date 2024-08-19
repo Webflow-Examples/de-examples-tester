@@ -3,22 +3,29 @@ import { createRoot } from 'react-dom/client'
 
 // Import hooks
 import { useFunctionCode } from './hooks/useFunctionCode'
+import { useFunctionExecutor } from '.hooks/useFunctionExecutor'
 
 // Import Components
 import examples from './examples/examples'
 import Dropdown from './components/dropdown'
 import ParameterInput from './components/parameterInput'
 import enums from './examples/enums'
-import PermissionsContext from './components/permissions'
+import PermissionsContext, {
+  PermissionsProvider,
+} from './components/permissions'
 
 // Import Styling
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-jsx'
+import './App.css'
 
 const App = () => {
+  // State to track the selected example category and function name
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
+
+  // Custom hook to fetch the code and parameters related to the selected function
   const {
     functionCode,
     parameterNames,
@@ -28,13 +35,16 @@ const App = () => {
     setParameterNames,
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
 
+  // Get the list of example categories from the examples object
   const exampleCategories = Object.keys(examples).map((key) => ({
     value: key,
     label: key,
   }))
 
+  // Access the permissions context to manage what actions can be performed
   const permissions = useContext(PermissionsContext)
 
+  // If a category is selected, get the list of function names within that category
   const functionSelections = selectedExampleCategory
     ? Object.keys(examples[selectedExampleCategory]).map((key) => ({
         value: key,
@@ -42,28 +52,34 @@ const App = () => {
       }))
     : []
 
+  // Handle when the user selects a new category from the dropdown
   const handleCategoryChange = (value) => {
     setSelectedExampleCategory(value)
     setSelectedFunctionName('')
     setParameterNames([])
   }
 
+  // Handle when the user selects a new function from the dropdown
   const handleFunctionChange = (value) => {
     setSelectedFunctionName(value)
   }
 
+  // Handle changes to function parameters
   const handleParameterChange = (paramName, value) => {
     setFunctionParameters((prev) => ({ ...prev, [paramName]: value }))
   }
 
+  // Use Prism to highlight code syntax whenever the function code changes
   useEffect(() => {
     Prism.highlightAll()
   }, [functionCode])
 
+  // Set the extension size
   useEffect(() => {
     webflow.setExtensionSize({ height: 425, width: 500 })
   }, [])
 
+  // Automatically execute a function without parameters when selected
   useEffect(() => {
     if (selectedExampleCategory && selectedFunctionName) {
       const category = examples[selectedExampleCategory]
@@ -86,6 +102,7 @@ const App = () => {
     }
   }, [selectedFunctionName, selectedExampleCategory])
 
+  // Handle execution of functions that require parameters
   const handleFunctionExecutionWithParameters = () => {
     // Retrieve the function to execute based on the currently selected category and function name
     const funcToExecute =
@@ -93,6 +110,7 @@ const App = () => {
 
     if (funcToExecute) {
       // Check if the function exists
+
       try {
         // If there are parameter names defined, map them to their respective values; otherwise, use an empty array
         const paramValues =
@@ -118,6 +136,8 @@ const App = () => {
       }
     }
   }
+
+  // Helper function to convert an enum object into an array with a placeholder
   const enumToArray = (enumObj) => {
     // Create an array from the enum object's values
     const valuesArray = Object.values(enumObj)
@@ -125,6 +145,7 @@ const App = () => {
     // Prepend the placeholder item to the beginning of the array
     return ['Select an option', ...valuesArray]
   }
+
   return (
     <div id="container" className="container u-pt-1">
       <h1 className="strong h2">
@@ -198,4 +219,8 @@ const App = () => {
 
 const container = document.getElementById('root')
 const root = createRoot(container)
-root.render(<App />)
+root.render(
+  <PermissionsProvider>
+    <App />
+  </PermissionsProvider>,
+)
