@@ -1,8 +1,8 @@
 /* Site information and Settings */
 export enum ExtensionSizeEnum {
-  Large = "large",
-  Default = "default",
-  Comfortable = "comfortable",
+  Large = 'large',
+  Default = 'default',
+  Comfortable = 'comfortable',
 }
 
 export const Webflow = {
@@ -76,7 +76,10 @@ export const Webflow = {
     })
 
     // Success notification
-    await webflow.notify({ type: 'Success', message: 'Successfully did something!' })
+    await webflow.notify({
+      type: 'Success',
+      message: 'Successfully did something!',
+    })
   },
 
   subscribeSelect: async () => {
@@ -159,5 +162,16 @@ export const Webflow = {
       'currentpage',
       selectedPageCallback,
     )
+  },
+
+  subscribeCMSPageChange: async () => {
+    // Callback for subscription
+    const cmsCallback = async () => {
+      const page = await webflow.getCurrentPage()
+      console.log(await page.getPublishPath())
+    }
+
+    // Subscribe to changes for CMS Pages
+    const unsubscribeCmsPages = webflow.subscribe('currentcmsitem', cmsCallback)
   },
 }
