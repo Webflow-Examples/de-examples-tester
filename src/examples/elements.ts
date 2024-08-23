@@ -85,7 +85,7 @@ export const Elements = {
   },
 
   BulkAddElementSVG: async () => {
-    const childElementIds = []
+    const childElementIds: string[] = []
 
     // Get Selected Element
     const selectedElement = await webflow.getSelectedElement()
@@ -94,9 +94,11 @@ export const Elements = {
     const rootElement = webflow.elementBuilder(webflow.elementPresets.DOM)
 
     // Append a DOM element to the element structure.
-    const svgElement = rootElement.append(webflow.elementPresets.DOM)
+    const svgElement: BuilderElement = rootElement.append(
+      webflow.elementPresets.DOM,
+    )
     svgElement.setTag('svg')
-    childElementIds.push(svgElement)
+    childElementIds.push(svgElement.id)
 
     // Append a DOM element to the element structure.
     const rectElement = svgElement.append(webflow.elementPresets.DOM)
@@ -104,7 +106,7 @@ export const Elements = {
     rectElement.setTag('rect')
     rectElement.setAttribute('hello', 'world')
     rectElement.setStyles([styles[0]])
-    childElementIds.push(rectElement)
+    childElementIds.push(rectElement.id)
 
     if (selectedElement?.children) {
       // Add root element to the deisgner by appending to selected Element
