@@ -172,4 +172,19 @@ export const Webflow = {
       selectedPageCallback,
     )
   },
+
+  subscribeAppModes: async () => {
+    // Subscribe to changes in the selected page
+    const checkAppModes = async () => {
+      const capabilities = await webflow.canForAppMode(
+        Object.values(webflow.appModes),
+      )
+      console.log(capabilities)
+    }
+
+    const unsubscribeSelectedElement = webflow.subscribe(
+      'currentappmode',
+      checkAppModes,
+    )
+  },
 }
