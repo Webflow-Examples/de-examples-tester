@@ -65,6 +65,15 @@ export const Webflow = {
     console.log(idToken)
   },
 
+  checkAppMode: async () => {
+    const capabilities = await webflow.canForAppMode([
+      webflow.appModes.canEdit,
+      webflow.appModes.canDesign,
+    ])
+
+    console.log(capabilities)
+  },
+
   notifyUser: async () => {
     // General notification
     await webflow.notify({ type: 'Info', message: 'Great work!' })
@@ -164,14 +173,18 @@ export const Webflow = {
     )
   },
 
-  subscribeCMSPageChange: async () => {
-    // Callback for subscription
-    const cmsCallback = async () => {
-      const page = await webflow.getCurrentPage()
-      console.log(await page.getPublishPath())
+  subscribeAppModes: async () => {
+    // Subscribe to changes in the selected page
+    const checkAppModes = async () => {
+      const capabilities = await webflow.canForAppMode(
+        Object.values(webflow.appModes),
+      )
+      console.log(capabilities)
     }
 
-    // Subscribe to changes for CMS Pages
-    const unsubscribeCmsPages = webflow.subscribe('currentcmsitem', cmsCallback)
+    const unsubscribeSelectedElement = webflow.subscribe(
+      'currentappmode',
+      checkAppModes,
+    )
   },
 }
