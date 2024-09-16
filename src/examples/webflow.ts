@@ -74,6 +74,8 @@ export const Webflow = {
     console.log(capabilities)
   },
 
+  checkAppConnection: async () => {},
+
   notifyUser: async () => {
     // General notification
     await webflow.notify({ type: 'Info', message: 'Great work!' })
