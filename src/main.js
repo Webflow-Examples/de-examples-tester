@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
+import './App.css'
 
 // Import hooks
 import { useFunctionCode } from './hooks/useFunctionCode'
+import CapabilitiesProvider from './context/CapabilitiesContext'
 
 // Import Components
 import examples from './examples/examples'
@@ -25,6 +27,7 @@ const App = () => {
     functionParameters,
     setFunctionParameters,
     setParameterNames,
+    hasPermission,
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
 
   const exampleCategories = Object.keys(examples).map((key) => ({
@@ -117,10 +120,10 @@ const App = () => {
   }
   const enumToArray = (enumObj) => {
     // Create an array from the enum object's values
-    const valuesArray = Object.values(enumObj);
-  
+    const valuesArray = Object.values(enumObj)
+
     // Prepend the placeholder item to the beginning of the array
-    return ["Select an option", ...valuesArray];
+    return ['Select an option', ...valuesArray]
   }
   return (
     <div id="container" className="container u-pt-1">
@@ -161,15 +164,22 @@ const App = () => {
                   ? enumToArray(enums[parameterNames[index]])
                   : undefined
               }
+              disabled={!hasPermission}
             ></ParameterInput>
           ))}
         {parameterNames.length > 0 && (
           <button
             onClick={handleFunctionExecutionWithParameters}
-            className="button cc-primary"
+            className={`button cc-primary ${!hasPermission ? 'disabled-class' : ''}`}
+            disabled={!hasPermission}
           >
             Run Function
           </button>
+        )}
+        {!hasPermission && (
+          <p className="error-message">
+            Please change designer mode to use this method.
+          </p>
         )}
       </div>
       {selectedFunctionName && (
@@ -194,4 +204,8 @@ const App = () => {
 
 const container = document.getElementById('root')
 const root = createRoot(container)
-root.render(<App />)
+root.render(
+  <CapabilitiesProvider>
+    <App />
+  </CapabilitiesProvider>,
+)
