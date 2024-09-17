@@ -49415,7 +49415,7 @@ var App = function App() {
     disabled: !hasPermission
   }, "Run Function"), !hasPermission && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "error-message"
-  }, "Please change designer modes to use this method.")), selectedFunctionName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, "Please change designer mode to use this method.")), selectedFunctionName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "code",
     className: "w-container"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
