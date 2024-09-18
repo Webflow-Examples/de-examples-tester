@@ -52,7 +52,6 @@ const CapabilitiesProvider: React.FC<CapabilitiesProviderProps> = ({
   // Function to update capabilities
   const updateCapabilities = async () => {
     try {
-      console.log('updating capabilities')
       const updatedCapabilities = await webflow.canForAppMode(
         Object.values(webflow.appModes) as AppMode[],
       )

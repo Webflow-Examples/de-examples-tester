@@ -20,6 +20,7 @@ export const useFunctionCode = (
 
   // Helper function to track variable assignments and method calls
   const extractMethodCallsAndVariableTypes = (code) => {
+    console.log(code)
     const cleanedCode = code.replace(/^\s*\w+:\s*/, '')
     const finalCode = cleanedCode.replace(/},\s*$/, '}')
     console.log(finalCode)
@@ -33,10 +34,46 @@ export const useFunctionCode = (
     const methodCalls = []
     const variableTypes = {}
 
+    // Extend `acorn-walk` to handle missing visitors for TypeScript-specific nodes and async/await
+    walk.base.AwaitExpression = (node, state, c) => {
+      c(node.argument, state)
+    }
+
+    walk.base.NewExpression = (node, state, c) => {
+      c(node.callee, state)
+      for (const arg of node.arguments) {
+        c(arg, state)
+      }
+    }
+
+    walk.base.CallExpression = (node, state, c) => {
+      if (
+        node.callee.type === 'MemberExpression' &&
+        node.callee.object.name === 'console'
+      ) {
+        // Skip console calls
+        return
+      }
+
+      c(node.callee, state)
+      for (const arg of node.arguments) {
+        c(arg, state)
+      }
+    }
+
+    // For TypeScript-specific type assertions like `as`
+    walk.base.TSAsExpression = (node, state, c) => {
+      c(node.expression, state)
+    }
+
     walk.simple(ast, {
       // Track Method Calls
       CallExpression(node) {
-        if (node.callee && node.callee.type === 'MemberExpression') {
+        if (
+          node.callee &&
+          node.callee.type === 'MemberExpression' &&
+          node.callee.object.name !== 'console' // Exclude console calls
+        ) {
           const objectName = node.callee.object.name
           const methodName = node.callee.property.name
 
@@ -54,14 +91,19 @@ export const useFunctionCode = (
       VariableDeclarator(node) {
         if (node.id && node.init && node.init.type === 'AwaitExpression') {
           const variableName = node.id.name
-          const methodName = node.init.argument.callee.property.name
 
-          // Infer the object type based on the method called
-          Object.keys(permissionsMap).forEach((objectType) => {
-            if (permissionsMap[objectType]?.[methodName]) {
-              variableTypes[variableName] = objectType
-            }
-          })
+          // Handle optional chaining in CallExpression
+          const callee = node.init.argument?.callee
+          const methodName = callee?.property?.name
+
+          if (methodName) {
+            // Infer the object type based on the method called
+            Object.keys(permissionsMap).forEach((objectType) => {
+              if (permissionsMap[objectType]?.[methodName]) {
+                variableTypes[variableName] = objectType
+              }
+            })
+          }
         }
       },
       AssignmentExpression(node) {
@@ -72,7 +114,6 @@ export const useFunctionCode = (
           const methodName = node.right.argument.callee.property.name
           const variableName = node.left.name
 
-          // Infer the object type based on the method called
           Object.keys(permissionsMap).forEach((objectType) => {
             if (permissionsMap[objectType]?.[methodName]) {
               variableTypes[variableName] = objectType
@@ -92,11 +133,11 @@ export const useFunctionCode = (
         .then((response) => response.text())
         .then((text) => {
           const functionRegex = new RegExp(
-            `\\s*${selectedFunctionName}:\\s*async\\s*\\((.*?)\\)\\s*=>\\s*{[\\s\\S]*?},`,
+            `\\s*${selectedFunctionName}:\\s*async\\s*\\(([^)]*)\\)\\s*=>\\s*{([\\s\\S]*?)\\n\\s*},?\\n`,
             'm',
           )
 
-          const match = text.match(functionRegex)
+          const match = functionRegex.exec(text)
           if (match) {
             setFunctionCode(match[0])
 
@@ -147,16 +188,11 @@ export const useFunctionCode = (
         ({ methodName, objectType }) => {
           const methodPermissions =
             permissionsMap[objectType]?.[methodName]?.permissions || []
-          console.log('methodPermissions', methodPermissions)
           return methodPermissions.every(
             (permission) => capabilities[permission],
           )
         },
       )
-
-      console.log('capabilities', capabilities)
-      console.log('hasAllPermissions', hasAllPermissions)
-
       setHasPermission(hasAllPermissions)
     } else {
       setHasPermission(true) // Assume permission granted if no function code

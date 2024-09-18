@@ -26,6 +26,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -64,6 +65,7 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
 
   // Helper function to track variable assignments and method calls
   var extractMethodCallsAndVariableTypes = function extractMethodCallsAndVariableTypes(code) {
+    console.log(code);
     var cleanedCode = code.replace(/^\s*\w+:\s*/, '');
     var finalCode = cleanedCode.replace(/},\s*$/, '}');
     console.log(finalCode);
@@ -74,10 +76,55 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
     });
     var methodCalls = [];
     var variableTypes = {};
+
+    // Extend `acorn-walk` to handle missing visitors for TypeScript-specific nodes and async/await
+    acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.AwaitExpression = function (node, state, c) {
+      c(node.argument, state);
+    };
+    acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.NewExpression = function (node, state, c) {
+      c(node.callee, state);
+      var _iterator = _createForOfIteratorHelper(node.arguments),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var arg = _step.value;
+          c(arg, state);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    };
+    acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.CallExpression = function (node, state, c) {
+      if (node.callee.type === 'MemberExpression' && node.callee.object.name === 'console') {
+        // Skip console calls
+        return;
+      }
+      c(node.callee, state);
+      var _iterator2 = _createForOfIteratorHelper(node.arguments),
+        _step2;
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var arg = _step2.value;
+          c(arg, state);
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+    };
+
+    // For TypeScript-specific type assertions like `as`
+    acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.TSAsExpression = function (node, state, c) {
+      c(node.expression, state);
+    };
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.simple(ast, {
       // Track Method Calls
       CallExpression: function CallExpression(node) {
-        if (node.callee && node.callee.type === 'MemberExpression') {
+        if (node.callee && node.callee.type === 'MemberExpression' && node.callee.object.name !== 'console' // Exclude console calls
+        ) {
           var objectName = node.callee.object.name;
           var methodName = node.callee.property.name;
 
@@ -93,24 +140,27 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
       // Track variable declarations and assignments
       VariableDeclarator: function VariableDeclarator(node) {
         if (node.id && node.init && node.init.type === 'AwaitExpression') {
+          var _node$init$argument, _callee$property;
           var variableName = node.id.name;
-          var methodName = node.init.argument.callee.property.name;
 
-          // Infer the object type based on the method called
-          Object.keys(_components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap).forEach(function (objectType) {
-            var _permissionsMap$objec;
-            if ((_permissionsMap$objec = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) !== null && _permissionsMap$objec !== void 0 && _permissionsMap$objec[methodName]) {
-              variableTypes[variableName] = objectType;
-            }
-          });
+          // Handle optional chaining in CallExpression
+          var callee = (_node$init$argument = node.init.argument) === null || _node$init$argument === void 0 ? void 0 : _node$init$argument.callee;
+          var methodName = callee === null || callee === void 0 || (_callee$property = callee.property) === null || _callee$property === void 0 ? void 0 : _callee$property.name;
+          if (methodName) {
+            // Infer the object type based on the method called
+            Object.keys(_components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap).forEach(function (objectType) {
+              var _permissionsMap$objec;
+              if ((_permissionsMap$objec = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) !== null && _permissionsMap$objec !== void 0 && _permissionsMap$objec[methodName]) {
+                variableTypes[variableName] = objectType;
+              }
+            });
+          }
         }
       },
       AssignmentExpression: function AssignmentExpression(node) {
         if (node.right.type === 'AwaitExpression' && node.right.argument.type === 'CallExpression') {
           var methodName = node.right.argument.callee.property.name;
           var variableName = node.left.name;
-
-          // Infer the object type based on the method called
           Object.keys(_components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap).forEach(function (objectType) {
             var _permissionsMap$objec2;
             if ((_permissionsMap$objec2 = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) !== null && _permissionsMap$objec2 !== void 0 && _permissionsMap$objec2[methodName]) {
@@ -131,8 +181,8 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
       fetch(filePath).then(function (response) {
         return response.text();
       }).then(function (text) {
-        var functionRegex = new RegExp("\\s*".concat(selectedFunctionName, ":\\s*async\\s*\\((.*?)\\)\\s*=>\\s*{[\\s\\S]*?},"), 'm');
-        var match = text.match(functionRegex);
+        var functionRegex = new RegExp("\\s*".concat(selectedFunctionName, ":\\s*async\\s*\\(([^)]*)\\)\\s*=>\\s*{([\\s\\S]*?)\\n\\s*},?\\n"), 'm');
+        var match = functionRegex.exec(text);
         if (match) {
           setFunctionCode(match[0]);
 
@@ -184,13 +234,10 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
         var methodName = _ref.methodName,
           objectType = _ref.objectType;
         var methodPermissions = ((_permissionsMap$objec3 = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) === null || _permissionsMap$objec3 === void 0 || (_permissionsMap$objec3 = _permissionsMap$objec3[methodName]) === null || _permissionsMap$objec3 === void 0 ? void 0 : _permissionsMap$objec3.permissions) || [];
-        console.log('methodPermissions', methodPermissions);
         return methodPermissions.every(function (permission) {
           return capabilities[permission];
         });
       });
-      console.log('capabilities', capabilities);
-      console.log('hasAllPermissions', hasAllPermissions);
       setHasPermission(hasAllPermissions);
     } else {
       setHasPermission(true); // Assume permission granted if no function code
@@ -840,23 +887,22 @@ var CapabilitiesProvider = function CapabilitiesProvider(_ref) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            console.log('updating capabilities');
-            _context.next = 4;
+            _context.next = 3;
             return webflow.canForAppMode(Object.values(webflow.appModes));
-          case 4:
+          case 3:
             updatedCapabilities = _context.sent;
             setCapabilities(updatedCapabilities);
-            _context.next = 11;
+            _context.next = 10;
             break;
-          case 8:
-            _context.prev = 8;
+          case 7:
+            _context.prev = 7;
             _context.t0 = _context["catch"](0);
             console.error('Error fetching capabilities', _context.t0);
-          case 11:
+          case 10:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 8]]);
+      }, _callee, null, [[0, 7]]);
     }));
     return function updateCapabilities() {
       return _ref2.apply(this, arguments);
@@ -1673,7 +1719,7 @@ var Components = {
             return webflow.getAllElements();
           case 2:
             elements = _context11.sent;
-            componentInstance = elements.find(function (el) {
+            componentInstance = elements === null || elements === void 0 ? void 0 : elements.find(function (el) {
               return el.type === 'ComponentInstance';
             });
             if (!((componentInstance === null || componentInstance === void 0 ? void 0 : componentInstance.type) === 'ComponentInstance')) {
@@ -1685,7 +1731,7 @@ var Components = {
           case 7:
             component = _context11.sent;
             _context11.next = 10;
-            return component.getName();
+            return component === null || component === void 0 ? void 0 : component.getName();
           case 10:
             componentName = _context11.sent;
             console.log(componentName);
@@ -5727,7 +5773,7 @@ var Variables = {
           case 2:
             collection = _context5.sent;
             _context5.next = 5;
-            return collection === null || collection === void 0 ? void 0 : collection.createSizeVariable('Defualt Padding', {
+            return collection === null || collection === void 0 ? void 0 : collection.createSizeVariable('Default Padding', {
               unit: 'px',
               value: 50
             });
