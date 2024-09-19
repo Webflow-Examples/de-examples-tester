@@ -69,28 +69,35 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
 
   // Helper function to track variable assignments and method calls
   var extractMethodCallsAndVariableTypes = function extractMethodCallsAndVariableTypes(code) {
+    // Remove leading variable assignments from the code
     var cleanedCode = code.replace(/^\s*\w+:\s*/, '');
+
+    // Remove trailing commas from the end of object definitions
     var finalCode = cleanedCode.replace(/},\s*$/, '}');
+
+    // Parse the cleaned code into an abstract syntax tree (AST) using Acorn
     var ast = acorn__WEBPACK_IMPORTED_MODULE_1__.Parser.extend((0,acorn_typescript__WEBPACK_IMPORTED_MODULE_3__["default"])()).parse(finalCode, {
       ecmaVersion: 2020,
       allowAwaitOutsideFunction: true,
       sourceType: 'module' // Enable module-level parsing
     });
+
+    // Initialize arrays and objects to store method calls and variable types
     var methodCalls = [];
     var variableTypes = {};
 
     // Extend `acorn-walk` to handle missing visitors for TypeScript-specific nodes and async/await
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.AwaitExpression = function (node, state, c) {
-      c(node.argument, state);
+      c(node.argument, state); // Continue walking the argument of AwaitExpression
     };
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.NewExpression = function (node, state, c) {
-      c(node.callee, state);
+      c(node.callee, state); // Walk the callee of NewExpression
       var _iterator = _createForOfIteratorHelper(node.arguments),
         _step;
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var arg = _step.value;
-          c(arg, state);
+          c(arg, state); // Walk each argument of NewExpression
         }
       } catch (err) {
         _iterator.e(err);
@@ -99,17 +106,17 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
       }
     };
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.CallExpression = function (node, state, c) {
+      // Skip console calls to avoid tracking console.log and similar
       if (node.callee.type === 'MemberExpression' && node.callee.object.name === 'console') {
-        // Skip console calls
         return;
       }
-      c(node.callee, state);
+      c(node.callee, state); // Walk the callee of CallExpression
       var _iterator2 = _createForOfIteratorHelper(node.arguments),
         _step2;
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var arg = _step2.value;
-          c(arg, state);
+          c(arg, state); // Walk each argument of CallExpression
         }
       } catch (err) {
         _iterator2.e(err);
@@ -120,69 +127,83 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
 
     // For TypeScript-specific type assertions like `as`
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.base.TSAsExpression = function (node, state, c) {
-      c(node.expression, state);
+      c(node.expression, state); // Walk the expression in TSAsExpression
     };
+
+    // Traverse the AST and collect method calls and variable types
     acorn_walk__WEBPACK_IMPORTED_MODULE_2__.simple(ast, {
-      // Track Method Calls
+      // Track method calls in the AST
       CallExpression: function CallExpression(node) {
         if (node.callee && node.callee.type === 'MemberExpression' && node.callee.object.name !== 'console' // Exclude console calls
         ) {
-          var objectName = node.callee.object.name;
-          var methodName = node.callee.property.name;
+          var objectName = node.callee.object.name; // Get the object name
+          var methodName = node.callee.property.name; // Get the method name
 
-          // If we know the type of object from early assignments, use it
+          // Use the known type of object from early assignments, if available
           var objectType = variableTypes[objectName];
           methodCalls.push({
             objectName: objectName,
             methodName: methodName,
             objectType: objectType
-          });
+          }); // Add the method call information to the list
         }
       },
       // Track variable declarations and assignments
       VariableDeclarator: function VariableDeclarator(node) {
         if (node.id && node.init && node.init.type === 'AwaitExpression') {
           var _node$init$argument, _callee$property;
-          var variableName = node.id.name;
+          var variableName = node.id.name; // Get the variable name
 
           // Handle optional chaining in CallExpression
           var callee = (_node$init$argument = node.init.argument) === null || _node$init$argument === void 0 ? void 0 : _node$init$argument.callee;
-          var methodName = callee === null || callee === void 0 || (_callee$property = callee.property) === null || _callee$property === void 0 ? void 0 : _callee$property.name;
+          var methodName = callee === null || callee === void 0 || (_callee$property = callee.property) === null || _callee$property === void 0 ? void 0 : _callee$property.name; // Get the method name from AwaitExpression
+
           if (methodName) {
             // Infer the object type based on the method called
             Object.keys(_components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap).forEach(function (objectType) {
               var _permissionsMap$objec;
               if ((_permissionsMap$objec = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) !== null && _permissionsMap$objec !== void 0 && _permissionsMap$objec[methodName]) {
-                variableTypes[variableName] = objectType;
+                variableTypes[variableName] = objectType; // Assign the object type to the variable
               }
             });
           }
         }
       },
+      // Track assignments to variables
       AssignmentExpression: function AssignmentExpression(node) {
         if (node.right.type === 'AwaitExpression' && node.right.argument.type === 'CallExpression') {
-          var methodName = node.right.argument.callee.property.name;
-          var variableName = node.left.name;
+          var methodName = node.right.argument.callee.property.name; // Get the method name from the assignment
+          var variableName = node.left.name; // Get the variable name being assigned to
+
+          // Infer the object type based on the method called
           Object.keys(_components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap).forEach(function (objectType) {
             var _permissionsMap$objec2;
             if ((_permissionsMap$objec2 = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) !== null && _permissionsMap$objec2 !== void 0 && _permissionsMap$objec2[methodName]) {
-              variableTypes[variableName] = objectType;
+              variableTypes[variableName] = objectType; // Assign the object type to the variable
             }
           });
         }
       }
     });
+
+    // Return the collected method calls and inferred variable types
     return {
       methodCalls: methodCalls,
       variableTypes: variableTypes
     };
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    // Check if both selectedFunctionName and selectedExampleCategory are defined
     if (selectedFunctionName && selectedExampleCategory) {
+      // Construct the file path to fetch the example TypeScript file
       var filePath = "https://main--thriving-zuccutto-5ad917.netlify.app/examples/".concat(selectedExampleCategory.toLowerCase(), ".ts");
+
+      // Fetch the TypeScript file from the constructed URL
       fetch(filePath).then(function (response) {
         return response.text();
-      }).then(function (text) {
+      }) // Get the response text
+      .then(function (text) {
+        // Function to parse the function text and extract details
         function parseFunctionText(text, selectedFunctionName) {
           // Regex to find all async function definitions in the export const object
           var funcRegex = /(\w+):\s+async\s*\(\s*[\s\S]*?\)\s*=>\s*\{([\s\S]*?)\}/g;
@@ -194,11 +215,13 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
           var selectedFunctionMatch = matches.find(function (match) {
             return match[1] === selectedFunctionName;
           });
+
+          // If the function is not found, throw an error
           if (!selectedFunctionMatch) {
             throw new Error("Function \"".concat(selectedFunctionName, "\" not found."));
           }
 
-          // Get the index of the selected function
+          // Get the index of the selected function in the matches
           var selectedFunctionIndex = matches.findIndex(function (match) {
             return match[1] === selectedFunctionName;
           });
@@ -206,34 +229,47 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
           // Get text for the selected function and everything up to the next function
           var functionText = selectedFunctionMatch[0].trim();
 
-          // If there's a next function, extract text up to it; otherwise, return all
+          // If there's a next function, extract text up to it; otherwise, use the end of the text
           var nextFunctionText = selectedFunctionIndex + 1 < matches.length ? matches[selectedFunctionIndex + 1][0] : null;
 
-          // Extract everything before the next function name
+          // Determine the end index for extraction
           var endIndex = nextFunctionText ? text.indexOf(nextFunctionText) : text.length;
+
+          // Extract everything from the function text up to the end index
           var extractedText = text.slice(text.indexOf(functionText), endIndex).trim();
 
-          // Remove the trailing "}" if it's the last function
+          // Remove the trailing "}" if this is the last function in the file
           if (!nextFunctionText) {
             extractedText = extractedText.replace(/\s*}$/, '');
           }
-          return extractedText;
+          return extractedText; // Return the extracted function text
         }
+
+        // Parse the function text for the selected function
         var functionMatch = parseFunctionText(text, selectedFunctionName);
         if (functionMatch) {
           var extractedCode = functionMatch;
+
+          // Clean up the extracted code by removing the function name and trailing comma
           extractedCode = extractedCode.replace("".concat(selectedFunctionName, ":"), '').replace(/,\s*$/, '');
+
+          // Update the state with the cleaned function code
           setFunctionCode(extractedCode);
+
+          // Extract method calls and variable types from the function code
           var _extractMethodCallsAn = extractMethodCallsAndVariableTypes(extractedCode),
             methodCalls = _extractMethodCallsAn.methodCalls,
             variableTypes = _extractMethodCallsAn.variableTypes;
-          // console.log('Extracted Methods:', methodCalls)
-          // console.log('Extracted Variable Types:', variableTypes)
+          // Uncomment for debugging purposes
+          // console.log('Extracted Methods:', methodCalls);
+          // console.log('Extracted Variable Types:', variableTypes);
 
-          var paramsRegex = /\(\s*([^)]*?)\s*\)\s*=>/; // Match the parameter list in the function signature
+          // Regex to match the parameter list in the function signature
+          var paramsRegex = /\(\s*([^)]*?)\s*\)\s*=>/;
           var paramsMatch = paramsRegex.exec(functionMatch);
-          var params = [];
-          var types = [];
+          var params = []; // Array to hold parameter names
+          var types = []; // Array to hold parameter types
+
           if (paramsMatch) {
             var paramString = paramsMatch[1]; // Get the matched parameters
 
@@ -247,18 +283,24 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
               types.push(paramMatch[2]); // Parameter type
             }
           }
+
+          // Update the state with extracted parameter names and types
           setParameterNames(params);
           setParameterTypes(types);
+
+          // Initialize function parameters with empty string values
           setFunctionParameters(params.reduce(function (acc, param) {
             return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, param, ''));
           }, {}));
         } else {
+          // If function match is not found, reset state
           setFunctionCode('Function code not found.');
           setParameterNames([]);
           setParameterTypes([]);
           setFunctionParameters({});
         }
       })["catch"](function (error) {
+        // Handle errors during the fetch operation
         console.error('Failed to fetch function source:', error);
         setFunctionCode('');
         setParameterNames([]);
@@ -269,19 +311,28 @@ var useFunctionCode = function useFunctionCode(selectedFunctionName, selectedExa
   }, [selectedFunctionName, selectedExampleCategory]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (functionCode) {
+      // Extract method calls and variable types from the provided function code
       var _extractMethodCallsAn2 = extractMethodCallsAndVariableTypes(functionCode),
         methodCalls = _extractMethodCallsAn2.methodCalls;
+
+      // Determine if the user has all the required permissions for each method call
       var hasAllPermissions = methodCalls.every(function (_ref) {
         var _permissionsMap$objec3;
         var methodName = _ref.methodName,
           objectType = _ref.objectType;
+        // Retrieve the permissions associated with the current method call
         var methodPermissions = ((_permissionsMap$objec3 = _components_PermissionsMap__WEBPACK_IMPORTED_MODULE_5__.permissionsMap[objectType]) === null || _permissionsMap$objec3 === void 0 || (_permissionsMap$objec3 = _permissionsMap$objec3[methodName]) === null || _permissionsMap$objec3 === void 0 ? void 0 : _permissionsMap$objec3.permissions) || [];
+
+        // Check if the user has each of the required permissions
         return methodPermissions.every(function (permission) {
           return capabilities[permission];
         });
       });
+
+      // Update the state to indicate whether the user has all necessary permissions
       setHasPermission(hasAllPermissions);
     } else {
+      // If functionCode is not defined, set hasPermission to true by default
       setHasPermission(true);
     }
   }, [functionCode, capabilities]);
