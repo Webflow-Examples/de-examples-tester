@@ -20,10 +20,8 @@ export const useFunctionCode = (
 
   // Helper function to track variable assignments and method calls
   const extractMethodCallsAndVariableTypes = (code) => {
-    console.log(code)
     const cleanedCode = code.replace(/^\s*\w+:\s*/, '')
     const finalCode = cleanedCode.replace(/},\s*$/, '}')
-    console.log(finalCode)
 
     const ast = acorn.Parser.extend(acornTs()).parse(finalCode, {
       ecmaVersion: 2020,
@@ -132,32 +130,87 @@ export const useFunctionCode = (
       fetch(filePath)
         .then((response) => response.text())
         .then((text) => {
-          const functionRegex = new RegExp(
-            `\\s*${selectedFunctionName}:\\s*async\\s*\\(([^)]*)\\)\\s*=>\\s*{([\\s\\S]*?)\\n\\s*},?\\n`,
-            'm',
-          )
+          function parseFunctionText(text, selectedFunctionName) {
+            // Regex to find all async function definitions in the export const object
+            const funcRegex = /(\w+):\s+async\s*\(\s*.*?\)\s*=>\s*{(.*?)}/gs
 
-          const match = functionRegex.exec(text)
-          if (match) {
-            setFunctionCode(match[0])
+            // Match all function definitions
+            const matches = [...text.matchAll(funcRegex)]
 
-            // Extract method calls and inferred types from the function code
+            // Find the match for the selected function
+            const selectedFunctionMatch = matches.find(
+              (match) => match[1] === selectedFunctionName,
+            )
+
+            if (!selectedFunctionMatch) {
+              throw new Error(`Function "${selectedFunctionName}" not found.`)
+            }
+
+            // Get the index of the selected function
+            const selectedFunctionIndex = matches.findIndex(
+              (match) => match[1] === selectedFunctionName,
+            )
+
+            // Get text for the selected function and everything up to the next function
+            const functionText = selectedFunctionMatch[0].trim()
+
+            // If there's a next function, extract text up to it; otherwise, return all
+            const nextFunctionText =
+              selectedFunctionIndex + 1 < matches.length
+                ? matches[selectedFunctionIndex + 1][0]
+                : null
+
+            // Extract everything before the next function name
+            const endIndex = nextFunctionText
+              ? text.indexOf(nextFunctionText)
+              : text.length
+
+            let extractedText = text
+              .slice(text.indexOf(functionText), endIndex)
+              .trim()
+
+            // Remove the trailing "}" if it's the last function
+            if (!nextFunctionText) {
+              extractedText = extractedText.replace(/\s*}$/, '')
+            }
+
+            return extractedText
+          }
+
+          const functionMatch = parseFunctionText(text, selectedFunctionName)
+
+          if (functionMatch) {
+            let extractedCode = functionMatch
+            extractedCode = extractedCode
+              .replace(`${selectedFunctionName}:`, '')
+              .replace(/,\s*$/, '')
+
+            setFunctionCode(extractedCode)
+
             const { methodCalls, variableTypes } =
-              extractMethodCallsAndVariableTypes(match[0])
-            console.log('Extracted Methods:', methodCalls) // 🧪 Testing: DELETE ME FOR PROD 🧪
-            console.log('Extracted Variable Types:', variableTypes) // 🧪 Testing: DELETE ME FOR PROD 🧪
+              extractMethodCallsAndVariableTypes(extractedCode)
+            // console.log('Extracted Methods:', methodCalls)
+            // console.log('Extracted Variable Types:', variableTypes)
 
-            // Modified regex to capture parameter names and types
-            const paramsRegex = new RegExp(`\\s*(\\w+)\\s*:\\s*(\\w+)`, 'g')
+            const paramsRegex = /\(\s*([^)]*?)\s*\)\s*=>/ // Match the parameter list in the function signature
+            const paramsMatch = paramsRegex.exec(functionMatch)
             const params = []
             const types = []
-            let paramMatch
 
-            // Using regex.exec in a loop to find all matches
-            while ((paramMatch = paramsRegex.exec(match[1]))) {
-              params.push(paramMatch[1])
-              types.push(paramMatch[2])
+            if (paramsMatch) {
+              const paramString = paramsMatch[1] // Get the matched parameters
+
+              // Regex to match individual parameters and their types
+              const individualParamRegex = /(\w+)\s*:\s*(\w+)/g
+              let paramMatch
+
+              // Loop through and extract parameters and their types
+              while ((paramMatch = individualParamRegex.exec(paramString))) {
+                params.push(paramMatch[1]) // Parameter name
+                types.push(paramMatch[2]) // Parameter type
+              }
             }
+
             setParameterNames(params)
             setParameterTypes(types)
             setFunctionParameters(
@@ -182,7 +235,7 @@ export const useFunctionCode = (
 
   useEffect(() => {
     if (functionCode) {
-      const { methodCalls } = extractMethodCallsAndVariableTypes(functionCode) // Extract methods from the function code
+      const { methodCalls } = extractMethodCallsAndVariableTypes(functionCode)
 
       const hasAllPermissions = methodCalls.every(
         ({ methodName, objectType }) => {
@@ -195,7 +248,7 @@ export const useFunctionCode = (
       )
       setHasPermission(hasAllPermissions)
     } else {
-      setHasPermission(true) // Assume permission granted if no function code
+      setHasPermission(true)
     }
   }, [functionCode, capabilities])
 
@@ -206,7 +259,7 @@ export const useFunctionCode = (
   return {
     functionCode,
     parameterNames,
-    parameterTypes, // Expose parameter types as part of the hook's return value
+    parameterTypes,
     functionParameters,
     setParameterNames,
     setFunctionParameters,

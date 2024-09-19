@@ -1,5 +1,14 @@
 import { removeIfPresent } from 'typedoc/dist/lib/utils'
 
+export enum LinkModeSettings {
+  url = 'url',
+  page = 'page',
+  pageSection = 'pageSection',
+  email = 'email',
+  phone = 'phone',
+  attachment = 'attachment',
+}
+
 export const Elements = {
   getSelectedElement: async () => {
     // Get Selected Element
@@ -621,7 +630,7 @@ export const Elements = {
 
     if (element) {
       const newLink = await element.after(webflow.elementPresets.LinkBlock) // Create new link element
-      const metadata = {openInNewTab: true}
+      const metadata = { openInNewTab: true }
       await newLink.setSettings(mode, target, metadata) // Set link element settings
       const targetValue = await newLink.getTarget() // Get target value
       console.log(targetValue)
@@ -661,13 +670,4 @@ export const Elements = {
       )
     }
   },
-}
-
-export enum LinkModeSettings {
-  url = 'url',
-  page = 'page',
-  pageSection = 'pageSection',
-  email = 'email',
-  phone = 'phone',
-  attachment = 'attachment',
 }
