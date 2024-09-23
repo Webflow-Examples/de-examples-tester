@@ -3,6 +3,7 @@ export enum ExtensionSizeEnum {
   Large = 'large',
   Default = 'default',
   Comfortable = 'comfortable',
+  Compact = 'compact',
 }
 
 export const Webflow = {
