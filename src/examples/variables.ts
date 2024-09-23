@@ -68,7 +68,7 @@ export const Variables = {
 
     // Create Size Variable with a Size Value
     const mySizeVariable = await collection?.createSizeVariable(
-      'Defualt Padding',
+      'Default Padding',
       { unit: 'px', value: 50 },
     )
     console.log(mySizeVariable)

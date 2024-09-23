@@ -146,3 +146,22 @@ input {
   max-width: 100%; /* Set a max width if needed */
   overflow-x: auto; /* Enable horizontal scrolling for longer lines */
 }
+
+.button.cc-primary:disabled {
+  background-color: #D8D8D8;
+  -webkit-transition-property: none;
+  transition-property: none;
+  color: #757575;
+}
+
+.button.cc-primary:disabled:hover {
+  background-color: #EE1D36;
+  -webkit-transition-property: none;
+  transition-property: none;
+  color: #363636;
+}
+
+.error-message{
+  color: #EE1D36;
+  font-size: .5em;
+}

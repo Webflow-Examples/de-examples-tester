@@ -146,14 +146,14 @@ export const Components = {
   getComponent: async () => {
     // Select Component Element on Page
     const elements = await webflow.getAllElements()
-    const componentInstance = elements.find(
+    const componentInstance = elements?.find(
       (el) => el.type === 'ComponentInstance',
     )
 
     if (componentInstance?.type === 'ComponentInstance') {
       // Get Component object from instance
       const component = await componentInstance?.getComponent()
-      const componentName = await component.getName()
+      const componentName = await component?.getName()
       console.log(componentName)
     } else {
       console.log('No component element found')
