@@ -65,34 +65,49 @@ const App = () => {
   }, [])
 
   useEffect(() => {
+    handleFunctionExecutionWithoutParameters()
+  }, [selectedFunctionName, selectedExampleCategory])
+
+  const handleFunctionExecutionWithoutParameters = () => {
+    // Check if both a category and function name have been selected
     if (selectedExampleCategory && selectedFunctionName) {
+      // Retrieve the category object from the examples using the selected category
       const category = examples[selectedExampleCategory]
+
+      // Retrieve the function to be executed from the category using the selected function name
       const funcToExecute = category
         ? category[selectedFunctionName]
         : undefined
 
+      // Check if a valid function is found and no parameters are required for execution
       if (funcToExecute && parameterNames.length === 0) {
         try {
-          const result = funcToExecute() // Execute if no parameters are needed
+          // Execute the function if no parameters are needed
+          const result = funcToExecute()
+
+          // Check if the result is a promise (i.e., async function) and handle accordingly
           if (result && typeof result.then === 'function') {
-            // result.then(console.log).catch(console.error)
+            // Handle promise (async function) result here if needed
           } else {
+            // If the result is not a promise, log it directly
             console.log(result)
           }
         } catch (error) {
+          // Catch and log any errors that occur during function execution
           console.error('Error executing function:', error)
         }
       }
     }
-  }, [selectedFunctionName, selectedExampleCategory])
+  }
 
   const handleFunctionExecutionWithParameters = () => {
+    // Retrieve the category object from the examples using the selected category
+    const category = examples[selectedExampleCategory]
+
     // Retrieve the function to execute based on the currently selected category and function name
-    const funcToExecute =
-      examples[selectedExampleCategory][selectedFunctionName]
+    const funcToExecute = category ? category[selectedFunctionName] : undefined
 
     if (funcToExecute) {
-      // Check if the function exists
       try {
         // If there are parameter names defined, map them to their respective values; otherwise, use an empty array
         const paramValues =
@@ -102,13 +117,12 @@ const App = () => {
 
         if (typeof funcToExecute === 'function') {
           // Check if the retrieved item is a function
+
           const result = funcToExecute(...paramValues) // Execute the function with the parameters
 
           if (result && typeof result.then === 'function') {
             // Check if the result is a Promise (asynchronous function)
-            result
-              // .then(console.log) // Log the result of the Promise when it resolves
-              .catch(console.error) // Catch and log any errors that occur during Promise execution
+            result.catch(console.error) // Catch and log any errors that occur during Promise execution
           } else {
             console.log(result) // Log the result for synchronous functions
           }
@@ -118,6 +132,7 @@ const App = () => {
       }
     }
   }
+
   const enumToArray = (enumObj) => {
     // Create an array from the enum object's values
     const valuesArray = Object.values(enumObj)
