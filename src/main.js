@@ -4,6 +4,8 @@ import './App.css'
 
 // Import hooks
 import { useFunctionCode } from './hooks/useFunctionCode'
+import { useMethodAnalysis } from './hooks/useMethodAnalysis'
+import { usePermissionCheck } from './hooks/usePermissionCheck'
 import CapabilitiesProvider from './context/CapabilitiesContext'
 
 // Import Components
@@ -20,15 +22,22 @@ import 'prismjs/components/prism-jsx'
 const App = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
+
+  // Fetch function code and parameters
   const {
     functionCode,
     parameterNames,
     parameterTypes,
     functionParameters,
-    setFunctionParameters,
     setParameterNames,
-    hasPermission,
+    setFunctionParameters,
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
+
+  // Analyze method calls and variable types
+  const { methodCalls } = useMethodAnalysis(functionCode)
+
+  // Check permissions for the extracted methods
+  const hasPermission = usePermissionCheck(methodCalls)
 
   const exampleCategories = Object.keys(examples).map((key) => ({
     value: key,
