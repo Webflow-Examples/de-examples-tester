@@ -7,8 +7,8 @@ export type Permission =
   | 'canDesign'
   | 'canModifyImageElements'
   | 'canCreateComponents'
-  | 'canCreateStyleBlocks'
-  | 'canModifyStyleBlocks'
+  | 'canCreateStyles'
+  | 'canModifyStyles'
   | 'canEdit'
   | 'canReadPageSettings'
   | 'canManagePageSettings'
@@ -107,13 +107,13 @@ export const permissionsMap: PermissionsMap = {
     getName: { permissions: ['canAccessCanvas'] },
     getProperties: { permissions: ['canAccessCanvas'] },
     getProperty: { permissions: ['canAccessCanvas'] },
-    setProperties: { permissions: ['canModifyStyleBlocks'] },
-    setProperty: { permissions: ['canModifyStyleBlocks'] },
-    removeAllProperties: { permissions: ['canModifyStyleBlocks'] },
-    removeProperty: { permissions: ['canModifyStyleBlocks'] },
-    removeProperties: { permissions: ['canModifyStyleBlocks'] },
-    createStyle: { permissions: ['canCreateStyleBlocks'] },
-    removeStyle: { permissions: ['canModifyStyleBlocks'] },
+    setProperties: { permissions: ['canModifyStyles'] },
+    setProperty: { permissions: ['canModifyStyles'] },
+    removeAllProperties: { permissions: ['canModifyStyles'] },
+    removeProperty: { permissions: ['canModifyStyles'] },
+    removeProperties: { permissions: ['canModifyStyles'] },
+    createStyle: { permissions: ['canCreateStyles'] },
+    removeStyle: { permissions: ['canModifyStyles'] },
     getStyleByName: { permissions: ['canAccessCanvas'] },
     getAllStyles: { permissions: ['canAccessCanvas'] },
   },
