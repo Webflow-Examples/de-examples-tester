@@ -7,7 +7,6 @@ import { permissionsMap } from '../components/PermissionsMap'
 
 // This hook is responsible for extracting method calls and variable types from the function code.
 export const useMethodAnalysis = (functionCode) => {
-  console.log('funcode', functionCode)
   const [methodCalls, setMethodCalls] = useState([])
   const [variableTypes, setVariableTypes] = useState({})
 
