@@ -158,4 +158,37 @@ export const Assets = {
       await domElement.setAttribute('src', assetUrl)
     }
   },
+
+  getAllAssetFolders: async () => {
+    const folders = await webflow.getAllAssetFolders()
+    console.log(folders)
+  },
+
+  createAssetFolder: async (name: string, parentFolderName?: string) => {
+    // Get All Asset Folders
+    const folders = await webflow.getAllAssetFolders()
+
+    // Find Parent Folder by Name
+    if (parentFolderName) {
+      const parentFolder = await Promise.all(
+        folders.map(async (folder) => {
+          const folderName = await folder.getName()
+          if (folderName === parentFolderName) {
+            return folder
+          }
+          return null
+        }),
+      ).then((results) => results.find((folder) => folder !== null))
+
+      // Create Asset Folder with parent folder
+      if (parentFolder) {
+        const newFolder = await webflow.createAssetFolder(name, parentFolder.id)
+        console.log(newFolder)
+      }
+    } else {
+      // Crate Asset Folder
+      const newFolder = await webflow.createAssetFolder(name)
+      console.log(newFolder)
+    }
+  },
 }

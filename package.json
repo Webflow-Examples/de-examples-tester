@@ -14,7 +14,7 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@types/prismjs": "^1.26.3",
-    "@webflow/designer-extension-typings": "^0.2.0-beta.17",
+    "@webflow/designer-extension-typings": "^2.0.3",
     "@webflow/webflow-cli": "^1.6.6",
     "babel-loader": "^9.1.3",
     "concurrently": "^6.3.0",
