@@ -40,7 +40,7 @@ export const Pages = {
     await webflow.switchPage(newPage)
   },
 
-  createNewPage: async () => {
+  createPage: async () => {
     // Create new page and set page name
     const newPage = (await webflow.createPage()) as Page
     await newPage.setName('My New Page')
