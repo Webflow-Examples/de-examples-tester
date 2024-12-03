@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './App.css'
+import { Alert, Box, Typography } from '@mui/material'
+import InfoIcon from '@mui/icons-material/Info'
 
 // Import hooks
 import { useFunctionCode } from './hooks/useFunctionCode'
@@ -22,6 +24,7 @@ import 'prismjs/components/prism-jsx'
 const App = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
+  const [launchContext, setLaunchContext] = useState(null)
 
   // Fetch function code and parameters
   const {
@@ -76,6 +79,21 @@ const App = () => {
   useEffect(() => {
     handleFunctionExecutionWithoutParameters()
   }, [selectedFunctionName, selectedExampleCategory])
+
+  useEffect(() => {
+    // Use Launch Context
+    async function checkLaunchContext() {
+      const context = await webflow.getLaunchContext()
+      setLaunchContext(context)
+
+      if (context?.type === 'AppIntent' && context.value?.image === 'manage') {
+        setSelectedExampleCategory('Elements')
+        setSelectedFunctionName('getAltText')
+      }
+    }
+
+    checkLaunchContext()
+  }, [])
 
   const handleFunctionExecutionWithoutParameters = () => {
     // Check if both a category and function name have been selected
@@ -155,6 +173,48 @@ const App = () => {
         Webflow <br />
         Designer API Playground
       </h1>
+
+      {launchContext && (
+        <Box sx={{ my: 2 }}>
+          <Alert
+            severity="info"
+            icon={<InfoIcon />}
+            sx={{
+              backgroundColor: 'rgba(229, 246, 253, 0.5)',
+              '& .MuiAlert-icon': {
+                color: '#0288d1',
+              },
+              '& .MuiAlert-message': {
+                width: '100%',
+              },
+            }}
+          >
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+              Launch Context
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ mb: launchContext.value ? 1 : 0 }}
+            >
+              Launched via: {launchContext.type}
+            </Typography>
+            {launchContext.value && (
+              <Typography
+                variant="body2"
+                sx={{
+                  backgroundColor: 'rgba(229, 246, 253, 0.8)',
+                  p: 1,
+                  borderRadius: 1,
+                  fontFamily: 'monospace',
+                }}
+              >
+                {JSON.stringify(launchContext.value, null, 2)}
+              </Typography>
+            )}
+          </Alert>
+        </Box>
+      )}
+
       <p>Select an API category</p>
       <Dropdown
         options={exampleCategories}

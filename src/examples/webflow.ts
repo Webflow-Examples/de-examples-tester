@@ -190,4 +190,25 @@ export const Webflow = {
       checkAppModes,
     )
   },
+
+  getLaunchContext: async () => {
+    const context = await webflow.getLaunchContext()
+    console.log('Launch Context:', context)
+
+    if (context) {
+      const contextType = context.type
+      const contextValue = context.value
+
+      console.log('Launch Type:', contextType)
+      console.log('Launch Value:', contextValue)
+
+      // Notify user of launch context
+      await webflow.notify({
+        type: 'Info',
+        message: `App launched via ${contextType}${contextValue ? ` with ${JSON.stringify(contextValue)}` : ''}`,
+      })
+    } else {
+      console.log('No specific launch context')
+    }
+  },
 }

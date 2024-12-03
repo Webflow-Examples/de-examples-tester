@@ -4,6 +4,7 @@
   "apiVersion": "2",
   "featureFlags": { "userAbilities": true },
   "appIntents": {
-    "Image": ["create"]
-  }
+    "image": ["manage"]
+  },
+  "appConnections": ["manageImageElement"]
 }
