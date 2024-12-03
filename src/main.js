@@ -25,6 +25,7 @@ const App = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
   const [launchContext, setLaunchContext] = useState(null)
+  const [selectedElement, setSelectedElement] = useState(null)
 
   // Fetch function code and parameters
   const {
@@ -81,14 +82,45 @@ const App = () => {
   }, [selectedFunctionName, selectedExampleCategory])
 
   useEffect(() => {
-    // Use Launch Context
     async function checkLaunchContext() {
       const context = await webflow.getLaunchContext()
       setLaunchContext(context)
 
-      if (context?.type === 'AppIntent' && context.value?.image === 'manage') {
-        setSelectedExampleCategory('Elements')
-        setSelectedFunctionName('getAltText')
+      // Get and store selected element
+      const element = await webflow.getSelectedElement()
+      setSelectedElement(element)
+
+      if (context?.type === 'AppIntent') {
+        // Handle different intent types
+        if (context.value?.image === 'manage') {
+          setSelectedExampleCategory('Elements')
+          setSelectedFunctionName('getAltText')
+          if (element?.type === 'Image') {
+            await webflow.notify({
+              type: 'Info',
+              message: 'Managing image element settings',
+            })
+          }
+        } else if (context.value?.form === 'manage') {
+          setSelectedExampleCategory('Elements')
+          setSelectedFunctionName('getChildren')
+          await webflow.notify({
+            type: 'Info',
+            message: 'Managing form element settings',
+          })
+        }
+      } else if (context?.type === 'AppConnection') {
+        // Handle different connection types
+        switch (context.value) {
+          case 'manageImageElement':
+            setSelectedExampleCategory('Elements')
+            setSelectedFunctionName('getAltText')
+            break
+          case 'manageFormElement':
+            setSelectedExampleCategory('Elements')
+            setSelectedFunctionName('getChildren')
+            break
+        }
       }
     }
 
