@@ -2,5 +2,9 @@
   "name": "My Amazing App",
   "publicDir": "dist",
   "apiVersion": "2",
-  "featureFlags": { "userAbilities": true }
+  "featureFlags": { "userAbilities": true },
+  "appIntents": {
+    "image": ["manage"]
+  },
+  "appConnections": ["manageImageElement"]
 }
