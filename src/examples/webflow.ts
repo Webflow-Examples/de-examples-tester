@@ -191,6 +191,18 @@ export const Webflow = {
     )
   },
 
+  subscribePseudoMode: async () => {
+    // Subscribe to changes in the pseudo mode
+    const pseudoModeCallback = (pseudoMode: PseudoStateKey | null) => {
+      console.log('Pseudo Mode:', pseudoMode)
+    }
+
+    const unsubscribePseudoMode = webflow.subscribe(
+      'pseudomode',
+      pseudoModeCallback,
+    )
+  },
+
   getLaunchContext: async () => {
     const context = await webflow.getLaunchContext()
     console.log('Launch Context:', context)
@@ -210,5 +222,11 @@ export const Webflow = {
     } else {
       console.log('No specific launch context')
     }
+  },
+
+  getPseudoMode: async () => {
+    // Select a state in the designer to see the pseudo mode in the console
+    const pseudoMode = await webflow.getPseudoMode()
+    console.log('Pseudo Mode:', pseudoMode)
   },
 }
