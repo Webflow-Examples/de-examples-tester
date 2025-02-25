@@ -379,10 +379,13 @@ export const Elements = {
       // Set and print text content
       const text = await selectedElement.setTextContent(myText)
       console.log(selectedElement.textContent)
+
+      // Check if element has child String elements
     } else if (selectedElement?.children) {
       const children = await selectedElement.getChildren()
       const stringElements = children.filter((child) => child.type === 'String')
       if (stringElements.length > 0) {
+        // Set text content on child String elements
         const text = await stringElements[0].setText(myText)
         console.log(text)
       }
@@ -395,31 +398,34 @@ export const Elements = {
     // Get Selected Element
     const selectedElement = await webflow.getSelectedElement()
 
+    // Check if element supports children
     if (selectedElement?.children) {
-      // Get Children
       const children = await selectedElement.getChildren()
 
-      // Get Children Details
-      const childrenDetailsPromises = children.map(async (child) => {
-        // Get style details of children (This is the name of the element in the designer)
-        let styleDetails = null
-        let childStyles = child.styles ? await child.getStyles() : null
+      if (children.length > 0) {
+        // Process all children in parallel using Promise.all
+        const childrenDetails = await Promise.all(
+          children.map(async (child) => {
+            if (!child.styles) return { styleDetails: null }
 
-        if (childStyles) {
-          const styleNamesPromises = childStyles.map((style) => style.getName())
-          styleDetails = await Promise.all(styleNamesPromises)
-        }
+            const childStyles = await child.getStyles()
+            const styleDetails = childStyles
+              ? await Promise.all(childStyles.map((style) => style?.getName()))
+              : null
 
-        return {
-          styleDetails,
-        }
-      })
+            return { styleDetails }
+          }),
+        )
 
-      // Print details of child elements
-      const childrenDetails = await Promise.all(childrenDetailsPromises)
-      console.log(childrenDetails) // This will now log the array of child details
+        console.log(childrenDetails)
+      } else {
+        // Create new element if no children exist
+        const newElement = await selectedElement.append(
+          webflow.elementPresets.DivBlock,
+        )
+        console.log(newElement)
+      }
     } else {
-      console.log(selectedElement.prepend(webflow.elementPresets.DivBlock))
       console.log('This element does not support child elements')
     }
   },
