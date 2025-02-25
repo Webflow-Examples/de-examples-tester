@@ -18,8 +18,8 @@ import enums from './examples/enums'
 
 // Import Styling
 import Prism from 'prismjs'
-import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-jsx'
+import 'prismjs/components/prism-typescript.js'
+import 'prismjs/components/prism-jsx.js'
 
 const App = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
