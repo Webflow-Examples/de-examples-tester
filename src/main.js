@@ -49,10 +49,24 @@ const App = () => {
   }))
 
   const functionSelections = selectedExampleCategory
-    ? Object.keys(examples[selectedExampleCategory]).map((key) => ({
-        value: key,
-        label: key,
-      }))
+    ? Object.entries(examples[selectedExampleCategory]).map(([key, value]) => {
+        if (typeof value === 'object' && !('type' in value)) {
+          // This is a category
+          return {
+            value: key,
+            label: key.replace(/([A-Z])/g, ' $1').trim(), // Convert camelCase to spaces
+            subcategories: Object.keys(value).map((subKey) => ({
+              value: subKey,
+              label: subKey.replace(/([A-Z])/g, ' $1').trim(),
+            })),
+          }
+        }
+        // This is a direct function
+        return {
+          value: key,
+          label: key.replace(/([A-Z])/g, ' $1').trim(),
+        }
+      })
     : []
 
   const handleCategoryChange = (value) => {
@@ -305,7 +319,7 @@ const App = () => {
           <p>
             <small>
               <i>
-                Open your browser’s console to view the output of the function.
+                Open your browser's console to view the output of the function.
               </i>
             </small>
           </p>
