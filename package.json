@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"webflow extension serve\" \"npm run watch-webpack\" \"npm run sync-dev\"",
-    "build": "npm run build-webpack && node copy-examples && node gh-sync.mjs production && webflow extension bundle",
+    "dev": "concurrently \"webflow extension serve\" \"npm run watch-webpack\" \"node copy-examples.mjs\" \"npm run sync-dev\"",
+    "build": "npm run build-webpack && node copy-examples.mjs && node gh-sync.mjs production && webflow extension bundle",
     "watch-webpack": "webpack --config webpack.config.mjs --mode development --watch",
     "build-webpack": "webpack --config webpack.config.mjs --mode production",
     "sync-dev": "nodemon --watch copies --exec \"node gh-sync-dev.mjs\"",
