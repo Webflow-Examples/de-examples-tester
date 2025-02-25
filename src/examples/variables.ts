@@ -6,10 +6,9 @@ export const Variables = {
     console.log(variableCollections)
   },
 
-  createVariableCollection: async () => {
+  createVariableCollection: async (name: string) => {
     // Create a new variable collection
-    const newVariableCollection =
-      await webflow.createVariableCollection('My New Collection')
+    const newVariableCollection = await webflow.createVariableCollection(name)
     console.log('New Variable Collection:')
     console.log(newVariableCollection)
   },
