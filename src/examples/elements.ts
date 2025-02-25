@@ -342,14 +342,52 @@ export const Elements = {
     }
   },
 
+  getTextContent: async () => {
+    const selectedElement = await webflow.getSelectedElement()
+
+    // Check if element is a String type
+    if (selectedElement?.type === 'String') {
+      const text = await selectedElement.getText()
+      console.log(text)
+    }
+    // Otherwise, check if element has child String elements
+    else if (selectedElement?.children) {
+      const children = await selectedElement.getChildren()
+      const stringElements = children.filter((child) => child.type === 'String')
+
+      if (stringElements.length > 0) {
+        const textContentPromises = stringElements.map(
+          async (stringElement: StringElement) => {
+            const text = await stringElement.getText()
+            return text
+          },
+        )
+        const textContent = await Promise.all(textContentPromises)
+        console.log(textContent)
+      } else {
+        console.log('Element does not support text content')
+      }
+    }
+  },
+
   setTextContent: async (myText: string) => {
     // Get Selected Element
     const selectedElement = await webflow.getSelectedElement()
 
+    // Check if element supports text content
     if (selectedElement?.textContent) {
       // Set and print text content
       const text = await selectedElement.setTextContent(myText)
       console.log(selectedElement.textContent)
+    } else if (selectedElement?.children) {
+      const children = await selectedElement.getChildren()
+      const stringElements = children.filter((child) => child.type === 'String')
+      if (stringElements.length > 0) {
+        const text = await stringElements[0].setText(myText)
+        console.log(text)
+      }
+    } else {
+      console.log('Element does not support text content')
     }
   },
 
