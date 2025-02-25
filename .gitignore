@@ -131,6 +131,8 @@ dist
 
 #bundle
 bundle.zip
+!bundle.js
+!bundle.js.map
 
 #copies
 copies
