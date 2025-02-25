@@ -1,11 +1,43 @@
 export const Variables = {
-  getCollection: async () => {
+  getAllVariableCollections: async () => {
+    // Get All Variable Collections
+    const variableCollections = await webflow.getAllVariableCollections()
+    console.log('All Variable Collections:')
+    console.log(variableCollections)
+  },
+
+  createVariableCollection: async () => {
+    // Create a new variable collection
+    const newVariableCollection =
+      await webflow.createVariableCollection('My New Collection')
+    console.log('New Variable Collection:')
+    console.log(newVariableCollection)
+  },
+
+  getVariableCollectionById: async (id: string) => {
+    // Get Variable Collection by ID
+    const variableCollection = await webflow.getVariableCollectionById(id)
+    console.log('Variable Collection:')
+    console.log(variableCollection)
+  },
+
+  getDefaultVariableCollection: async () => {
     // Get Collection
     const defaultVariableCollection =
       await webflow.getDefaultVariableCollection()
+    console.log('Default Variable Collection:')
+    console.log(defaultVariableCollection)
 
     // Fetch all variables within the default collection
     const variables = await defaultVariableCollection?.getAllVariables()
+    console.log('Variables in Default Collection:')
+    console.log(variables)
+  },
+
+  removeVariableCollection: async (id: string) => {
+    // Remove Variable Collection
+    const removedVariableCollection = await webflow.removeVariableCollection(id)
+    console.log(removedVariableCollection)
   },
 
   getCollectionName: async () => {
@@ -84,6 +116,30 @@ export const Variables = {
       'Inter',
     )
     console.log(myFontFamilyVariable)
+  },
+
+  createNumberVariable: async (number: number) => {
+    // Get Collection
+    const collection = await webflow.getDefaultVariableCollection()
+
+    // Create Number Variable with a Number Value
+    const myNumberVariable = await collection?.createNumberVariable(
+      'My Number',
+      number,
+    )
+    console.log(myNumberVariable)
+  },
+
+  createPercentageVariable: async (percentage: number) => {
+    // Get Collection
+    const collection = await webflow.getDefaultVariableCollection()
+
+    // Create Percentage Variable with a Percentage Value
+    const myPercentageVariable = await collection?.createPercentageVariable(
+      'My Percentage',
+      percentage,
+    )
+    console.log(myPercentageVariable)
   },
 
   getVariableById: async (id: string) => {
