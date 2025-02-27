@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "es5", // Specify ECMAScript target version
+    "target": "es2015",
     "module": "commonjs",
     "jsx": "react", // Specify module code generation
     "lib": ["dom", "es2017", "dom.iterable", "scripthost"], // Specify library files to be included in the compilation

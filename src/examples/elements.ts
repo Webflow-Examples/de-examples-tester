@@ -67,7 +67,9 @@ export const Elements = {
       const rootElement = await webflow.getRootElement()
 
       // Print element details
-      console.log(`Type: ${rootElement?.type} \n ID: ${rootElement?.id}`)
+      console.log(
+        `Type: ${rootElement?.type} \n ID: ${JSON.stringify(rootElement?.id)}`,
+      )
     },
 
     removeElement: async () => {

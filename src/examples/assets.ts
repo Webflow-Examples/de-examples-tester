@@ -186,7 +186,7 @@ export const Assets = {
         console.log(newFolder)
       }
     } else {
-      // Crate Asset Folder
+      // Create Asset Folder
       const newFolder = await webflow.createAssetFolder(name)
       console.log(newFolder)
     }

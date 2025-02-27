@@ -8,11 +8,19 @@ interface DropdownProps {
   }[]
   selectedValue: string
   onValueChange: (value: string) => void
+  disabled: boolean
 }
 
-function Dropdown({ options, selectedValue, onValueChange }: DropdownProps) {
+function Dropdown({
+  options,
+  selectedValue,
+  onValueChange,
+  disabled,
+}: DropdownProps) {
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onValueChange(event.target.value)
+    if (!disabled) {
+      onValueChange(event.target.value)
+    }
   }
 
   return (
@@ -20,7 +28,12 @@ function Dropdown({ options, selectedValue, onValueChange }: DropdownProps) {
       <select
         value={selectedValue}
         onChange={handleChange}
-        className="w-select"
+        className={`w-select ${disabled ? 'disabled' : ''}`}
+        style={{
+          opacity: disabled ? 0.5 : 1,
+          cursor: disabled ? 'not-allowed' : 'pointer',
+        }}
+        disabled={disabled}
       >
         <option value="">Select an option</option>
         {options.map((option) =>

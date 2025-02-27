@@ -23,7 +23,7 @@ const inputConfig: InputConfigType = {
       (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
         onChange(name, e.target.value),
   },
-  file: {
+  File: {
     type: 'file',
     className: 'w-file-upload',
     onChange:
