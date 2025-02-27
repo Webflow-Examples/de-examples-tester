@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "es5", // Specify ECMAScript target version
+    "target": "es2015",
     "module": "commonjs",
     "jsx": "react", // Specify module code generation
     "lib": ["dom", "es2017", "dom.iterable", "scripthost"], // Specify library files to be included in the compilation
@@ -10,9 +10,11 @@
     "rootDir": "./src", // Specify the root directory of input files
     "removeComments": true, // Do not emit comments to output
     "strict": true, // Enable all strict type-checking options
-    "typeRoots": ["./node_modules/@types", "./node_modules/@webflow/designer-extension-typings"],
-    "types":["index.d.ts"],
-
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@webflow/designer-extension-typings"
+    ],
+    "types": ["index.d.ts", "node"],
 
     /* Module Resolution Options */
     "moduleResolution": "node", // Resolve modules using Node.js style

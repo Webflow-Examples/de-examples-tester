@@ -6,8 +6,6 @@ import InfoIcon from '@mui/icons-material/Info'
 
 // Import hooks
 import { useFunctionCode } from './hooks/useFunctionCode'
-import { useMethodAnalysis } from './hooks/useMethodAnalysis'
-import { usePermissionCheck } from './hooks/usePermissionCheck'
 import CapabilitiesProvider from './context/CapabilitiesContext'
 
 // Import Components
@@ -18,8 +16,8 @@ import enums from './examples/enums'
 
 // Import Styling
 import Prism from 'prismjs'
-import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-jsx'
+import 'prismjs/components/prism-typescript.js'
+import 'prismjs/components/prism-jsx.js'
 
 const App = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
@@ -37,22 +35,30 @@ const App = () => {
     setFunctionParameters,
   } = useFunctionCode(selectedFunctionName, selectedExampleCategory)
 
-  // Analyze method calls and variable types
-  const { methodCalls } = useMethodAnalysis(functionCode)
-
-  // Check permissions for the extracted methods
-  const hasPermission = usePermissionCheck(methodCalls)
-
   const exampleCategories = Object.keys(examples).map((key) => ({
     value: key,
     label: key,
   }))
 
   const functionSelections = selectedExampleCategory
-    ? Object.keys(examples[selectedExampleCategory]).map((key) => ({
-        value: key,
-        label: key,
-      }))
+    ? Object.entries(examples[selectedExampleCategory]).map(([key, value]) => {
+        if (typeof value === 'object' && !('type' in value)) {
+          // This is a category
+          return {
+            value: key,
+            label: key.replace(/([A-Z])/g, ' $1').trim(), // Convert camelCase to spaces
+            subcategories: Object.keys(value).map((subKey) => ({
+              value: subKey,
+              label: subKey.replace(/([A-Z])/g, ' $1').trim(),
+            })),
+          }
+        }
+        // This is a direct function
+        return {
+          value: key,
+          label: key.replace(/([A-Z])/g, ' $1').trim(),
+        }
+      })
     : []
 
   const handleCategoryChange = (value) => {
@@ -128,31 +134,29 @@ const App = () => {
   }, [])
 
   const handleFunctionExecutionWithoutParameters = () => {
-    // Check if both a category and function name have been selected
     if (selectedExampleCategory && selectedFunctionName) {
-      // Retrieve the category object from the examples using the selected category
-      const category = examples[selectedExampleCategory]
+      // Handle nested function names (e.g., "elementManagement.setSelectedElement")
+      const [category, funcName] = selectedFunctionName.includes('.')
+        ? selectedFunctionName.split('.')
+        : [null, selectedFunctionName]
 
-      // Retrieve the function to be executed from the category using the selected function name
+      // Get the top-level category
+      const topCategory = examples[selectedExampleCategory]
+
+      // Get the function to execute, handling nested categories
       const funcToExecute = category
-        ? category[selectedFunctionName]
-        : undefined
+        ? topCategory[category][funcName] // For nested functions like elementManagement.getSelectedElement
+        : topCategory[selectedFunctionName] // For top-level functions
 
-      // Check if a valid function is found and no parameters are required for execution
       if (funcToExecute && parameterNames.length === 0) {
         try {
-          // Execute the function if no parameters are needed
           const result = funcToExecute()
-
-          // Check if the result is a promise (i.e., async function) and handle accordingly
           if (result && typeof result.then === 'function') {
-            // Handle promise (async function) result here if needed
+            result.then(console.log).catch(console.error)
           } else {
-            // If the result is not a promise, log it directly
             console.log(result)
           }
         } catch (error) {
-          // Catch and log any errors that occur during function execution
           console.error('Error executing function:', error)
         }
       }
@@ -160,34 +164,34 @@ const App = () => {
   }
 
   const handleFunctionExecutionWithParameters = () => {
-    // Retrieve the category object from the examples using the selected category
-    const category = examples[selectedExampleCategory]
+    if (selectedExampleCategory && selectedFunctionName) {
+      // Retrieve the function to execute based on the currently selected category and function name
+      const funcToExecute =
+        examples[selectedExampleCategory][selectedFunctionName]
 
-    // Retrieve the function to execute based on the currently selected category and function name
-    const funcToExecute = category ? category[selectedFunctionName] : undefined
+      if (funcToExecute) {
+        try {
+          // If there are parameter names defined, map them to their respective values; otherwise, use an empty array
+          const paramValues =
+            parameterNames.length > 0
+              ? parameterNames.map((name) => functionParameters[name])
+              : []
 
-    if (funcToExecute) {
-      try {
-        // If there are parameter names defined, map them to their respective values; otherwise, use an empty array
-        const paramValues =
-          parameterNames.length > 0
-            ? parameterNames.map((name) => functionParameters[name])
-            : []
+          if (typeof funcToExecute === 'function') {
+            // Check if the retrieved item is a function
 
-        if (typeof funcToExecute === 'function') {
-          // Check if the retrieved item is a function
+            const result = funcToExecute(...paramValues) // Execute the function with the parameters
 
-          const result = funcToExecute(...paramValues) // Execute the function with the parameters
-
-          if (result && typeof result.then === 'function') {
-            // Check if the result is a Promise (asynchronous function)
-            result.catch(console.error) // Catch and log any errors that occur during Promise execution
-          } else {
-            console.log(result) // Log the result for synchronous functions
+            if (result && typeof result.then === 'function') {
+              // Check if the result is a Promise (asynchronous function)
+              result.catch(console.error) // Catch and log any errors that occur during Promise execution
+            } else {
+              console.log(result) // Log the result for synchronous functions
+            }
           }
+        } catch (error) {
+          console.error('Error executing function:', error) // Catch and log any errors that occur during the function call
         }
-      } catch (error) {
-        console.error('Error executing function:', error) // Catch and log any errors that occur during the function call
       }
     }
   }
@@ -259,6 +263,7 @@ const App = () => {
         selectedValue={selectedFunctionName}
         onValueChange={handleFunctionChange}
       />
+
       <div id="inputs" className="w-container">
         {parameterNames.length > 0 &&
           parameterNames.map((name, index) => (
@@ -280,22 +285,15 @@ const App = () => {
                   ? enumToArray(enums[parameterNames[index]])
                   : undefined
               }
-              disabled={!hasPermission}
             ></ParameterInput>
           ))}
         {parameterNames.length > 0 && (
           <button
             onClick={handleFunctionExecutionWithParameters}
-            className={`button cc-primary ${!hasPermission ? 'disabled-class' : ''}`}
-            disabled={!hasPermission}
+            className="button cc-primary"
           >
             Run Function
           </button>
-        )}
-        {!hasPermission && (
-          <p className="error-message">
-            Please change designer mode to use this method.
-          </p>
         )}
       </div>
       {selectedFunctionName && (
@@ -305,7 +303,7 @@ const App = () => {
           <p>
             <small>
               <i>
-                Open your browser’s console to view the output of the function.
+                Open your browser's console to view the output of the function.
               </i>
             </small>
           </p>

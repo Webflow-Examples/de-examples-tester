@@ -6,10 +6,9 @@ export const Variables = {
     console.log(variableCollections)
   },
 
-  createVariableCollection: async () => {
+  createVariableCollection: async (name: string) => {
     // Create a new variable collection
-    const newVariableCollection =
-      await webflow.createVariableCollection('My New Collection')
+    const newVariableCollection = await webflow.createVariableCollection(name)
     console.log('New Variable Collection:')
     console.log(newVariableCollection)
   },
@@ -118,13 +117,13 @@ export const Variables = {
     console.log(myFontFamilyVariable)
   },
 
-  createNumberVariable: async (number: number) => {
+  createNumberVariable: async (name: string, number: number) => {
     // Get Collection
     const collection = await webflow.getDefaultVariableCollection()
 
     // Create Number Variable with a Number Value
     const myNumberVariable = await collection?.createNumberVariable(
-      'My Number',
+      name,
       number,
     )
     console.log(myNumberVariable)

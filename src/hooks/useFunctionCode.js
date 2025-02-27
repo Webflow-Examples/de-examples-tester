@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import examples from '../examples/examples'
 
+const BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? 'https://deploy-preview-1--thriving-zuccutto-5ad917.netlify.app'
+    : 'https://main--thriving-zuccutto-5ad917.netlify.app'
+
 // This hook is responsible for fetching and parsing function code, and extracting parameters.
 export const useFunctionCode = (
   selectedFunctionName,
@@ -13,13 +18,17 @@ export const useFunctionCode = (
 
   useEffect(() => {
     if (selectedFunctionName && selectedExampleCategory) {
-      const filePath = `https://main--thriving-zuccutto-5ad917.netlify.app/examples/${selectedExampleCategory.toLowerCase()}.ts`
+      const filePath = `${BASE_URL}/examples/${selectedExampleCategory.toLowerCase()}.ts`
 
       fetch(filePath)
         .then((response) => response.text())
         .then((text) => {
           // Function to parse the function text and extract details
-          const functionMatch = parseFunctionText(text, selectedFunctionName)
+          const functionMatch = parseFunctionText(
+            text,
+            selectedFunctionName,
+            selectedExampleCategory,
+          )
 
           if (functionMatch) {
             let extractedCode = functionMatch
@@ -63,26 +72,88 @@ export const useFunctionCode = (
 }
 
 // Utility function to parse function text
-const parseFunctionText = (text, selectedFunctionName) => {
-  // Regex to find all async function definitions in the export const object
-  const funcRegex = /(\w+):\s+async\s*\(\s*.*?\)\s*=>\s*{(.*?)}/gs
+const parseFunctionText = (
+  text,
+  selectedFunctionName,
+  selectedExampleCategory,
+) => {
+  // First, find the top-level category (Elements, Assets, etc.)
+  const findMatchingBrace = (str, startIndex) => {
+    let braceCount = 1
+    let i = startIndex
 
-  // Match all function definitions
-  const matches = [...text.matchAll(funcRegex)]
+    while (i < str.length && braceCount > 0) {
+      if (str[i] === '{') braceCount++
+      if (str[i] === '}') braceCount--
+      i++
+    }
+
+    return i
+  }
+
+  // Find the start of the category
+  const categoryStart = text.indexOf(
+    `export const ${selectedExampleCategory} = {`,
+  )
+  if (categoryStart === -1) {
+    console.error('Top level category not found:', selectedExampleCategory)
+    throw new Error(`Category "${selectedExampleCategory}" not found.`)
+  }
+
+  // Find the matching closing brace
+  const contentStart =
+    categoryStart + `export const ${selectedExampleCategory} = {`.length
+  const contentEnd = findMatchingBrace(text, contentStart)
+
+  // Extract everything between the braces
+  let searchText = text.slice(contentStart, contentEnd)
+
+  // Handle nested function names (e.g., "elementManagement.setSelectedElement")
+  const [category, funcName] = selectedFunctionName.includes('.')
+    ? selectedFunctionName.split('.')
+    : [null, selectedFunctionName]
+
+  // If we have a subcategory, extract that section
+  if (category) {
+    // Find the start of the subcategory
+    const subcategoryStart = searchText.indexOf(`${category}:`)
+    if (subcategoryStart === -1) {
+      console.error('Subcategory not found:', category)
+      throw new Error(`Subcategory "${category}" not found.`)
+    }
+
+    // Find the opening brace
+    const braceStart = searchText.indexOf('{', subcategoryStart)
+    if (braceStart === -1) {
+      throw new Error(`No opening brace found for subcategory "${category}"`)
+    }
+
+    // Find the matching closing brace using our existing helper
+    const subcategoryEnd = findMatchingBrace(searchText, braceStart + 1)
+
+    // Extract everything between the braces
+    searchText = searchText.slice(braceStart + 1, subcategoryEnd - 1)
+  }
+
+  // Regex to find all function definitions
+  const funcRegex = /(\w+):\s*(async\s*)?\(\s*.*?\)\s*=>\s*{(.*?)}/gs
+
+  // Match all function definitions in the search text
+  const matches = [...searchText.matchAll(funcRegex)]
 
   // Find the match for the selected function
   const selectedFunctionMatch = matches.find(
-    (match) => match[1] === selectedFunctionName,
+    (match) => match[1] === (funcName || selectedFunctionName),
   )
 
   // If the function is not found, throw an error
   if (!selectedFunctionMatch) {
-    throw new Error(`Function "${selectedFunctionName}" not found.`)
+    throw new Error(`Function "${funcName || selectedFunctionName}" not found.`)
   }
 
   // Get the index of the selected function in the matches
   const selectedFunctionIndex = matches.findIndex(
-    (match) => match[1] === selectedFunctionName,
+    (match) => match[1] === (funcName || selectedFunctionName),
   )
 
   // Get text for the selected function and everything up to the next function
@@ -96,18 +167,19 @@ const parseFunctionText = (text, selectedFunctionName) => {
 
   // Determine the end index for extraction
   const endIndex = nextFunctionText
-    ? text.indexOf(nextFunctionText)
-    : text.length
+    ? searchText.indexOf(nextFunctionText)
+    : searchText.length
 
   // Extract everything from the function text up to the end index
-  let extractedText = text.slice(text.indexOf(functionText), endIndex).trim()
+  let extractedText = searchText
+    .slice(searchText.indexOf(functionText), endIndex)
+    .trim()
 
   // Remove the trailing "}" if this is the last function in the file
   if (!nextFunctionText) {
     extractedText = extractedText.replace(/\s*}$/, '')
   }
-
-  return extractedText // Return the extracted function text
+  return extractedText
 }
 
 // Utility function to extract parameters and types
@@ -126,4 +198,34 @@ const extractParameters = (functionMatch) => {
     }
   }
   return { params, types }
+}
+
+const handleFunctionExecutionWithoutParameters = () => {
+  if (selectedExampleCategory && selectedFunctionName) {
+    // Handle nested function names (e.g., "elementManagement.setSelectedElement")
+    const [category, funcName] = selectedFunctionName.includes('.')
+      ? selectedFunctionName.split('.')
+      : [null, selectedFunctionName]
+
+    // Get the top-level category
+    const topCategory = examples[selectedExampleCategory]
+
+    // Get the function to execute, handling nested categories
+    const funcToExecute = category
+      ? topCategory[category][funcName] // For nested functions like elementManagement.getSelectedElement
+      : topCategory[selectedFunctionName] // For top-level functions
+
+    if (funcToExecute && parameterNames.length === 0) {
+      try {
+        const result = funcToExecute()
+        if (result && typeof result.then === 'function') {
+          result.catch(console.error)
+        } else {
+          console.log(result)
+        }
+      } catch (error) {
+        console.error('Error executing function:', error)
+      }
+    }
+  }
 }

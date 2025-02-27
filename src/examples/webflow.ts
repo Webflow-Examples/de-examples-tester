@@ -75,7 +75,11 @@ export const Webflow = {
     console.log(capabilities)
   },
 
-  checkAppConnection: async () => {},
+  checkAppConnection: async () => {
+    // Check for current app connection
+    const appConnection = await webflow.getCurrentAppConnection()
+    console.log(appConnection)
+  },
 
   notifyUser: async () => {
     // General notification

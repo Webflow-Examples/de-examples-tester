@@ -1,6 +1,11 @@
-const path = require('path')
+import path from 'path'
+import { fileURLToPath } from 'url'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+export default {
   entry: './src/main.js',
   output: {
     filename: 'bundle.js',
@@ -9,14 +14,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
-      },
-      {
-        test: /\.(ts|tsx)$/,
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -43,7 +41,13 @@ module.exports = {
     port: 1337,
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx', '.mjs'],
+    extensionAlias: {
+      '.js': ['.js', '.ts', '.tsx'],
+      '.mjs': ['.mjs', '.mts'],
+      '.cjs': ['.cjs', '.cts'],
+    },
+    fullySpecified: false,
   },
   devtool: 'source-map',
 }
