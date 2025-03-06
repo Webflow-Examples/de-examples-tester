@@ -12,9 +12,7 @@ export const Webflow = {
     const siteInfo = await webflow.getSiteInfo()
 
     // Print Site Information
-    console.log('Site ID:', siteInfo.siteId)
-    console.log('Site Name:', siteInfo.siteName)
-    console.log('Short Name:', siteInfo.shortName)
+    console.log(JSON.stringify(siteInfo, null, 2))
   },
 
   setExtensionSize: async (extensionSizeEnum: ExtensionSizeEnum) => {
