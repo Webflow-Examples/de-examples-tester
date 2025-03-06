@@ -680,4 +680,33 @@ export const Elements = {
       }
     },
   },
+
+  formOperations: {
+    getFormName: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        const formName = await selectedElement?.getName()
+        console.log(formName)
+      } else {
+        console.log('Selected Element is not a Form')
+      }
+    },
+
+    setFormName: async (name: string) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        await selectedElement?.setName(name)
+      }
+    },
+  },
 }
