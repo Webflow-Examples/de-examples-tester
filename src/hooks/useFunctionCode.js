@@ -3,7 +3,7 @@ import examples from '../examples/examples'
 
 const BASE_URL =
   process.env.NODE_ENV === 'development'
-    ? 'https://deploy-preview-1--thriving-zuccutto-5ad917.netlify.app'
+    ? 'https://development--thriving-zuccutto-5ad917.netlify.app'
     : 'https://main--thriving-zuccutto-5ad917.netlify.app'
 
 // This hook is responsible for fetching and parsing function code, and extracting parameters.
