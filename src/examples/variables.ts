@@ -181,7 +181,7 @@ export const Variables = {
       }
     },
 
-    setVariable: async (name: string) => {
+    setVariableValue: async (name: string) => {
       // Get Collection
       const collection = await webflow.getDefaultVariableCollection()
 
@@ -190,6 +190,23 @@ export const Variables = {
 
       // Check Variable type and set color
       if (variable?.type === 'Color') await variable.set('#fffcc11')
+    },
+
+    setVariableValueWithMode: async () => {
+      // Get the default variable collection
+      const collection = await webflow.getDefaultVariableCollection()
+
+      // Create variable for the collection with a default value
+      const colorVariable = await collection?.createColorVariable(
+        'Body Text',
+        '#ccc',
+      )
+
+      // Create a variable mode
+      const variableMode = await collection?.createVariableMode('Dark Mode')
+
+      // Set a mode-specific value on the variables
+      await colorVariable?.set('#FFF', { mode: variableMode })
     },
 
     applyVariableToStyle: async (styleName: string, variableName: string) => {
@@ -254,35 +271,35 @@ export const Variables = {
       const variableMode = await collection?.getVariableModeById(modeId)
       console.log(variableMode)
     },
-  },
 
-  getVariableModeByName: async (modeName: string) => {
-    // Get Collection
-    const collection = await webflow.getDefaultVariableCollection()
+    getVariableModeByName: async (modeName: string) => {
+      // Get Collection
+      const collection = await webflow.getDefaultVariableCollection()
 
-    // Get Variable Mode by Name
-    const variableMode = await collection?.getVariableModeByName(modeName)
-    console.log(variableMode)
-  },
-
-  // Create Variable Mode
-  createVariableMode: async (modeName: string) => {
-    // Get Collection
-    const collection = await webflow.getDefaultVariableCollection()
+      // Get Variable Mode by Name
+      const variableMode = await collection?.getVariableModeByName(modeName)
+      console.log(variableMode)
+    },
 
     // Create Variable Mode
-    const variableMode = await collection?.createVariableMode(modeName)
-  },
+    createVariableMode: async (modeName: string) => {
+      // Get Collection
+      const collection = await webflow.getDefaultVariableCollection()
 
-  // Remove Variable Mode
-  removeVariableMode: async (modeId: string) => {
-    // Get Collection
-    const collection = await webflow.getDefaultVariableCollection()
-
-    // Get Variable Mode
-    const variableMode = await collection?.getVariableModeById(modeId)
+      // Create Variable Mode
+      const variableMode = await collection?.createVariableMode(modeName)
+    },
 
     // Remove Variable Mode
-    variableMode?.remove()
+    removeVariableMode: async (modeId: string) => {
+      // Get Collection
+      const collection = await webflow.getDefaultVariableCollection()
+
+      // Get Variable Mode
+      const variableMode = await collection?.getVariableModeById(modeId)
+
+      // Remove Variable Mode
+      variableMode?.remove()
+    },
   },
 }
