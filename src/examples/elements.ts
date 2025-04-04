@@ -681,6 +681,7 @@ export const Elements = {
     },
   },
 
+  // Form Operations
   formOperations: {
     getFormName: async () => {
       // Get Selected Element
@@ -706,6 +707,40 @@ export const Elements = {
         selectedElement?.type === 'FormWrapper'
       ) {
         await selectedElement?.setName(name)
+      }
+    },
+
+    getFormSettings: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        const formSettings = await selectedElement?.getSettings()
+        console.log(formSettings)
+      }
+    },
+
+    setFormSettings: async (
+      name: string,
+      method: 'get' | 'post',
+      state: 'success' | 'error' | 'loading',
+      action: string,
+    ) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        await selectedElement?.setSettings({
+          method: 'post',
+          name: 'New Form',
+          state: 'success',
+        })
       }
     },
   },
