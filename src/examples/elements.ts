@@ -9,6 +9,17 @@ export enum LinkModeSettings {
   attachment = 'attachment',
 }
 
+export enum MethodEnum {
+  get = 'get',
+  post = 'post',
+}
+
+export enum StateEnum {
+  success = 'success',
+  error = 'error',
+  loading = 'loading',
+}
+
 export const Elements = {
   // Element Management
   elementManagement: {
@@ -681,6 +692,7 @@ export const Elements = {
     },
   },
 
+  // Form Operations
   formOperations: {
     getFormName: async () => {
       // Get Selected Element
@@ -706,6 +718,40 @@ export const Elements = {
         selectedElement?.type === 'FormWrapper'
       ) {
         await selectedElement?.setName(name)
+      }
+    },
+
+    getFormSettings: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        const formSettings = await selectedElement?.getSettings()
+        console.log(formSettings)
+      }
+    },
+
+    setFormSettings: async (
+      name: string,
+      method: MethodEnum,
+      state: StateEnum,
+      action: string,
+    ) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (
+        selectedElement?.type === 'FormForm' ||
+        selectedElement?.type === 'FormWrapper'
+      ) {
+        await selectedElement?.setSettings({
+          method: 'post',
+          name: 'New Form',
+          state: 'success',
+        })
       }
     },
   },
