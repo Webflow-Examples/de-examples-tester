@@ -9,6 +9,17 @@ export enum LinkModeSettings {
   attachment = 'attachment',
 }
 
+export enum MethodEnum {
+  get = 'get',
+  post = 'post',
+}
+
+export enum StateEnum {
+  success = 'success',
+  error = 'error',
+  loading = 'loading',
+}
+
 export const Elements = {
   // Element Management
   elementManagement: {
@@ -725,8 +736,8 @@ export const Elements = {
 
     setFormSettings: async (
       name: string,
-      method: 'get' | 'post',
-      state: 'success' | 'error' | 'loading',
+      method: MethodEnum,
+      state: StateEnum,
       action: string,
     ) => {
       // Get Selected Element
