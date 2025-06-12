@@ -63,6 +63,7 @@ type ParameterInputProps = {
   inputType: string
   options?: string[]
   disabled?: boolean
+  strictEnum?: boolean
 }
 
 const ParameterInput: React.FC<ParameterInputProps> = ({
@@ -73,6 +74,7 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   inputType,
   options,
   disabled,
+  strictEnum = false,
 }) => {
   const config = inputConfig[inputType]
 
@@ -90,6 +92,28 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
     )
   }
 
+  // Strict enum: render a <select> dropdown
+  if (inputType === 'enum' && strictEnum && options?.length) {
+    return (
+      <select
+        className={config.className}
+        value={value || ''}
+        onChange={config.onChange(name, onChange)}
+        disabled={disabled}
+      >
+        <option value="" disabled>
+          {config.placeholder || placeholder || 'Select an option'}
+        </option>
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  // Open enum: render <input> with <datalist>
   return (
     <>
       {inputType === 'enum' ? (

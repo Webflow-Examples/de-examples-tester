@@ -142,21 +142,32 @@ const APIExplorer: React.FC = () => {
       </div>
       {parameterNames.length > 0 && (
         <div style={{ marginBottom: 12 }}>
-          {parameterNames.map((param, idx) => (
-            <ParameterInput
-              key={param}
-              name={param}
-              value={functionParameters[param]}
-              onChange={handleParameterChange}
-              inputType={parameterTypes[idx] || 'string'}
-              options={
-                parameterTypes[idx] === 'enum'
-                  ? enums[param + 'Enum'] || []
-                  : undefined
-              }
-              disabled={false}
-            />
-          ))}
+          {parameterNames.map((param, idx) => {
+            // If the parameter type matches a key in enums, treat as strict enum
+            const enumOptions = enums[parameterTypes[idx]]
+            const isStrictEnum =
+              !!enumOptions && Array.isArray(Object.values(enumOptions))
+            return (
+              <ParameterInput
+                key={param}
+                name={param}
+                value={functionParameters[param]}
+                onChange={handleParameterChange}
+                inputType={
+                  isStrictEnum ? 'enum' : parameterTypes[idx] || 'string'
+                }
+                options={
+                  isStrictEnum
+                    ? Object.values(enumOptions)
+                    : parameterTypes[idx] === 'enum'
+                      ? enums[param + 'Enum'] || []
+                      : undefined
+                }
+                strictEnum={isStrictEnum}
+                disabled={false}
+              />
+            )
+          })}
         </div>
       )}
       <div style={{ marginBottom: 12 }}>
