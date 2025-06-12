@@ -44,6 +44,18 @@ const APIExplorer: React.FC = () => {
     setApiOutput('')
   }, [selectedFunctionName, selectedExampleCategory])
 
+  // Auto-run function if selected and has no parameters
+  useEffect(() => {
+    if (
+      selectedFunctionName &&
+      parameterNames.length === 0 &&
+      selectedExampleCategory
+    ) {
+      handleFunctionExecution()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFunctionName, selectedExampleCategory, parameterNames])
+
   const exampleCategories = Object.keys(examples).map((key) => ({
     value: key,
     label: key,
@@ -164,21 +176,17 @@ const APIExplorer: React.FC = () => {
           ))}
         </div>
       )}
-      <div style={{ marginBottom: 12 }}>
-        <button
-          onClick={handleFunctionExecution}
-          disabled={!selectedFunctionName}
-          style={{ padding: '6px 16px', fontWeight: 600 }}
-        >
-          Run
-        </button>
-        <button
-          onClick={() => setApiOutput('')}
-          style={{ marginLeft: 8, padding: '6px 16px' }}
-        >
-          Clear Output
-        </button>
-      </div>
+      {/* Only show Run button if there are parameters */}
+      {parameterNames.length > 0 && (
+        <div style={{ marginBottom: 12 }}>
+          <button
+            onClick={handleFunctionExecution}
+            disabled={!selectedFunctionName}
+          >
+            Run
+          </button>
+        </div>
+      )}
       {functionCode && (
         <div style={{ marginBottom: 24 }}>
           <label style={{ fontWeight: 600 }}>Source Code:</label>
@@ -199,7 +207,12 @@ const APIExplorer: React.FC = () => {
         </div>
       )}
       <div style={{ marginTop: 24 }}>
-        <label style={{ fontWeight: 600 }}>Output:</label>
+        <label style={{ fontWeight: 600 }}>
+          Output:
+          <button onClick={() => setApiOutput('')} style={{ marginLeft: 8 }}>
+            Clear Output
+          </button>
+        </label>
         <pre
           style={{
             background: '#222',
