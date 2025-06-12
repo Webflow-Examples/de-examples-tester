@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './App.css'
 import Playground from './components/Playground'
@@ -12,6 +12,10 @@ const TABS = [
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('api')
+
+  useEffect(() => {
+    webflow.setExtensionSize({ height: 425, width: 500 })
+  }, [])
 
   return (
     <div id="container" className="container u-pt-1">
