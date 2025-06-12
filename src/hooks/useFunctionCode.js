@@ -54,6 +54,9 @@ export const useFunctionCode = (
             let extractedCode = functionMatch
               .replace(`${selectedFunctionName}:`, '')
               .replace(/,\s*$/, '')
+
+            // Strip the function wrapper to show only the body content
+            extractedCode = stripFunctionWrapper(extractedCode)
             setFunctionCode(extractedCode)
 
             const { params, types } = extractParameters(functionMatch)
@@ -209,6 +212,28 @@ const parseFunctionText = (
     extractedText = extractedText.replace(/\s*}$/, '')
   }
   return extractedText
+}
+
+// Utility function to strip the async function wrapper and show only the body
+const stripFunctionWrapper = (code) => {
+  // Remove leading whitespace
+  let cleanedCode = code.trim()
+
+  // Remove the async function wrapper pattern: async (...params) => {
+  // This regex matches: optional 'async', optional whitespace, optional params in parentheses, '=>', '{'
+  const functionWrapperRegex = /^\s*async\s*\([^)]*\)\s*=>\s*\{/
+  if (functionWrapperRegex.test(cleanedCode)) {
+    // Remove the function declaration part
+    cleanedCode = cleanedCode.replace(functionWrapperRegex, '')
+
+    // Remove the trailing closing brace and any trailing comma/whitespace
+    cleanedCode = cleanedCode.replace(/\s*\}\s*,?\s*$/, '')
+  }
+
+  // Clean up any extra leading/trailing whitespace
+  cleanedCode = cleanedCode.trim()
+
+  return cleanedCode
 }
 
 // Utility function to extract parameters and types
