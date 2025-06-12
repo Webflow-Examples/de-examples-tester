@@ -1,10 +1,29 @@
 import { useState, useEffect } from 'react'
 import examples from '../examples/examples'
 
-const BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'https://development--thriving-zuccutto-5ad917.netlify.app'
-    : 'https://main--thriving-zuccutto-5ad917.netlify.app'
+// Import raw TypeScript files using Vite's ?raw suffix
+import assetsRaw from '../examples/assets.ts?raw'
+import componentsRaw from '../examples/components.ts?raw'
+import elementsRaw from '../examples/elements.ts?raw'
+import foldersRaw from '../examples/folders.ts?raw'
+import pagesRaw from '../examples/pages.ts?raw'
+import paymentsRaw from '../examples/payments.ts?raw'
+import stylesRaw from '../examples/styles.ts?raw'
+import variablesRaw from '../examples/variables.ts?raw'
+import webflowRaw from '../examples/webflow.ts?raw'
+
+// Map category names to their raw file contents
+const RAW_FILES_MAP = {
+  assets: assetsRaw,
+  components: componentsRaw,
+  elements: elementsRaw,
+  folders: foldersRaw,
+  pages: pagesRaw,
+  payments: paymentsRaw,
+  styles: stylesRaw,
+  variables: variablesRaw,
+  webflow: webflowRaw,
+}
 
 // This hook is responsible for fetching and parsing function code, and extracting parameters.
 export const useFunctionCode = (
@@ -18,14 +37,15 @@ export const useFunctionCode = (
 
   useEffect(() => {
     if (selectedFunctionName && selectedExampleCategory) {
-      const filePath = `${BASE_URL}/examples/${selectedExampleCategory.toLowerCase()}.ts`
+      // Get the raw file content from the imported files
+      const rawFileContent =
+        RAW_FILES_MAP[selectedExampleCategory.toLowerCase()]
 
-      fetch(filePath)
-        .then((response) => response.text())
-        .then((text) => {
+      if (rawFileContent) {
+        try {
           // Function to parse the function text and extract details
           const functionMatch = parseFunctionText(
-            text,
+            rawFileContent,
             selectedFunctionName,
             selectedExampleCategory,
           )
@@ -50,14 +70,23 @@ export const useFunctionCode = (
             setParameterTypes([])
             setFunctionParameters({})
           }
-        })
-        .catch((error) => {
-          console.error('Failed to fetch function source:', error)
-          setFunctionCode('')
+        } catch (error) {
+          console.error('Failed to parse function source:', error)
+          setFunctionCode('Error parsing function code.')
           setParameterNames([])
           setParameterTypes([])
           setFunctionParameters({})
-        })
+        }
+      } else {
+        console.error(
+          'Raw file not found for category:',
+          selectedExampleCategory,
+        )
+        setFunctionCode('Example category not found.')
+        setParameterNames([])
+        setParameterTypes([])
+        setFunctionParameters({})
+      }
     }
   }, [selectedFunctionName, selectedExampleCategory])
 
