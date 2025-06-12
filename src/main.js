@@ -19,7 +19,7 @@ const App = () => {
 
   return (
     <div id="container" className="container u-pt-1">
-      <h1 className="strong h2" style={{ marginBottom: 0 }}>
+      <h1 className="strong h2" style={{ marginBottom: 15, marginTop: 4 }}>
         Webflow <br />
         Designer API Explorer
       </h1>

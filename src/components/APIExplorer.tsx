@@ -180,6 +180,7 @@ const APIExplorer: React.FC = () => {
       {parameterNames.length > 0 && (
         <div style={{ marginBottom: 12 }}>
           <button
+            className="button cc-primary"
             onClick={handleFunctionExecution}
             disabled={!selectedFunctionName}
           >
@@ -206,13 +207,8 @@ const APIExplorer: React.FC = () => {
           </pre>
         </div>
       )}
-      <div style={{ marginTop: 24 }}>
-        <label style={{ fontWeight: 600 }}>
-          Output:
-          <button onClick={() => setApiOutput('')} style={{ marginLeft: 8 }}>
-            Clear Output
-          </button>
-        </label>
+      <div style={{ marginTop: 24, position: 'relative' }}>
+        <label style={{ fontWeight: 600 }}>Output:</label>
         <pre
           style={{
             background: '#222',
@@ -223,9 +219,25 @@ const APIExplorer: React.FC = () => {
             marginTop: 4,
             fontSize: 13,
             overflowX: 'auto',
+            position: 'relative',
           }}
         >
           {apiOutput}
+          {/* Clear Output button in bottom right */}
+          <button
+            className="button cc-primary"
+            onClick={() => setApiOutput('')}
+            style={{
+              position: 'absolute',
+              right: 12,
+              bottom: 12,
+              padding: '4px 12px',
+              fontSize: 12,
+              zIndex: 2,
+            }}
+          >
+            Clear Output
+          </button>
         </pre>
       </div>
     </div>

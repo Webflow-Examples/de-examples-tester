@@ -148,20 +148,68 @@ input {
 }
 
 .button.cc-primary:disabled {
-  background-color: #D8D8D8;
+  background-color: #d8d8d8;
   -webkit-transition-property: none;
   transition-property: none;
   color: #757575;
 }
 
 .button.cc-primary:disabled:hover {
-  background-color: #EE1D36;
+  background-color: #ee1d36;
   -webkit-transition-property: none;
   transition-property: none;
   color: #363636;
 }
 
-.error-message{
-  color: #EE1D36;
-  font-size: .5em;
+.error-message {
+  color: #ee1d36;
+  font-size: 0.5em;
+}
+/* TabNavigation styles */
+.tablist {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  border-bottom: 1px solid #444;
+  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.tab-btn {
+  position: relative;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 24px 8px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #006acc;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  transition:
+    color 0.2s,
+    border-bottom 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn[data-state='active'] {
+  color: #006acc;
+  border-bottom: 3px solid #006acc;
+  font-weight: 700;
+  border-radius: 0;
+  background: none;
+}
+
+.tab-btn:hover:not([data-state='active']) {
+  color: #339dff;
+  background: none;
+}
+
+.tab-btn:focus-visible {
+  box-shadow: 0 2px 0 0 #339dff;
+}
+
+.tab-btn:focus {
+  outline: none;
 }

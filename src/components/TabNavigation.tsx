@@ -16,40 +16,25 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
   activeTab,
   setActiveTab,
 }) => (
-  <div
-    style={{
-      display: 'flex',
-      gap: 0,
-      marginBottom: 20,
-      marginTop: 8,
-      borderBottom: '1px solid #444',
-    }}
-  >
-    {tabs.map((tab) => (
-      <button
-        key={tab.key}
-        onClick={() => setActiveTab(tab.key)}
-        style={{
-          padding: '10px 24px',
-          border: 'none',
-          borderBottom:
-            activeTab === tab.key
-              ? '3px solid #8ac2ff'
-              : '3px solid transparent',
-          background: 'none',
-          color: activeTab === tab.key ? '#8ac2ff' : '#bdbdbd',
-          fontWeight: activeTab === tab.key ? 700 : 500,
-          fontSize: 16,
-          cursor: 'pointer',
-          outline: 'none',
-          transition: 'color 0.2s, border-bottom 0.2s',
-        }}
-        aria-selected={activeTab === tab.key}
-        tabIndex={activeTab === tab.key ? 0 : -1}
-      >
-        {tab.label}
-      </button>
-    ))}
+  <div role="tablist" aria-label="Main Tabs" className="tablist">
+    {tabs.map((tab) => {
+      const isActive = activeTab === tab.key
+      return (
+        <button
+          key={tab.key}
+          id={`tab-${tab.key}`}
+          role="tab"
+          aria-selected={isActive}
+          aria-controls={`tabpanel-${tab.key}`}
+          tabIndex={isActive ? 0 : -1}
+          data-state={isActive ? 'active' : 'inactive'}
+          className="tab-btn"
+          onClick={() => setActiveTab(tab.key)}
+        >
+          {tab.label}
+        </button>
+      )
+    })}
   </div>
 )
 
