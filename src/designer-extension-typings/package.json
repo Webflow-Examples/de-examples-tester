@@ -1,0 +1,10 @@
+{
+  "name": "@webflow/designer-extension-typings",
+  "version": "2.0.12",
+  "license": "SEE LICENSE IN LICENSE",
+  "description": "Typings for the Webflow Designer Extension API",
+  "main": "",
+  "scripts": {
+    "test": "tsc"
+  }
+}

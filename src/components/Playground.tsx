@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 import MonacoEditor, { useMonaco } from '@monaco-editor/react'
-import designerExtensionTypings from '@webflow/designer-extension-typings'
+import CodeBlock from './CodeBlock'
+import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
 
-const defaultCode = `// Example: Get the current page name\nconst page = await webflow.getCurrentPage();\nconst name = await page.getName();\nconsole.log('Current page name:', name);`
+const defaultCode = `// Explore the Webflow Designer API
+// Try typing "webflow." to see all available methods.
+
+// Get site information
+const siteInfo = await webflow.getSiteInfo();
+console.log('Site ID:', siteInfo.siteId);
+console.log('Site name:', siteInfo.siteName);`
 
 const Playground: React.FC = () => {
   const [code, setCode] = useState(defaultCode)
@@ -15,14 +22,6 @@ const Playground: React.FC = () => {
   // Inject Webflow Designer Extension typings for intellisense
   useEffect(() => {
     if (monaco) {
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(
-        designerExtensionTypings,
-        'ts:filename/webflow-designer-extension.d.ts',
-      )
-      monaco.languages.typescript.javascriptDefaults.addExtraLib(
-        designerExtensionTypings,
-        'ts:filename/webflow-designer-extension.d.ts',
-      )
       // Relax TypeScript diagnostics
       monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
@@ -55,6 +54,9 @@ const Playground: React.FC = () => {
         target: monaco.languages.typescript.ScriptTarget.ESNext,
         module: monaco.languages.typescript.ModuleKind.ESNext,
       })
+
+      // Load and configure designer extension typings
+      configureMonacoWithDesignerTypings(monaco)
     }
   }, [monaco])
 
@@ -119,10 +121,12 @@ const Playground: React.FC = () => {
 
   // Run user code safely
   const runCode = async (customCode?: string) => {
-    setOutput('')
     setIsRunning(true)
+    setOutput('Running...\n')
     const codeToRun = customCode ?? codeRef.current
     try {
+      // Clear output and start fresh
+      setOutput('')
       // Wrap code in async function for await support
       const asyncCode = `(async (webflow, console) => {\n${codeToRun}\n})`
       // eslint-disable-next-line no-new-func
@@ -137,10 +141,6 @@ const Playground: React.FC = () => {
 
   return (
     <div style={{ padding: 16, maxWidth: 700, margin: '0 auto' }}>
-      <p style={{ color: '#757575', fontSize: '0.98em', marginBottom: 16 }}>
-        Use this playground to experiment with Designer API commands in real
-        time. Enter your requests and see the results instantly.
-      </p>
       <div style={{ marginBottom: 8, position: 'relative' }}>
         <MonacoEditor
           height="240px"
@@ -153,12 +153,17 @@ const Playground: React.FC = () => {
           }}
           theme="vs-dark"
           options={{
-            fontSize: 14,
+            fontSize: 12,
             minimap: { enabled: false },
             fontFamily: 'monospace',
             lineNumbers: 'on',
+            lineNumbersMinChars: 3,
+            glyphMargin: false,
+            folding: false,
+            lineDecorationsWidth: 8,
             scrollBeyondLastLine: false,
             wordWrap: 'on',
+            padding: { top: 8, bottom: 40 }, // Add bottom padding to prevent overlap
           }}
           onMount={(editor, monaco) => {
             editorRef.current = editor
@@ -175,60 +180,49 @@ const Playground: React.FC = () => {
           disabled={isRunning}
           style={{
             position: 'absolute',
-            right: 12,
-            bottom: 12,
-            padding: '8px 20px',
+            right: 16,
+            bottom: 16,
+            padding: '6px 16px',
             fontWeight: 600,
-            fontSize: 14,
-            zIndex: 2,
+            fontSize: 12,
+            zIndex: 10,
             background: '#006acc',
             color: '#fff',
-            border: 'none',
-            borderRadius: 4,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+            border: '1px solid #004c99',
+            borderRadius: 3,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
             cursor: 'pointer',
             opacity: isRunning ? 0.7 : 1,
-            transition: 'opacity 0.2s',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (!isRunning) {
+              e.currentTarget.style.background = '#0078d4'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isRunning) {
+              e.currentTarget.style.background = '#006acc'
+            }
           }}
         >
           {isRunning ? 'Running...' : 'Run'}
         </button>
       </div>
-      <div>
-        <label style={{ fontWeight: 600 }}>Output:</label>
-        <pre
-          style={{
-            background: '#222',
-            color: '#8ac2ff',
-            padding: 12,
-            minHeight: 80,
-            borderRadius: 4,
-            marginTop: 4,
-            fontSize: 13,
-            overflowX: 'auto',
-            position: 'relative',
-          }}
-        >
-          <button
-            onClick={() => setOutput('')}
-            style={{
-              position: 'absolute',
-              right: 12,
-              top: 12,
-              padding: '4px 12px',
-              fontSize: 12,
-              zIndex: 2,
-              background: '#333',
-              color: '#8ac2ff',
-              border: 'none',
-              borderRadius: 3,
-              cursor: 'pointer',
-            }}
-          >
-            Clear Output
-          </button>
-          {output}
-        </pre>
+      <div
+        style={{
+          opacity: output ? 1 : 0,
+          height: output ? 'auto' : 0,
+          overflow: 'hidden',
+          transition: 'opacity 0.2s ease-in-out',
+        }}
+      >
+        <label style={{ fontWeight: 600 }}>Output</label>
+        <CodeBlock
+          code={output || ' '}
+          language="javascript"
+          onClear={output ? () => setOutput('') : undefined}
+        />
       </div>
     </div>
   )

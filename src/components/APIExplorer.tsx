@@ -6,7 +6,11 @@ import enumsImport from '../examples/enums'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
 import 'prismjs/components/prism-jsx.js'
+import 'prismjs/themes/prism-tomorrow.css'
 import { useFunctionCode } from '../hooks/useFunctionCode'
+// @ts-ignore
+import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?raw'
+import CodeBlock from './CodeBlock'
 
 // Add index signatures for dynamic access
 const examples: { [key: string]: any } = examplesImport as any
@@ -27,13 +31,60 @@ const APIExplorer: React.FC = () => {
   // Safe console for API Explorer
   const apiSafeConsole = {
     log: (...args: any[]) =>
-      setApiOutput((prev) => prev + args.join(' ') + '\n'),
+      setApiOutput(
+        (prev) =>
+          prev +
+          args
+            .map((arg) =>
+              typeof arg === 'object' && arg !== null
+                ? JSON.stringify(arg, null, 2)
+                : String(arg),
+            )
+            .join(' ') +
+          '\n',
+      ),
     error: (...args: any[]) =>
-      setApiOutput((prev) => prev + '[Error] ' + args.join(' ') + '\n'),
+      setApiOutput(
+        (prev) =>
+          prev +
+          '[Error] ' +
+          args
+            .map((arg) =>
+              typeof arg === 'object' && arg !== null
+                ? JSON.stringify(arg, null, 2)
+                : String(arg),
+            )
+            .join(' ') +
+          '\n',
+      ),
     warn: (...args: any[]) =>
-      setApiOutput((prev) => prev + '[Warn] ' + args.join(' ') + '\n'),
+      setApiOutput(
+        (prev) =>
+          prev +
+          '[Warn] ' +
+          args
+            .map((arg) =>
+              typeof arg === 'object' && arg !== null
+                ? JSON.stringify(arg, null, 2)
+                : String(arg),
+            )
+            .join(' ') +
+          '\n',
+      ),
     info: (...args: any[]) =>
-      setApiOutput((prev) => prev + '[Info] ' + args.join(' ') + '\n'),
+      setApiOutput(
+        (prev) =>
+          prev +
+          '[Info] ' +
+          args
+            .map((arg) =>
+              typeof arg === 'object' && arg !== null
+                ? JSON.stringify(arg, null, 2)
+                : String(arg),
+            )
+            .join(' ') +
+          '\n',
+      ),
   }
 
   useEffect(() => {
@@ -191,55 +242,19 @@ const APIExplorer: React.FC = () => {
       {functionCode && (
         <div style={{ marginBottom: 24 }}>
           <label style={{ fontWeight: 600 }}>Source Code:</label>
-          <pre
-            className="small-code-block"
-            style={{
-              background: '#181818',
-              color: '#8ac2ff',
-              padding: 12,
-              borderRadius: 4,
-              marginTop: 4,
-              fontSize: 13,
-              overflowX: 'auto',
-            }}
-          >
-            <code className="language-typescript">{functionCode}</code>
-          </pre>
+          <CodeBlock code={functionCode} language="typescript" />
         </div>
       )}
-      <div style={{ marginTop: 24, position: 'relative' }}>
-        <label style={{ fontWeight: 600 }}>Output:</label>
-        <pre
-          style={{
-            background: '#222',
-            color: '#8ac2ff',
-            padding: 12,
-            minHeight: 80,
-            borderRadius: 4,
-            marginTop: 4,
-            fontSize: 13,
-            overflowX: 'auto',
-            position: 'relative',
-          }}
-        >
-          {apiOutput}
-          {/* Clear Output button in bottom right */}
-          <button
-            className="button cc-primary"
-            onClick={() => setApiOutput('')}
-            style={{
-              position: 'absolute',
-              right: 12,
-              bottom: 12,
-              padding: '4px 12px',
-              fontSize: 12,
-              zIndex: 2,
-            }}
-          >
-            Clear Output
-          </button>
-        </pre>
-      </div>
+      {selectedFunctionName && (
+        <div style={{ marginTop: 24, position: 'relative' }}>
+          <label style={{ fontWeight: 600 }}>Output</label>
+          <CodeBlock
+            code={apiOutput}
+            language="javascript"
+            onClear={() => setApiOutput('')}
+          />
+        </div>
+      )}
     </div>
   )
 }

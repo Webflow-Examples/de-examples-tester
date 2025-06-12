@@ -1,4 +1,4 @@
-import { removeIfPresent } from 'typedoc/dist/lib/utils'
+// import { removeIfPresent } from 'typedoc/dist/lib/utils'
 
 export enum LinkModeSettings {
   url = 'url',

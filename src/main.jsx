@@ -1,6 +1,9 @@
+import './brand.css'
+import './App.css'
+
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import './App.css'
+
 import Playground from './components/Playground'
 import TabNavigation from './components/TabNavigation'
 import APIExplorer from './components/APIExplorer'
@@ -18,7 +21,7 @@ const App = () => {
   }, [])
 
   return (
-    <div id="container" className="container u-pt-1">
+    <div id="container" className="container">
       <h1 className="strong h2" style={{ marginBottom: 15, marginTop: 4 }}>
         Webflow <br />
         Designer API Explorer
