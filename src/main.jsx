@@ -1,7 +1,7 @@
 import './brand.css'
 import './App.css'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Playground from './components/Playground'
@@ -15,16 +15,25 @@ const TABS = [
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('api')
+  const containerRef = useRef(null)
 
   useEffect(() => {
+    // Set initial size
     webflow.setExtensionSize({ height: 425, width: 500 })
   }, [])
 
   return (
-    <div id="container" className="container">
-      <h1 className="strong h2" style={{ marginBottom: 15, marginTop: 4 }}>
-        Webflow <br />
-        Designer API Explorer
+    <div id="container" className="container" ref={containerRef}>
+      <h1
+        className="strong h2"
+        style={{
+          marginBottom: 8,
+          marginTop: 0,
+          fontSize: '1.2rem',
+          lineHeight: 1.2,
+        }}
+      >
+        Webflow Designer API Explorer
       </h1>
       <TabNavigation
         tabs={TABS}

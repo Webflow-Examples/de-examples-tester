@@ -1,4 +1,5 @@
-import React, { ChangeEvent } from 'react'
+import React from 'react'
+import type { ChangeEvent } from 'react'
 
 interface DropdownProps {
   options: {
@@ -9,6 +10,7 @@ interface DropdownProps {
   selectedValue: string
   onValueChange: (value: string) => void
   disabled: boolean
+  placeholder?: string
 }
 
 function Dropdown({
@@ -16,6 +18,7 @@ function Dropdown({
   selectedValue,
   onValueChange,
   disabled,
+  placeholder = 'Select an option',
 }: DropdownProps) {
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     if (!disabled) {
@@ -35,7 +38,7 @@ function Dropdown({
         }}
         disabled={disabled}
       >
-        <option value="">Select an option</option>
+        <option value="">{placeholder}</option>
         {options.map((option) =>
           option.subcategories ? (
             <optgroup key={option.value} label={option.label}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import examplesImport from '../examples/examples'
 import Dropdown from './dropdown'
 import ParameterInput from './parameterInput'
@@ -7,7 +7,7 @@ import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
 import 'prismjs/components/prism-jsx.js'
 import 'prismjs/themes/prism-tomorrow.css'
-import { useFunctionCode } from '../hooks/useFunctionCode'
+import { useFunctionCode } from '../hooks/useFunctionCode.js'
 // @ts-ignore
 import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?raw'
 import CodeBlock from './CodeBlock'
@@ -16,13 +16,17 @@ import CodeBlock from './CodeBlock'
 const examples: { [key: string]: any } = examplesImport as any
 const enums: { [key: string]: any } = enumsImport as any
 
+interface ParameterMap {
+  [key: string]: string | number | boolean
+}
+
 const APIExplorer: React.FC = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
-  const [functionParameters, setFunctionParametersState] = useState<{
-    [key: string]: any
-  }>({})
+  const [functionParameters, setFunctionParametersState] =
+    useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
+  const hasAutoExecutedRef = useRef(false)
 
   // Fetch function code and parameters
   const { functionCode, parameterNames, parameterTypes, setParameterNames } =
@@ -100,11 +104,12 @@ const APIExplorer: React.FC = () => {
     if (
       selectedFunctionName &&
       parameterNames.length === 0 &&
-      selectedExampleCategory
+      selectedExampleCategory &&
+      !hasAutoExecutedRef.current
     ) {
+      hasAutoExecutedRef.current = true
       handleFunctionExecution()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFunctionName, selectedExampleCategory, parameterNames])
 
   const exampleCategories = Object.keys(examples).map((key) => ({
@@ -145,6 +150,7 @@ const APIExplorer: React.FC = () => {
 
   const handleFunctionChange = (value: string) => {
     setSelectedFunctionName(value)
+    hasAutoExecutedRef.current = false
   }
 
   const handleParameterChange = (paramName: string, value: any) => {
@@ -187,49 +193,57 @@ const APIExplorer: React.FC = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: 12 }}>
-        <Dropdown
-          options={exampleCategories}
-          selectedValue={selectedExampleCategory}
-          onValueChange={handleCategoryChange}
-          disabled={false}
-        />
-      </div>
-      <div style={{ marginBottom: 12 }}>
-        <Dropdown
-          options={functionSelections}
-          selectedValue={selectedFunctionName}
-          onValueChange={handleFunctionChange}
-          disabled={!selectedExampleCategory}
-        />
+      <div className="flex-row gap-2 mb-2">
+        <div className="flex-1">
+          <Dropdown
+            options={exampleCategories}
+            selectedValue={selectedExampleCategory}
+            onValueChange={handleCategoryChange}
+            disabled={false}
+            placeholder="Select API category"
+          />
+        </div>
+        <div className="flex-1">
+          <Dropdown
+            options={functionSelections}
+            selectedValue={selectedFunctionName}
+            onValueChange={handleFunctionChange}
+            disabled={!selectedExampleCategory}
+            placeholder="Select API method"
+          />
+        </div>
       </div>
       {parameterNames.length > 0 && (
-        <div style={{ marginBottom: 12 }}>
-          {parameterNames.map((name, index) => (
-            <ParameterInput
-              key={name}
-              name={name}
-              inputType={
-                String(parameterTypes[index]).includes('Enum')
-                  ? 'enum'
-                  : parameterTypes[index]
-              }
-              placeholder={`Enter ${name}`}
-              onChange={handleParameterChange}
-              options={
-                String(parameterTypes[index]).includes('Enum')
-                  ? Object.values(enums[parameterNames[index]])
+        <div className="flex-row items-end gap-2">
+          <div className="flex-1">
+            {parameterNames.map((name: string, index: number) => {
+              const paramType = parameterTypes[index]
+              const isEnum = String(paramType).includes('Enum')
+              let enumValues: string[] | undefined
+
+              // Extract the enum key from the type (e.g., "ValidFileTypesEnum" -> "fileTypeEnum")
+              if (isEnum) {
+                const enumKey =
+                  paramType.charAt(0).toLowerCase() + paramType.slice(1)
+                enumValues = enums[enumKey]
+                  ? (Object.values(enums[enumKey]) as string[])
                   : undefined
               }
-              value={functionParameters[name]}
-              disabled={false}
-            />
-          ))}
-        </div>
-      )}
-      {/* Only show Run button if there are parameters */}
-      {parameterNames.length > 0 && (
-        <div style={{ marginBottom: 12 }}>
+
+              return (
+                <ParameterInput
+                  key={name}
+                  name={name}
+                  inputType={isEnum ? 'enum' : paramType}
+                  value={String(functionParameters[name] || '')}
+                  onChange={(name, value) => handleParameterChange(name, value)}
+                  options={enumValues}
+                  placeholder={`Enter ${name}`}
+                  strictEnum={isEnum}
+                />
+              )
+            })}
+          </div>
           <button
             className="button cc-primary"
             onClick={handleFunctionExecution}
@@ -240,14 +254,32 @@ const APIExplorer: React.FC = () => {
         </div>
       )}
       {functionCode && (
-        <div style={{ marginBottom: 24 }}>
-          <label style={{ fontWeight: 600 }}>Source Code:</label>
+        <div className="mb-3">
+          <label
+            style={{
+              fontWeight: 500,
+              fontSize: '12px',
+              display: 'block',
+              marginBottom: '4px',
+            }}
+          >
+            Source Code:
+          </label>
           <CodeBlock code={functionCode} language="typescript" />
         </div>
       )}
       {selectedFunctionName && (
-        <div style={{ marginTop: 24, position: 'relative' }}>
-          <label style={{ fontWeight: 600 }}>Output</label>
+        <div style={{ marginTop: 16, position: 'relative' }}>
+          <label
+            style={{
+              fontWeight: 500,
+              fontSize: '12px',
+              display: 'block',
+              marginBottom: '4px',
+            }}
+          >
+            Output
+          </label>
           <CodeBlock
             code={apiOutput}
             language="javascript"

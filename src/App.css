@@ -168,11 +168,12 @@ input {
 /* TabNavigation styles */
 .tablist {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   overflow-x: auto;
   border-bottom: 1px solid #444;
-  margin-bottom: 20px;
-  margin-top: 8px;
+  margin-bottom: 12px;
+  margin-top: 4px;
+  padding-bottom: 4px;
 }
 
 .tab-btn {
@@ -181,24 +182,22 @@ input {
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 10px 24px 8px 24px;
-  font-size: 1rem;
+  padding: 6px 12px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #006acc;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   border-radius: 0;
   transition:
     color 0.2s,
     border-bottom 0.2s;
   white-space: nowrap;
+  min-height: unset;
 }
 
 .tab-btn[data-state='active'] {
   color: #006acc;
-  border-bottom: 3px solid #006acc;
-  font-weight: 700;
-  border-radius: 0;
-  background: none;
+  border-bottom: 2px solid #006acc;
 }
 
 .tab-btn:hover:not([data-state='active']) {
@@ -212,4 +211,175 @@ input {
 
 .tab-btn:focus {
   outline: none;
+}
+
+.box {
+  position: relative;
+  background: white;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.react-resizable {
+  position: relative;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+}
+
+.container {
+  padding: 0 16px;
+}
+
+.button {
+  appearance: none;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  min-height: 28px;
+}
+
+.button:hover {
+  background: rgb(0 0 0 / 0.02);
+}
+
+.button:active {
+  background: rgb(0 0 0 / 0.05);
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button.cc-primary {
+  background-color: #146ef5;
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 12px;
+  font-weight: 500;
+  min-height: 28px;
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.button.cc-primary:hover {
+  background-color: #0055d4;
+}
+
+.button.cc-primary:disabled {
+  background-color: #d8d8d8;
+  color: #757575;
+}
+
+/* Dropdown and input styles */
+select,
+input {
+  padding: 4px 8px;
+  margin: 2px 0;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  background: white;
+  min-height: 28px;
+}
+
+/* Code block styles */
+pre {
+  font-size: 11px !important;
+  padding: 8px !important;
+  margin: 8px 0 !important;
+  border-radius: 4px;
+}
+
+/* Spacing utilities */
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.mb-3 {
+  margin-bottom: 12px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+/* Layout utilities */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+/* TabNavigation styles */
+.tablist {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  border-bottom: 1px solid #444;
+  margin-bottom: 12px;
+  margin-top: 4px;
+  padding-bottom: 4px;
+}
+
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #444;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.tab:hover {
+  background: rgb(0 0 0 / 0.05);
+}
+
+.tab[aria-selected='true'] {
+  background: #146ef5;
+  color: white;
+}
+
+/* Form controls */
+.w-select {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+}
+
+.w-select:focus {
+  outline: none;
+  border-color: #146ef5;
 }
