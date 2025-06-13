@@ -1,4 +1,4 @@
-import { removeIfPresent } from 'typedoc/dist/lib/utils'
+// import { removeIfPresent } from 'typedoc/dist/lib/utils'
 
 export enum LinkModeSettings {
   url = 'url',
@@ -84,81 +84,154 @@ export const Elements = {
   // Element Creation
   elementCreation: {
     BulkAddElements: async () => {
-      // Get Selected Element
+      // Get the selected element as the container
       const selectedElement = await webflow.getSelectedElement()
 
-      // Build an element. We only support DOM elements and append for now.
-      const rootElement = webflow.elementBuilder(webflow.elementPresets.DOM)
+      // Create a nav container
+      const navMenu = webflow.elementBuilder(webflow.elementPresets.DOM)
+      navMenu.setTag('nav')
 
-      // Append a DOM element to the element structure.
-      const childElement = rootElement.append(webflow.elementPresets.DOM)
-      childElement.setTag('svg')
+      // Menu items to add
+      const menuItems = ['Home', 'About', 'Services', 'Portfolio', 'Contact']
 
+      // Create all menu items at once and store references for later
+      const menuItemRefs = []
+      menuItems.forEach((itemText) => {
+        const item = navMenu.append(webflow.elementPresets.DOM)
+        item.setTag('a')
+        item.setAttribute('href', '#')
+        // Store reference to set text later
+        menuItemRefs.push(item)
+      })
+
+      // Add the entire menu to the canvas in one operation
       if (selectedElement?.children) {
-        // Add root element to the deisgner by appending to selected Element
-        await selectedElement.append(rootElement)
+        await selectedElement.append(navMenu)
+        console.log(
+          'Navigation structure with 5 items created in one operation',
+        )
+
+        // Text content must be set after elements are added to the canvas
+        const elements = await webflow.getAllElements()
+
+        // Set text content for each menu item
+        for (let i = 0; i < menuItemRefs.length; i++) {
+          const menuItemElement = elements.find(
+            (el) => el.id.element === menuItemRefs[i].id,
+          )
+          if (menuItemElement) {
+            await menuItemElement.setTextContent(menuItems[i])
+          }
+        }
+
+        // Style application would also come after the elements are added
+        // (Styling example shown below for completeness)
+
+        // Example of applying styles after elements are on the canvas
+        // First, create the styles
+        const navStyle = await webflow.createStyle('navContainer')
+        await navStyle.setProperties({
+          display: 'flex',
+          'row-gap': '20px',
+          'padding-left': '15px',
+          'padding-right': '15px',
+          'padding-top': '15px',
+          'padding-bottom': '15px',
+          'background-color': '#f5f5f5',
+          'border-radius': '8px',
+        })
+
+        const navItemStyle = await webflow.createStyle('navItem')
+        await navItemStyle.setProperties({
+          color: '#333',
+          'text-decoration': 'none',
+          'padding-left': '12px',
+          'padding-right': '12px',
+          'padding-top': '8px',
+          'padding-bottom': '8px',
+          'border-radius': '4px',
+          'font-weight': '500',
+        })
+
+        // Then find and apply styles to the elements
+        const navElement = elements.find((el) => el.id.element === navMenu.id)
+        if (navElement) {
+          await navElement.setStyles([navStyle])
+
+          // Apply styles to all menu items
+          for (const menuItemRef of menuItemRefs) {
+            const menuItem = elements.find(
+              (el) => el.id.element === menuItemRef.id,
+            )
+            if (menuItem) {
+              await menuItem.setStyles([navItemStyle])
+            }
+          }
+        }
       }
     },
 
     BulkAddElementSVG: async () => {
-      const childElementIds = []
-
-      // Get Selected Element
+      // Get the selected element as the container
       const selectedElement = await webflow.getSelectedElement()
 
-      // Build an element. We only support DOM elements and append for now.
-      const rootElement = webflow.elementBuilder(webflow.elementPresets.DOM)
+      // Create an SVG builder element
+      const svgBuilder = webflow.elementBuilder(webflow.elementPresets.DOM)
+      svgBuilder.setTag('svg')
+      svgBuilder.setAttribute('viewBox', '0 0 100 100')
+      svgBuilder.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+      svgBuilder.setAttribute('width', '200')
+      svgBuilder.setAttribute('height', '200')
 
-      // Append a DOM element to the element structure.
-      const svgElement = rootElement.append(webflow.elementPresets.DOM)
-      svgElement.setTag('svg')
-      childElementIds.push(svgElement)
+      // Create rainbow circular background with multiple circles
+      const backgroundElements = []
+      const rainbowColors = [
+        'hsl(0, 90%, 55%)', // Red
+        'hsl(30, 90%, 55%)', // Orange
+        'hsl(60, 90%, 55%)', // Yellow
+        'hsl(120, 90%, 55%)', // Green
+        'hsl(240, 90%, 55%)', // Blue
+        'hsl(270, 90%, 55%)', // Indigo
+        'hsl(300, 90%, 55%)', // Violet
+      ]
 
-      // Append a DOM element to the element structure.
-      const rectElement = svgElement.append(webflow.elementPresets.DOM)
-      const styles = await webflow.getAllStyles()
-      rectElement.setTag('rect')
-      rectElement.setAttribute('hello', 'world')
-      rectElement.setStyles([styles[0]])
-      childElementIds.push(rectElement)
+      for (let i = 0; i < 7; i++) {
+        const circle = svgBuilder.append(webflow.elementPresets.DOM)
+        circle.setTag('circle')
+        circle.setAttribute('cx', '50')
+        circle.setAttribute('cy', '50')
+        circle.setAttribute('r', `${46 - i * 3}`)
+        circle.setAttribute('fill', 'none')
+        circle.setAttribute('stroke', rainbowColors[i])
+        circle.setAttribute('stroke-width', '2.5')
+        circle.setAttribute('opacity', '0.9')
+        backgroundElements.push(circle)
+      }
 
+      // Create the central background circle
+      const centralCircle = svgBuilder.append(webflow.elementPresets.DOM)
+      centralCircle.setTag('circle')
+      centralCircle.setAttribute('cx', '50')
+      centralCircle.setAttribute('cy', '50')
+      centralCircle.setAttribute('r', '32')
+      centralCircle.setAttribute('fill', 'white')
+
+      // Create the "Webflow" logo
+      const logoPath = svgBuilder.append(webflow.elementPresets.DOM)
+      logoPath.setTag('path')
+      logoPath.setAttribute(
+        'd',
+        'M61.3811 14L43.0716 49.7933H25.8737L33.5362 34.959H33.1924C26.8709 43.1653 17.439 48.5674 4 49.7933V35.1643C4 35.1643 12.5972 34.6565 17.6513 29.3429H4V14.0003H19.3426V26.6194L19.687 26.6179L25.9565 14.0003H37.5597V26.5393L37.9041 26.5388L44.4089 14H61.3811Z',
+      )
+      logoPath.setAttribute('fill', '#146EF5')
+      logoPath.setAttribute('fill-rule', 'evenodd')
+      logoPath.setAttribute('clip-rule', 'evenodd')
+      logoPath.setAttribute('transform', 'translate(30.5, 30.5) scale(0.7)')
+
+      // Add the entire SVG structure to the canvas in one operation
       if (selectedElement?.children) {
-        // Add root element to the deisgner by appending to selected Element
-        const newEl = await selectedElement.append(rootElement)
-
-        // get the children of the newly appended element
-        if (newEl.children) {
-          const newElChildren = await newEl.getChildren()
-
-          const promises = []
-
-          // loop through child elements that we added to the array during creation
-          // and create an array of promises to later await
-          for (let i = 0; i < childElementIds.length; i++) {
-            const childEl = newElChildren.find(
-              (x) => x.id.element === childElementIds[i].id,
-            )
-            console.log(childEl)
-            switch (childEl?.getTag()) {
-              case 'svg':
-                promises.push(
-                  childEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg'),
-                )
-                break
-              case 'rect':
-                promises.push(childEl.setAttribute('width', '200'))
-                promises.push(childEl.setAttribute('height', '100'))
-                promises.push(childEl.setAttribute('x', '10'))
-                promises.push(childEl.setAttribute('y', '10'))
-                promises.push(childEl.setAttribute('rx', '20'))
-                promises.push(childEl.setAttribute('ry', '20'))
-                promises.push(childEl.setAttribute('fill', 'blue'))
-                break
-            }
-          }
-
-          await Promise.all(promises)
-        }
+        await selectedElement.append(svgBuilder)
+        console.log('webflow logo created successfully')
       }
     },
 

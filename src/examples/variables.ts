@@ -271,7 +271,6 @@ export const Variables = {
       const variableMode = await collection?.getVariableModeById(modeId)
       console.log(variableMode)
     },
-
     getVariableModeByName: async (modeName: string) => {
       // Get Collection
       const collection = await webflow.getDefaultVariableCollection()
@@ -288,6 +287,8 @@ export const Variables = {
 
       // Create Variable Mode
       const variableMode = await collection?.createVariableMode(modeName)
+      const newVariableMode = await collection?.getVariableModeByName(modeName)
+      console.log(newVariableMode)
     },
 
     // Remove Variable Mode

@@ -63,6 +63,7 @@ type ParameterInputProps = {
   inputType: string
   options?: string[]
   disabled?: boolean
+  strictEnum?: boolean
 }
 
 const ParameterInput: React.FC<ParameterInputProps> = ({
@@ -73,33 +74,74 @@ const ParameterInput: React.FC<ParameterInputProps> = ({
   inputType,
   options,
   disabled,
+  strictEnum = false,
 }) => {
   const config = inputConfig[inputType]
 
+  if (!config) {
+    // Fallback: render a basic text input if config is undefined
+    return (
+      <input
+        type="text"
+        className="w-input"
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+    )
+  }
+
+  // Strict enum: render a <select> dropdown
+  if (inputType === 'enum' && strictEnum && options?.length) {
+    return (
+      <select
+        className={config.className}
+        value={value || ''}
+        onChange={config.onChange(name, onChange)}
+        disabled={disabled}
+      >
+        <option value="" disabled>
+          {config.placeholder || placeholder || 'Select an option'}
+        </option>
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
+  // Open enum: render <input> with <datalist>
   return (
     <>
-      {inputType === 'enum' && options?.length ? (
-        <select
-          name={name}
-          className={config.className}
-          value={value}
-          onChange={(e) => onChange(name, e.target.value)} // Use the function directly
-          disabled={disabled}
-        >
-          {options?.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      {inputType === 'enum' ? (
+        <>
+          <input
+            type="text"
+            className={config.className}
+            value={value}
+            onChange={config.onChange(name, onChange)}
+            placeholder={config.placeholder || placeholder}
+            list={`${name}-list`}
+            disabled={disabled}
+          />
+          {options?.length ? (
+            <datalist id={`${name}-list`}>
+              {options.map((option, index) => (
+                <option key={index} value={option} />
+              ))}
+            </datalist>
+          ) : null}
+        </>
       ) : (
         <input
           type={config.type}
           className={config.className}
           value={inputType === 'file' ? undefined : value}
-          onChange={config.onChange(name, onChange)} // Use the function directly
+          onChange={config.onChange(name, onChange)}
           placeholder={config.placeholder || placeholder}
-          list={inputType === 'enum' ? `${name}-list` : undefined}
           disabled={disabled}
         />
       )}
