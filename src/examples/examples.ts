@@ -1,4 +1,4 @@
-import { Webflow } from './webflow'
+import { Utilities } from './utilities'
 import { Components } from './components'
 import { Elements } from './elements'
 import { Styles } from './styles'
@@ -9,7 +9,6 @@ import { Payments } from './payments'
 import { Assets } from './assets'
 
 const examples = {
-  Webflow: Webflow,
   Elements: Elements,
   Styles: Styles,
   Components: Components,
@@ -17,7 +16,8 @@ const examples = {
   Pages: Pages,
   Folders: Folders,
   Payments: Payments,
-  Assets: Assets
+  Assets: Assets,
+  Utilities: Utilities,
 }
 
 export default examples

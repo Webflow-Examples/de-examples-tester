@@ -170,10 +170,15 @@ input {
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
-  border-bottom: 1px solid #444;
   margin-bottom: 12px;
   margin-top: 4px;
   padding-bottom: 4px;
+  position: relative;
+}
+
+/* Remove the grey border pseudo-element */
+.tablist::after {
+  display: none;
 }
 
 .tab-btn {
@@ -240,7 +245,7 @@ input {
 }
 
 .container {
-  padding: 0 16px;
+  padding: 16px 16px 32px; /* Increased bottom padding */
 }
 
 .button {
@@ -252,10 +257,12 @@ input {
   background: white;
   cursor: pointer;
   min-height: 28px;
+  transition: all 0.2s ease;
 }
 
 .button:hover {
   background: rgb(0 0 0 / 0.02);
+  border-color: rgb(0 0 0 / 0.2);
 }
 
 .button:active {
@@ -275,6 +282,7 @@ input {
   min-height: 28px;
   align-self: flex-start;
   margin-top: 8px;
+  border: none;
 }
 
 .button.cc-primary:hover {
@@ -282,8 +290,8 @@ input {
 }
 
 .button.cc-primary:disabled {
-  background-color: #d8d8d8;
-  color: #757575;
+  background-color: #e5e5e5;
+  color: #999;
 }
 
 /* Dropdown and input styles */
@@ -342,25 +350,39 @@ pre {
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
-  border-bottom: 1px solid #444;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   margin-top: 4px;
   padding-bottom: 4px;
+  position: relative;
+}
+
+.tablist::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgb(255 255 255 / 0.1);
 }
 
 .tab {
   appearance: none;
   background: none;
   border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  color: #444;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: rgb(255 255 255 / 0.6);
   cursor: pointer;
   border-radius: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+  font-weight: 500;
 }
 
 .tab:hover {
-  background: rgb(0 0 0 / 0.05);
+  color: rgb(255 255 255 / 0.9);
+  background: rgb(255 255 255 / 0.1);
 }
 
 .tab[aria-selected='true'] {
@@ -368,18 +390,106 @@ pre {
   color: white;
 }
 
+.tab[aria-selected='true']:hover {
+  background: #0055d4;
+  color: white;
+}
+
 /* Form controls */
 .w-select {
   width: 100%;
-  padding: 6px 8px;
+  padding: 6px 28px 6px 8px;
   font-size: 12px;
-  border: 1px solid rgb(0 0 0 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 4px;
-  background: white;
+  background: rgb(255 255 255 / 0.05);
+  color: rgb(255 255 255 / 0.9);
   cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 8px;
+}
+
+.w-select:hover {
+  background-color: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.2);
 }
 
 .w-select:focus {
   outline: none;
   border-color: #146ef5;
+  box-shadow: 0 0 0 1px #146ef5;
+}
+
+.w-select option {
+  background: #181818;
+  color: white;
+  padding: 8px;
+}
+
+/* Reset some basic elements */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.wf-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  min-height: 100vh;
+  position: relative;
+}
+
+.wf-content {
+  width: 100%;
+}
+
+.wf-footer {
+  padding: 24px 0;
+  margin-top: 48px;
+  text-align: center;
+  width: 100%;
+  border-top: 1px solid #eee;
+}
+
+.wf-footer-logo {
+  width: 32px;
+  height: 32px;
+  display: block;
+  margin: 0 auto 16px;
+}
+
+.wf-footer-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.wf-footer-links a {
+  text-decoration: none;
+  font-size: 12px;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.wf-footer-links a:hover {
+  color: #333;
+}
+
+.wf-footer div {
+  color: #666;
+  font-size: 12px;
 }

@@ -6,7 +6,7 @@ export enum ExtensionSizeEnum {
   Compact = 'compact',
 }
 
-export const Webflow = {
+export const Utilities = {
   getSiteInfo: async () => {
     // Get Site Information
     const siteInfo = await webflow.getSiteInfo()

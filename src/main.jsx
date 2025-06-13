@@ -42,6 +42,30 @@ const App = () => {
       />
       {activeTab === 'api' && <APIExplorer />}
       {activeTab === 'code' && <Playground />}
+      <footer className="wf-footer">
+        <img
+          src="https://dhygzobemt712.cloudfront.net/Mark/Mark_Logo_Blue.svg"
+          alt="Webflow Logo"
+          className="wf-footer-logo"
+        />
+        <div>Designer API Playground • Built with Webflow Designer API</div>
+        <div className="wf-footer-links">
+          <a
+            href="https://developers.webflow.com/designer/reference/designer-api/getting-started"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Documentation
+          </a>
+          <a
+            href="https://developers.webflow.com/data/v2.0.0/docs/register-an-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Create an App
+          </a>
+        </div>
+      </footer>
     </div>
   )
 }

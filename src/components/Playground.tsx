@@ -1,7 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react'
 import MonacoEditor, { useMonaco } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import CodeBlock from './CodeBlock'
 import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
+
+// Extend Window interface to include Monaco
+declare global {
+  interface Window {
+    monaco: typeof monaco
+  }
+}
+
+// Custom theme definition to match PrismJS tomorrow theme
+const MONACO_THEME: monaco.editor.IStandaloneThemeData = {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [
+    { token: 'comment', foreground: '969896' },
+    { token: 'string', foreground: 'b5bd68' },
+    { token: 'number', foreground: 'de935f' },
+    { token: 'keyword', foreground: 'b294bb' },
+    { token: 'type', foreground: '81a2be' },
+    { token: 'variable', foreground: 'cc6666' },
+    { token: 'function', foreground: '81a2be' },
+    { token: 'operator', foreground: '8abeb7' },
+  ],
+  colors: {
+    'editor.background': '#181818',
+    'editor.foreground': '#c5c8c6',
+    'editor.lineHighlightBackground': '#282a2e',
+    'editor.selectionBackground': '#373b41',
+    'editorCursor.foreground': '#c5c8c6',
+    'editorWhitespace.foreground': '#969896',
+  },
+} as const
 
 const defaultCode = `// Explore the Webflow Designer API
 // Try typing "webflow." to see all available methods.
@@ -19,7 +51,7 @@ const Playground: React.FC = () => {
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
 
-  // Inject Webflow Designer Extension typings for intellisense
+  // Configure Monaco editor settings
   useEffect(() => {
     if (monaco) {
       // Relax TypeScript diagnostics
@@ -59,6 +91,13 @@ const Playground: React.FC = () => {
       configureMonacoWithDesignerTypings(monaco)
     }
   }, [monaco])
+
+  useEffect(() => {
+    // Define the custom theme when Monaco is loaded
+    if (window.monaco) {
+      window.monaco.editor.defineTheme('prism-tomorrow', MONACO_THEME)
+    }
+  }, [])
 
   // Safe console implementation
   const safeConsole = {
@@ -139,31 +178,60 @@ const Playground: React.FC = () => {
     }
   }
 
+  const editorOptions = {
+    minimap: { enabled: false },
+    fontSize: 10.5,
+    lineHeight: 15,
+    padding: { top: 12, bottom: 12, left: 12, right: 12 },
+    scrollBeyondLastLine: false,
+    theme: 'prism-tomorrow',
+    automaticLayout: true,
+    fontFamily:
+      'ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace',
+    renderLineHighlight: 'none' as const,
+    contextmenu: false,
+    folding: false,
+    lineNumbers: 'off' as const,
+    glyphMargin: false,
+    scrollbar: {
+      vertical: 'hidden' as const,
+      horizontal: 'hidden' as const,
+    },
+  }
+
   return (
-    <div style={{ padding: 16, maxWidth: 700, margin: '0 auto' }}>
-      <div style={{ marginBottom: 8, position: 'relative' }}>
+    <div
+      style={{
+        padding: 0,
+        maxWidth: 700,
+        margin: '0 auto',
+        background: '#1e1e1e',
+        color: 'rgb(255 255 255 / 0.9)',
+        borderRadius: 4,
+      }}
+    >
+      <div
+        style={{
+          background: '#181818',
+          borderRadius: 4,
+          marginBottom: 8,
+          overflow: 'hidden',
+        }}
+      >
         <MonacoEditor
-          height="240px"
-          defaultLanguage="javascript"
+          height="200px"
+          defaultLanguage="typescript"
           value={code}
           path="webflow-playground.js"
           onChange={(value) => {
             setCode(value || '')
             codeRef.current = value || ''
           }}
-          theme="vs-dark"
-          options={{
-            fontSize: 12,
-            minimap: { enabled: false },
-            fontFamily: 'monospace',
-            lineNumbers: 'on',
-            lineNumbersMinChars: 3,
-            glyphMargin: false,
-            folding: false,
-            lineDecorationsWidth: 8,
-            scrollBeyondLastLine: false,
-            wordWrap: 'on',
-            padding: { top: 8, bottom: 40 }, // Add bottom padding to prevent overlap
+          options={editorOptions}
+          theme="prism-tomorrow"
+          beforeMount={(monaco) => {
+            monaco.editor.defineTheme('prism-tomorrow', MONACO_THEME)
+            monaco.editor.setTheme('prism-tomorrow')
           }}
           onMount={(editor, monaco) => {
             editorRef.current = editor
@@ -175,35 +243,16 @@ const Playground: React.FC = () => {
             }
           }}
         />
+      </div>
+      <div style={{ marginBottom: 8, position: 'relative' }}>
         <button
           onClick={() => runCode(codeRef.current)}
           disabled={isRunning}
+          className="button cc-primary"
           style={{
             position: 'absolute',
             right: 16,
             bottom: 16,
-            padding: '6px 16px',
-            fontWeight: 600,
-            fontSize: 12,
-            zIndex: 10,
-            background: '#006acc',
-            color: '#fff',
-            border: '1px solid #004c99',
-            borderRadius: 3,
-            boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-            cursor: 'pointer',
-            opacity: isRunning ? 0.7 : 1,
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (!isRunning) {
-              e.currentTarget.style.background = '#0078d4'
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isRunning) {
-              e.currentTarget.style.background = '#006acc'
-            }
           }}
         >
           {isRunning ? 'Running...' : 'Run'}
@@ -215,9 +264,20 @@ const Playground: React.FC = () => {
           height: output ? 'auto' : 0,
           overflow: 'hidden',
           transition: 'opacity 0.2s ease-in-out',
+          padding: '0 16px 16px',
         }}
       >
-        <label style={{ fontWeight: 600 }}>Output</label>
+        <label
+          style={{
+            fontWeight: 500,
+            fontSize: 13,
+            color: 'rgb(255 255 255 / 0.6)',
+            display: 'block',
+            marginBottom: 4,
+          }}
+        >
+          Output
+        </label>
         <CodeBlock
           code={output || ' '}
           language="javascript"
