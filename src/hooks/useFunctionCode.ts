@@ -10,7 +10,7 @@ import pagesRaw from '../examples/pages.ts?raw'
 import paymentsRaw from '../examples/payments.ts?raw'
 import stylesRaw from '../examples/styles.ts?raw'
 import variablesRaw from '../examples/variables.ts?raw'
-import webflowRaw from '../examples/utilities.ts?raw'
+import utilitiesRaw from '../examples/utilities.ts?raw'
 
 interface RawFilesMap {
   [key: string]: string
@@ -26,7 +26,7 @@ const RAW_FILES_MAP: RawFilesMap = {
   payments: paymentsRaw,
   styles: stylesRaw,
   variables: variablesRaw,
-  webflow: webflowRaw,
+  utilities: utilitiesRaw,
 }
 
 interface FunctionMatch {
