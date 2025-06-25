@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useQuery, useQueries } from '@tanstack/react-query'
 import examplesImport from '../examples/examples'
 import Dropdown from './dropdown'
 import ParameterInput from './parameterInput'
-import enumsImport from '../examples/enums'
+import enumProviders, { hasEnumProvider } from '../examples/enums'
+import type { EnumProviderType } from '../examples/enums'
+import { useDynamicEnum } from '../hooks/useVariableCollections'
+import type {
+  DynamicEnumValue,
+  DynamicEnumProvider,
+} from '../types/dynamic-enums'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
 import 'prismjs/components/prism-jsx.js'
@@ -11,13 +18,27 @@ import { useFunctionCode } from '../hooks/useFunctionCode'
 // @ts-ignore
 import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?raw'
 import CodeBlock from './CodeBlock'
+import { isVariableCollectionInfo } from '../types/dynamic-enums'
+import {
+  useVariableCollections,
+  useVariables,
+} from '../hooks/useVariableCollections'
+import { getVariablesEnum } from '../examples/variables'
+import type { VariableInfo } from '../types/dynamic-enums'
 
 // Add index signatures for dynamic access
 const examples: { [key: string]: any } = examplesImport as any
-const enums: { [key: string]: any } = enumsImport as any
+
+// Define parameter dependencies
+const PARAMETER_DEPENDENCIES: Record<string, { dependsOn: string }> = {
+  variableName: {
+    dependsOn: 'collection',
+  },
+  // Add more dependent parameters here as needed
+}
 
 interface ParameterMap {
-  [key: string]: string | number | boolean
+  [key: string]: any // Changed from string | number | boolean to any to support complex objects
 }
 
 const getMethodDescription = (
@@ -37,8 +58,9 @@ const getMethodDescription = (
 const APIExplorer: React.FC = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
-  const [functionParameters, setFunctionParametersState] =
-    useState<ParameterMap>({})
+  const [functionParameters, setFunctionParameters] = useState<
+    Record<string, any>
+  >({})
   const [apiOutput, setApiOutput] = useState('')
   const hasAutoExecutedRef = useRef(false)
   const hasInitializedRef = useRef(false)
@@ -46,6 +68,49 @@ const APIExplorer: React.FC = () => {
   // Fetch function code and parameters
   const { functionCode, parameterNames, parameterTypes, setParameterNames } =
     useFunctionCode(selectedFunctionName, selectedExampleCategory)
+
+  // Fetch variable collections
+  const { loading: collectionsLoading } = useVariableCollections()
+
+  // Get the selected collection for variables
+  const selectedCollection = functionParameters['collection']
+
+  // Fetch variables for the selected collection
+  const {
+    data: variables,
+    isLoading: variablesLoading,
+    error: variablesError,
+  } = useQuery({
+    queryKey: ['variables', selectedCollection?.id],
+    queryFn: async () => {
+      if (!isVariableCollectionInfo(selectedCollection)) return null
+      try {
+        const collection = await webflow.getVariableCollectionById(
+          selectedCollection.id,
+        )
+        if (!collection) {
+          throw new Error(
+            `Collection with ID ${selectedCollection.id} not found`,
+          )
+        }
+        const variables = await collection.getAllVariables()
+        return Promise.all(
+          variables.map(async (variable) => ({
+            id: variable.id,
+            name: await variable.getName(),
+            type: variable.type,
+            data: { variable },
+            collectionId: selectedCollection.id,
+          })),
+        )
+      } catch (err) {
+        console.error('Error fetching variables:', err)
+        throw err
+      }
+    },
+    enabled: !!selectedCollection?.id,
+    staleTime: 5 * 60 * 1000,
+  })
 
   // Auto-select first example and function on mount
   useEffect(() => {
@@ -81,9 +146,11 @@ const APIExplorer: React.FC = () => {
           prev +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -95,9 +162,11 @@ const APIExplorer: React.FC = () => {
           '[Error] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -109,9 +178,11 @@ const APIExplorer: React.FC = () => {
           '[Warn] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -123,9 +194,11 @@ const APIExplorer: React.FC = () => {
           '[Info] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -152,6 +225,35 @@ const APIExplorer: React.FC = () => {
       handleFunctionExecution()
     }
   }, [selectedFunctionName, selectedExampleCategory, parameterNames])
+
+  // Fetch all non-dependent enum values at once
+  const enumQueries = useQueries({
+    queries: parameterTypes.map((paramType, index) => {
+      const paramName = parameterNames[index]
+      const dependency = PARAMETER_DEPENDENCIES[paramName]
+
+      // Skip dependent parameters and VariableInfo - they'll be handled separately
+      if (dependency || paramType === 'VariableInfo') {
+        return {
+          queryKey: ['enumValues', paramType, 'dependent'],
+          queryFn: async () => null,
+          enabled: false,
+        }
+      }
+
+      return {
+        queryKey: ['enumValues', paramType],
+        queryFn: async () => {
+          if (!hasEnumProvider(paramType)) return null
+          const provider = enumProviders[paramType as EnumProviderType]
+          return (provider as DynamicEnumProvider<DynamicEnumValue>).getAll()
+        },
+        enabled: hasEnumProvider(paramType),
+        staleTime: 5 * 60 * 1000,
+        cacheTime: 10 * 60 * 1000,
+      }
+    }),
+  })
 
   const exampleCategories = Object.keys(examples).map((key) => ({
     value: key,
@@ -194,11 +296,11 @@ const APIExplorer: React.FC = () => {
     hasAutoExecutedRef.current = false
   }
 
-  const handleParameterChange = (
-    paramName: string,
-    value: string | number | boolean,
-  ) => {
-    setFunctionParametersState((prev) => ({ ...prev, [paramName]: value }))
+  const handleParameterChange = (name: string, value: any) => {
+    setFunctionParameters((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
   }
 
   const handleFunctionExecution = () => {
@@ -235,8 +337,59 @@ const APIExplorer: React.FC = () => {
     }
   }
 
+  const renderParameter = (name: string, index: number) => {
+    const paramType = parameterTypes[index]
+    const hasProvider = hasEnumProvider(paramType)
+    const dependency = PARAMETER_DEPENDENCIES[name]
+
+    let options: any[] = []
+    let isLoading = false
+    let error: Error | null = null
+    let isDynamicEnum = false
+
+    if (paramType === 'VariableInfo') {
+      options = variables || []
+      isLoading = variablesLoading
+      error = variablesError as Error
+      isDynamicEnum = true
+    } else if (!dependency) {
+      // Handle non-dependent parameters
+      const queryResult = enumQueries[index]
+      const {
+        data,
+        isLoading: queryLoading,
+        error: queryError,
+      } = queryResult || {}
+      options = data || []
+      isLoading = queryLoading
+      error = queryError as Error
+      isDynamicEnum = hasProvider && data !== null
+    }
+
+    return (
+      <ParameterInput
+        key={name}
+        name={name}
+        value={functionParameters[name] || ''}
+        onChange={handleParameterChange}
+        inputType={hasProvider ? 'enum' : 'text'}
+        options={options}
+        isDynamicEnum={isDynamicEnum}
+        placeholder={
+          isLoading
+            ? 'Loading...'
+            : error
+              ? `Error: ${error.message}`
+              : `Enter ${name}`
+        }
+        disabled={isDynamicEnum && (isLoading || !!error)}
+        loading={isLoading}
+      />
+    )
+  }
+
   return (
-    <div>
+    <div className="api-explorer">
       <div className="flex-row gap-2 mb-2">
         <div className="flex-1">
           <Dropdown
@@ -269,33 +422,9 @@ const APIExplorer: React.FC = () => {
       {parameterNames.length > 0 && (
         <div className="flex-row items-end gap-2">
           <div className="flex-1">
-            {parameterNames.map((name: string, index: number) => {
-              const paramType = parameterTypes[index]
-              const isEnum = String(paramType).includes('Enum')
-              let enumValues: string[] | undefined
-
-              // Extract the enum key from the type (e.g., "ValidFileTypesEnum" -> "fileTypeEnum")
-              if (isEnum) {
-                const enumKey =
-                  paramType.charAt(0).toLowerCase() + paramType.slice(1)
-                enumValues = enums[enumKey]
-                  ? (Object.values(enums[enumKey]) as string[])
-                  : undefined
-              }
-
-              return (
-                <ParameterInput
-                  key={name}
-                  name={name}
-                  inputType={isEnum ? 'enum' : paramType}
-                  value={String(functionParameters[name] || '')}
-                  onChange={(name, value) => handleParameterChange(name, value)}
-                  options={enumValues}
-                  placeholder={`Enter ${name}`}
-                  strictEnum={isEnum}
-                />
-              )
-            })}
+            {parameterNames.map((name: string, index: number) =>
+              renderParameter(name, index),
+            )}
           </div>
           <button
             className="button cc-primary"

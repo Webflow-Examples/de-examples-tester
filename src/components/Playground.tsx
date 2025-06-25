@@ -107,9 +107,11 @@ const Playground: React.FC = () => {
           prev +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -121,9 +123,11 @@ const Playground: React.FC = () => {
           '[Error] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -135,9 +139,11 @@ const Playground: React.FC = () => {
           '[Warn] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',
@@ -149,9 +155,11 @@ const Playground: React.FC = () => {
           '[Info] ' +
           args
             .map((arg) =>
-              typeof arg === 'object' && arg !== null
-                ? JSON.stringify(arg, null, 2)
-                : String(arg),
+              arg instanceof Error
+                ? `${arg.name}: ${arg.message}\n${arg.stack}`
+                : typeof arg === 'object' && arg !== null
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
             )
             .join(' ') +
           '\n',

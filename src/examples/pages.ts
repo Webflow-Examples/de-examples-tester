@@ -1,3 +1,38 @@
+import type { PageInfo } from '../types/dynamic-enums'
+
+// Types for page collections
+export type PagesEnum = {
+  [key: string]: PageInfo
+}
+
+// Utility function to get all pages as an enum-like object
+export const getPagesEnum = async (): Promise<PagesEnum> => {
+  const pagesAndFolders = await webflow.getAllPagesAndFolders()
+  const pages = pagesAndFolders?.filter((i): i is Page => i.type === 'Page')
+  const pagesMap: PagesEnum = {}
+
+  await Promise.all(
+    pages.map(async (page) => {
+      const name = await page.getName()
+      pagesMap[name] = {
+        id: page.id,
+        name,
+        page,
+      }
+    }),
+  )
+
+  return pagesMap
+}
+
+// Helper function to get a specific page by name
+export const getPageByName = async (
+  name: string,
+): Promise<PageInfo | undefined> => {
+  const pages = await getPagesEnum()
+  return pages[name]
+}
+
 export const Pages = {
   // Page Management
   pageManagement: {
@@ -148,7 +183,8 @@ export const Pages = {
         // Get Collection ID if page belongs to a collection
         const collectionId = await currentPage.getCollectionId()
         console.log(collectionId)
-      } catch (error) {
+      } catch (err) {
+        const error = err as { cause: { tag: string }; message: string }
         console.error([error.cause.tag, error.message])
       }
     },
@@ -161,7 +197,8 @@ export const Pages = {
         // Get Collection ID if page belongs to a collection
         const collectionName = await currentPage.getCollectionName()
         console.log(collectionName)
-      } catch (error) {
+      } catch (err) {
+        const error = err as { cause: { tag: string }; message: string }
         console.error([error.cause.tag, error.message])
       }
     },

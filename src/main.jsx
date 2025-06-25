@@ -3,6 +3,7 @@ import './App.css'
 
 import React, { useState, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import Playground from './components/Playground'
 import TabNavigation from './components/TabNavigation'
@@ -12,6 +13,15 @@ const TABS = [
   { key: 'api', label: 'API Explorer' },
   { key: 'code', label: 'Code Playground' },
 ]
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // disable automatic refetching when window gains focus
+      retry: 1, // retry failed queries once
+    },
+  },
+})
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('api')
@@ -72,4 +82,10 @@ const App = () => {
 
 const container = document.getElementById('root')
 const root = createRoot(container)
-root.render(<App />)
+root.render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </React.StrictMode>,
+)

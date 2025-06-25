@@ -1,3 +1,37 @@
+import type { StyleInfo } from '../types/dynamic-enums'
+
+// Types for style collections
+export type StylesEnum = {
+  [key: string]: StyleInfo
+}
+
+// Utility function to get all styles as an enum-like object
+export const getStylesEnum = async (): Promise<StylesEnum> => {
+  const styles = await webflow.getAllStyles()
+  const stylesMap: StylesEnum = {}
+
+  await Promise.all(
+    styles.map(async (style) => {
+      const name = await style.getName()
+      stylesMap[name] = {
+        id: style.id,
+        name,
+        style,
+      }
+    }),
+  )
+
+  return stylesMap
+}
+
+// Helper function to get a specific style by name
+export const getStyleByName = async (
+  name: string,
+): Promise<StyleInfo | undefined> => {
+  const styles = await getStylesEnum()
+  return styles[name]
+}
+
 export const Styles = {
   getAllStyles: async () => {
     // Get all Styles
@@ -51,20 +85,16 @@ export const Styles = {
     }
   },
   removeStyle: async (styleName: string) => {
-
     // Retrieve the style by name
     const retrievedStyle = await webflow.getStyleByName(styleName)
 
     if (retrievedStyle) {
-        
-        // Remove Style
-        await webflow.removeStyle(retrievedStyle)
-        console.log(`Style: ${styleName} was removed`)
-        
+      // Remove Style
+      await webflow.removeStyle(retrievedStyle)
+      console.log(`Style: ${styleName} was removed`)
     } else {
       console.log(`Style ${styleName} not found.`)
     }
-
   },
 
   getStyleProperties: async () => {

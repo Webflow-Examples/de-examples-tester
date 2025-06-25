@@ -1,3 +1,47 @@
+import type { AssetInfo, DynamicEnumProvider } from '../types/dynamic-enums'
+import { createDynamicEnumMap } from '../types/dynamic-enums'
+
+// Types for asset collections
+export type AssetsEnum = Record<string, AssetInfo>
+
+// Create the assets provider
+export const assetsProvider: DynamicEnumProvider<AssetInfo> = {
+  getAll: async () => {
+    const assets = await webflow.getAllAssets()
+    return Promise.all(
+      assets.map(async (asset) => ({
+        id: asset.id,
+        name: await asset.getName(),
+        type: await asset.getMimeType(),
+        data: { asset },
+      })),
+    )
+  },
+  getByName: async (name: string) => {
+    const assets = await getAssetsEnum()
+    return assets[name]
+  },
+}
+
+// Utility function to get all assets as an enum-like object
+export const getAssetsEnum = async (): Promise<AssetsEnum> => {
+  const assets = await webflow.getAllAssets()
+  return createDynamicEnumMap(assets, async (asset) => ({
+    id: asset.id,
+    name: await asset.getName(),
+    type: await asset.getMimeType(),
+    data: { asset },
+  }))
+}
+
+// Helper function to get a specific asset by name
+export const getAssetByName = async (
+  name: string,
+): Promise<AssetInfo | undefined> => {
+  const assets = await getAssetsEnum()
+  return assets[name]
+}
+
 export enum ValidFileTypesEnum {
   JPEG = 'image/jpeg',
   JPG = 'image/jpg',
@@ -84,7 +128,7 @@ export const Assets = {
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
-      type: 'image/png',
+      type: fileTypeEnum,
     })
 
     try {
@@ -92,8 +136,9 @@ export const Assets = {
       const asset = await webflow.createAsset(file)
       console.log(asset)
     } catch (err) {
-      console.error(`Cause:${err.cause.tag}`)
-      console.error(`Cause:${err.message}`)
+      const error = err as { cause: { tag: string }; message: string }
+      console.error(`Cause:${error.cause.tag}`)
+      console.error(`Cause:${error.message}`)
     }
   },
   getAssetById: async (asset_id: string) => {
@@ -112,14 +157,13 @@ export const Assets = {
       console.log(`Asset URL: ${url}`)
     }
   },
-  getAltText: async (assetId: string) => {
+  getAltText: async (asset: AssetInfo) => {
     // Get Asset by ID
-    const asset = await webflow.getAssetById(assetId)
-    console.log(asset)
+    const selAsset = await webflow.getAssetById(asset.data.id)
 
-    if (asset) {
+    if (selAsset) {
       // Get asset URL
-      const altText = await asset.getAltText()
+      const altText = await selAsset.getAltText()
       console.log(`Asset Alt Text: ${altText}`)
     }
   },

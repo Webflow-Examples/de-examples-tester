@@ -1,3 +1,119 @@
+import type {
+  VariableCollectionInfo,
+  VariableInfo,
+  DynamicEnumProvider,
+} from '../types/dynamic-enums'
+import { createDynamicEnumMap } from '../types/dynamic-enums'
+
+// Types for collections
+export type VariableCollections = Record<string, VariableCollectionInfo>
+export type Variables = Record<string, VariableInfo>
+
+// Create the collections provider
+export const collectionsProvider: DynamicEnumProvider<VariableCollectionInfo> =
+  {
+    getAll: async () => {
+      const collections = await webflow.getAllVariableCollections()
+      return Promise.all(
+        collections.map(async (collection) => ({
+          id: collection.id,
+          name: await collection.getName(),
+          data: { collection },
+        })),
+      )
+    },
+    getByName: async (name: string) => {
+      const collections = await getVariableCollectionsEnum()
+      return collections[name]
+    },
+    getById: async (id: string) => {
+      const collection = await webflow.getVariableCollectionById(id)
+      if (!collection) return undefined
+      return {
+        id: collection.id,
+        name: await collection.getName(),
+        data: { collection },
+      }
+    },
+  }
+
+// Create the variables provider
+export const variablesProvider = (
+  collection: VariableCollectionInfo,
+): DynamicEnumProvider<VariableInfo> => ({
+  getAll: async () => {
+    const selCollection = await webflow.getVariableCollectionById(collection.id)
+    const variables = await selCollection?.getAllVariables()
+    if (!variables) return []
+    return Promise.all(
+      variables.map(async (variable) => ({
+        id: variable.id,
+        name: await variable.getName(),
+        type: variable.type,
+        data: { variable },
+        collectionId: collection.id,
+      })),
+    )
+  },
+  getByName: async (name: string) => {
+    const variables = await getVariablesEnum(collection)
+    return variables[name]
+  },
+})
+
+// Utility function to get all collections as an enum-like object
+export const getVariableCollectionsEnum =
+  async (): Promise<VariableCollections> => {
+    const collections = await webflow.getAllVariableCollections()
+    return createDynamicEnumMap(collections, async (collection) => ({
+      id: collection.id,
+      name: await collection.getName(),
+      data: { collection },
+    }))
+  }
+
+// Utility function to get all variables in a collection as an enum-like object
+export const getVariablesEnum = async (
+  collectionInfo: VariableCollectionInfo,
+): Promise<Variables> => {
+  const collection = await webflow.getVariableCollectionById(collectionInfo.id)
+  if (!collection) {
+    throw new Error(`Collection with ID ${collectionInfo.id} not found`)
+  }
+
+  const variables = await collection.getAllVariables()
+  return createDynamicEnumMap(variables, async (variable) => ({
+    id: variable.id,
+    name: await variable.getName(),
+    type: variable.type,
+    data: { variable },
+    collectionId: collectionInfo.id,
+  }))
+}
+
+interface WebflowVariable {
+  id: string
+  getName: () => Promise<string>
+  getType: () => Promise<string>
+}
+
+// Helper function to get a specific collection by name
+export const getCollectionByName = async (
+  name: string,
+): Promise<VariableCollectionInfo | undefined> => {
+  const collections = await getVariableCollectionsEnum()
+  return collections[name]
+}
+
+// Helper function to get a variable by name from a collection
+export const getVariableByName = async (
+  collection: VariableCollectionInfo,
+  variableName: string,
+): Promise<VariableInfo | undefined> => {
+  const variables = await getVariablesEnum(collection)
+  return variables[variableName]
+}
+
 export const Variables = {
   // Collection Management
   collectionManagement: {
@@ -99,6 +215,31 @@ export const Variables = {
       console.log(myColorVariable)
     },
 
+    createCustomColorVariable: async () => {
+      // Get Collection
+      const collection = await webflow.getDefaultVariableCollection()
+
+      // Create Color Variable
+      const webflowBlue = await collection?.createColorVariable(
+        'blue-500',
+        '#146EF5',
+      )
+
+      // Get the binding to the webflowBlue variable
+      const webflowBlueBinding = await webflowBlue?.getBinding()
+
+      // Function to create a string that uses the binding and CSS color-mix function
+      const colorMix = (binding, color, opacity) =>
+        `color-mix(in srgb, ${binding} , ${color} ${opacity}%)`
+
+      // Create a color variable that uses a CSS function
+      const webflowBlue400 = await collection?.createColorVariable('blue-400', {
+        type: 'custom',
+        value: colorMix(webflowBlueBinding, '#fff', 60),
+      })
+      console.log(webflowBlue400)
+    },
+
     createSizeVariable: async () => {
       // Get Collection
       const collection = await webflow.getDefaultVariableCollection()
@@ -109,6 +250,11 @@ export const Variables = {
         { unit: 'px', value: 50 },
       )
       console.log(mySizeVariable)
+    },
+
+    createCustomSizeVariable: async () => {
+      // Get Collection
+      const collection = await webflow.getDefaultVariableCollection()
     },
 
     createFontFamilyVariable: async () => {
@@ -179,6 +325,45 @@ export const Variables = {
         const variable = await collection.getVariableByName('Space Cadet')
         await variable?.setName('Our awesome bg color')
       }
+    },
+    getVariableValue: async (
+      collection: VariableCollectionInfo,
+      variable: VariableInfo,
+    ) => {
+      // Get selected collection and variable info
+      const selCollection = await webflow.getVariableCollectionById(
+        collection.id,
+      )
+      const selVariable = await selCollection?.getVariable(variable.id)
+
+      // Get variable value. Include option to return custom values
+      let value = await selVariable?.get({ customValues: true })
+
+      console.log(`Raw value: ${JSON.stringify(value)}`)
+      let type = selVariable?.type
+
+      // If the variable is a custom value, return the value
+      if (
+        value &&
+        typeof value === 'object' &&
+        'type' in value &&
+        value.type === 'custom'
+      ) {
+        value = value.value
+        type = `Custom ${type}`
+      }
+
+      // If the variable is a variable reference, return the referenced variable name
+      if (value && typeof value === 'object' && 'id' in value) {
+        let referencedVariable = await selCollection?.getVariable(value.id)
+        value = await referencedVariable?.getName()
+        type = `Referenced ${type}`
+      }
+
+      console.log(`Variable Type: ${type}`)
+      console.log(`Variable Value: ${value}`)
+
+      return { value, type }
     },
 
     setVariableValue: async (name: string) => {
