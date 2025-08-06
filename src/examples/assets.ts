@@ -84,8 +84,14 @@ export const Assets = {
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
+<<<<<<< Updated upstream
       type: 'image/png',
+=======
+      type: fileTypeEnum.id,
+>>>>>>> Stashed changes
     })
+
+    console.log('file', file)
 
     try {
       // Create and upload the asset to webflow

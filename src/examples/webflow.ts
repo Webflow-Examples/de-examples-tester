@@ -17,9 +17,9 @@ export const Webflow = {
 
   setExtensionSize: async (extensionSizeEnum: ExtensionSizeEnum) => {
     // Set the extension UI size to "default", "comfortable", or "large"
-    await webflow.setExtensionSize(extensionSizeEnum)
+    await webflow.setExtensionSize(extensionSizeEnum.id)
 
-    console.log(`Extension UI size set to: ${extensionSizeEnum}`)
+    console.log(`Extension UI size set to: ${extensionSizeEnum.id}`)
   },
 
   displayCurrentMediaQuery: async () => {
