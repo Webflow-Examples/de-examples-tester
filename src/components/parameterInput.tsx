@@ -88,6 +88,9 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
     dependentOptions,
     loading = false,
   }) => {
+    // Create a ref for the file input
+    const fileInputRef = React.useRef<HTMLInputElement>(null)
+
     // Get the config based on inputType, falling back to text if not found
     const config =
       inputConfig[isDynamicEnum ? 'dynamicEnum' : inputType.toLowerCase()] ||
@@ -120,6 +123,22 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
       }
 
       onChange(name, e.target.value)
+    }
+
+    // Handle click on the file upload label/button
+    const handleFileUploadClick = () => {
+      if (fileInputRef.current) {
+        fileInputRef.current.click()
+      }
+    }
+
+    // Get the display name for the file
+    const getFileDisplayName = () => {
+      if (!value) return ''
+      if (value instanceof File) return value.name
+      if (typeof value === 'string') return value
+      if (isDynamicEnumValue(value)) return value.name
+      return ''
     }
 
     if (inputType === 'enum' || isDynamicEnum) {
@@ -156,15 +175,49 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
       )
     }
 
-    // For file inputs, we need to handle the value differently
-    const inputValue =
-      inputType.toLowerCase() === 'file' ? undefined : displayValue
+    // For file inputs, wrap in a div with proper Webflow file upload styling
+    if (inputType.toLowerCase() === 'file') {
+      const fileName = getFileDisplayName()
+
+      return (
+        <div className="w-file-upload">
+          <div className="w-file-upload-default">
+            <input
+              ref={fileInputRef}
+              type="file"
+              id={`file-${name}`}
+              name={name}
+              className={config.className}
+              onChange={handleChange}
+              disabled={disabled}
+              accept="*/*"
+              style={{ display: 'none' }}
+            />
+            <button
+              type="button"
+              className="w-file-upload-button"
+              onClick={handleFileUploadClick}
+              disabled={disabled}
+            >
+              {effectivePlaceholder}
+            </button>
+          </div>
+          {fileName && (
+            <div className="w-file-upload-info">
+              <div className="w-file-upload-file">
+                <div className="w-file-upload-file-name">{fileName}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    }
 
     return (
       <input
         type={config.type}
         className={config.className}
-        value={inputValue}
+        value={displayValue}
         onChange={handleChange}
         placeholder={effectivePlaceholder}
         disabled={disabled}

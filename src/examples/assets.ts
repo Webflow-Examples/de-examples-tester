@@ -128,8 +128,10 @@ export const Assets = {
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
-      type: fileTypeEnum,
+      type: fileTypeEnum.id,
     })
+
+    console.log('file', file)
 
     try {
       // Create and upload the asset to webflow

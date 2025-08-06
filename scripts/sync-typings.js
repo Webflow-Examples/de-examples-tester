@@ -1,10 +1,10 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
 // Configuration
 const SOURCE_DIR = path.join(
   process.cwd(),
-  'node_modules/@webflow/designer-extension-typings/dist',
+  'node_modules/@webflow/designer-extension-typings',
 )
 const TARGET_DIR = path.join(process.cwd(), 'src/designer-extension-typings')
 

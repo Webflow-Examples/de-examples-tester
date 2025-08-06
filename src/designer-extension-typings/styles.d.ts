@@ -92,6 +92,103 @@ interface Style {
    * ```
    */
   isComboClass(): boolean;
+  /**
+   * Retrieve a variable mode from the style.
+   * @param collection - The collection from which to get the currently applied mode.
+   * @param options - Options to get variable mode based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * const collection = await webflow.getVariableCollectionById('collection-id');
+   * let variableMode = await myStyle.getVariableMode(collection);
+   * ```
+   */
+  getVariableMode(
+    collection: VariableCollection,
+    options?: BreakpointAndPseudo
+  ): Promise<null | VariableMode>;
+  /**
+   * Sets a variable mode for the style.
+   * @param collection - The collection that the mode being set belongs to.
+   * @param mode - The variable mode to set.
+   * @param options - Options to set variable mode based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * const collection = await webflow.getVariableCollectionById('collection-id');
+   * const mode = await collection.getVariableModeByName('Dark');
+   * await myStyle.setVariableMode(collection, mode);
+   * ```
+   */
+  setVariableMode(
+    collection: VariableCollection,
+    mode: VariableMode,
+    options?: BreakpointAndPseudo
+  ): Promise<null>;
+  /**
+   * Removes a variable mode from the style.
+   * @param collection - The collection that the mode being removed belongs to.
+   * @param options - Options to remove variable mode based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * const collection = await webflow.getVariableCollectionById('collection-id');
+   * await myStyle.removeVariableMode(collection)
+   * ```
+   */
+  removeVariableMode(
+    collection: VariableCollection,
+    options?: BreakpointAndPseudo
+  ): Promise<null>;
+  /**
+   * Retrieve all variable modes applied on the style.
+   * @param options - Options to get variable modes based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * const modes = await myStyle.getVariableModes();
+   * ```
+   */
+  getVariableModes(
+    options?: BreakpointAndPseudo
+  ): Promise<VariableModeStylePropertyMap>;
+  /**
+   * Sets variable modes for the style.
+   * @param props - The variable modes to set.
+   * @param options - Options to set variable modes based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * await myStyle.setVariableModes({
+   *   'collection-id-1': 'mode-id-1',
+   *   'collection-id-2': 'mode-id-2',
+   * });
+   * ```
+   */
+  setVariableModes(
+    props: VariableModeStylePropertyMap,
+    options?: BreakpointAndPseudo
+  ): Promise<null>;
+  /**
+   * Removes variable modes from the style.
+   * @param modes - The variable modes to remove from the style.
+   * @param options - Options to remove variable modes based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * await myStyle.removeVariableModes({
+   *   'collection-id-1': 'mode-id-1',
+   *   'collection-id-2': 'mode-id-2',
+   * });
+   * ```
+   */
+  removeVariableModes(
+    modes: Array<VariableMode>,
+    options?: BreakpointAndPseudo
+  ): Promise<null>;
+  /**
+   * Removes all variable modes from the style.
+   * @param options - Options to remove all variable modes based on breakpoints and pseudo classes / states.
+   * @example
+   * ```ts
+   * await myStyle.removeAllVariableModes();
+   * ```
+   */
+  removeAllVariableModes(options?: BreakpointAndPseudo): Promise<null>;
 }
 
 type StyleId = string;
@@ -109,3 +206,7 @@ type BreakpointId =
   | 'medium'
   | 'small'
   | 'tiny';
+
+type VariableModeStylePropertyMap = {
+  [collectionId: VariableCollectionId]: VariableModeId;
+};

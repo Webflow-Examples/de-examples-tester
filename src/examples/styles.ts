@@ -236,4 +236,15 @@ export const Styles = {
     // apply newStyle to element
     if (selectedElement?.styles) await selectedElement.setStyles([newStyle])
   },
+
+  // Variable Modes
+
+  getVariableMode: async (styleName: string) => {
+    // Get Style
+    const style = await webflow.getStyleByName(styleName)
+
+    // Get Variable Mode
+    const variableMode = await style?.getVariableMode()
+    console.log(variableMode)
+  },
 }

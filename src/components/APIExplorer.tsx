@@ -1,66 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useQuery, useQueries } from '@tanstack/react-query'
-import examplesImport from '../examples/examples'
-import Dropdown from './dropdown'
-import ParameterInput from './parameterInput'
-import enumProviders, { hasEnumProvider } from '../examples/enums'
-import type { EnumProviderType } from '../examples/enums'
-import { useDynamicEnum } from '../hooks/useVariableCollections'
-import type {
-  DynamicEnumValue,
-  DynamicEnumProvider,
-} from '../types/dynamic-enums'
+import { useQuery } from '@tanstack/react-query'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
 import 'prismjs/components/prism-jsx.js'
 import 'prismjs/themes/prism-tomorrow.css'
-import { useFunctionCode } from '../hooks/useFunctionCode'
-// @ts-ignore
-import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?raw'
+
+// Internal Components
+import Dropdown from './dropdown'
 import CodeBlock from './CodeBlock'
-import { isVariableCollectionInfo } from '../types/dynamic-enums'
+import APIExplorerParameter from './APIExplorerParameter'
+
+// Types
+import type {
+  ParameterMap,
+  CategoryOption,
+  FunctionSelection,
+} from '../types/api-explorer.types'
+
+// Hooks
+import { useFunctionCode } from '../hooks/useFunctionCode'
+import { useEnumQueries } from '../hooks/useEnumQueries'
 import {
   useVariableCollections,
   useVariables,
 } from '../hooks/useVariableCollections'
-import { getVariablesEnum } from '../examples/variables'
-import type { VariableInfo } from '../types/dynamic-enums'
 
-// Add index signatures for dynamic access
+// Utils and Constants
+import { createAPIConsole } from '../utils/console-utils'
+import { METHOD_DESCRIPTIONS } from '../constants/api-explorer.constants'
+import { isVariableCollectionInfo } from '../types/dynamic-enums'
+
+// Data
+import examplesImport from '../examples/examples'
+import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?raw'
+
 const examples: { [key: string]: any } = examplesImport as any
-
-// Define parameter dependencies
-const PARAMETER_DEPENDENCIES: Record<string, { dependsOn: string }> = {
-  variableName: {
-    dependsOn: 'collection',
-  },
-  // Add more dependent parameters here as needed
-}
-
-interface ParameterMap {
-  [key: string]: any // Changed from string | number | boolean to any to support complex objects
-}
-
-const getMethodDescription = (
-  category: string,
-  functionName: string,
-): string => {
-  const descriptions: { [key: string]: { [key: string]: string } } = {
-    elements: {
-      'elementManagement.getSelectedElement':
-        'Get info about the currently selected element',
-      // Add more descriptions as needed
-    },
-  }
-  return descriptions[category]?.[functionName] || ''
-}
 
 const APIExplorer: React.FC = () => {
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
-  const [functionParameters, setFunctionParameters] = useState<
-    Record<string, any>
-  >({})
+  const [functionParameters, setFunctionParameters] = useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
   const hasAutoExecutedRef = useRef(false)
   const hasInitializedRef = useRef(false)
@@ -112,98 +91,8 @@ const APIExplorer: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   })
 
-  // Auto-select first example and function on mount
-  useEffect(() => {
-    if (!hasInitializedRef.current) {
-      hasInitializedRef.current = true
-      const firstCategory = Object.keys(examples)[0]
-      setSelectedExampleCategory(firstCategory)
-
-      // Get first function from the category, handling nested subcategories
-      const categoryContent = examples[firstCategory] || {}
-      const firstSubcategory = Object.keys(categoryContent)[0]
-
-      // Check if we have nested subcategories
-      if (
-        typeof categoryContent[firstSubcategory] === 'object' &&
-        !('type' in (categoryContent[firstSubcategory] || {}))
-      ) {
-        // Handle nested structure - use subcategory.function format
-        const firstFunction = Object.keys(categoryContent[firstSubcategory])[0]
-        setSelectedFunctionName(`${firstSubcategory}.${firstFunction}`)
-      } else {
-        // Handle flat structure
-        setSelectedFunctionName(firstSubcategory)
-      }
-    }
-  }, [])
-
-  // Safe console for API Explorer
-  const apiSafeConsole = {
-    log: (...args: any[]) =>
-      setApiOutput(
-        (prev) =>
-          prev +
-          args
-            .map((arg) =>
-              arg instanceof Error
-                ? `${arg.name}: ${arg.message}\n${arg.stack}`
-                : typeof arg === 'object' && arg !== null
-                  ? JSON.stringify(arg, null, 2)
-                  : String(arg),
-            )
-            .join(' ') +
-          '\n',
-      ),
-    error: (...args: any[]) =>
-      setApiOutput(
-        (prev) =>
-          prev +
-          '[Error] ' +
-          args
-            .map((arg) =>
-              arg instanceof Error
-                ? `${arg.name}: ${arg.message}\n${arg.stack}`
-                : typeof arg === 'object' && arg !== null
-                  ? JSON.stringify(arg, null, 2)
-                  : String(arg),
-            )
-            .join(' ') +
-          '\n',
-      ),
-    warn: (...args: any[]) =>
-      setApiOutput(
-        (prev) =>
-          prev +
-          '[Warn] ' +
-          args
-            .map((arg) =>
-              arg instanceof Error
-                ? `${arg.name}: ${arg.message}\n${arg.stack}`
-                : typeof arg === 'object' && arg !== null
-                  ? JSON.stringify(arg, null, 2)
-                  : String(arg),
-            )
-            .join(' ') +
-          '\n',
-      ),
-    info: (...args: any[]) =>
-      setApiOutput(
-        (prev) =>
-          prev +
-          '[Info] ' +
-          args
-            .map((arg) =>
-              arg instanceof Error
-                ? `${arg.name}: ${arg.message}\n${arg.stack}`
-                : typeof arg === 'object' && arg !== null
-                  ? JSON.stringify(arg, null, 2)
-                  : String(arg),
-            )
-            .join(' ') +
-          '\n',
-      ),
-  }
+  // Fetch enum values
+  const enumQueries = useEnumQueries(parameterTypes, parameterNames)
 
   useEffect(() => {
     Prism.highlightAll()
@@ -213,7 +102,29 @@ const APIExplorer: React.FC = () => {
     setApiOutput('')
   }, [selectedFunctionName, selectedExampleCategory])
 
-  // Auto-run function if selected and has no parameters
+  // Auto-initialize first example and function
+  useEffect(() => {
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true
+      const firstCategory = Object.keys(examples)[0]
+      setSelectedExampleCategory(firstCategory)
+
+      const categoryContent = examples[firstCategory] || {}
+      const firstSubcategory = Object.keys(categoryContent)[0]
+
+      if (
+        typeof categoryContent[firstSubcategory] === 'object' &&
+        !('type' in (categoryContent[firstSubcategory] || {}))
+      ) {
+        const firstFunction = Object.keys(categoryContent[firstSubcategory])[0]
+        setSelectedFunctionName(`${firstSubcategory}.${firstFunction}`)
+      } else {
+        setSelectedFunctionName(firstSubcategory)
+      }
+    }
+  }, [])
+
+  // Auto-run function if no parameters needed
   useEffect(() => {
     if (
       selectedFunctionName &&
@@ -226,41 +137,14 @@ const APIExplorer: React.FC = () => {
     }
   }, [selectedFunctionName, selectedExampleCategory, parameterNames])
 
-  // Fetch all non-dependent enum values at once
-  const enumQueries = useQueries({
-    queries: parameterTypes.map((paramType, index) => {
-      const paramName = parameterNames[index]
-      const dependency = PARAMETER_DEPENDENCIES[paramName]
-
-      // Skip dependent parameters and VariableInfo - they'll be handled separately
-      if (dependency || paramType === 'VariableInfo') {
-        return {
-          queryKey: ['enumValues', paramType, 'dependent'],
-          queryFn: async () => null,
-          enabled: false,
-        }
-      }
-
-      return {
-        queryKey: ['enumValues', paramType],
-        queryFn: async () => {
-          if (!hasEnumProvider(paramType)) return null
-          const provider = enumProviders[paramType as EnumProviderType]
-          return (provider as DynamicEnumProvider<DynamicEnumValue>).getAll()
-        },
-        enabled: hasEnumProvider(paramType),
-        staleTime: 5 * 60 * 1000,
-        cacheTime: 10 * 60 * 1000,
-      }
+  const exampleCategories: CategoryOption[] = Object.keys(examples).map(
+    (key) => ({
+      value: key,
+      label: key,
     }),
-  })
+  )
 
-  const exampleCategories = Object.keys(examples).map((key) => ({
-    value: key,
-    label: key,
-  }))
-
-  const functionSelections = selectedExampleCategory
+  const functionSelections: FunctionSelection[] = selectedExampleCategory
     ? Object.entries(examples[selectedExampleCategory] || {}).map(
         ([key, value]) => {
           if (
@@ -312,6 +196,7 @@ const APIExplorer: React.FC = () => {
       const funcToExecute = category
         ? topCategory[category][funcName]
         : topCategory[selectedFunctionName]
+
       if (funcToExecute) {
         try {
           setApiOutput('')
@@ -319,17 +204,19 @@ const APIExplorer: React.FC = () => {
             parameterNames.length > 0
               ? parameterNames.map((name: string) => functionParameters[name])
               : []
-          // Patch global console for this call
+
+          const apiConsole = createAPIConsole(setApiOutput)
           const originalConsole = { ...console }
-          Object.assign(console, apiSafeConsole)
+          Object.assign(console, apiConsole)
+
           if (typeof funcToExecute === 'function') {
             const result = funcToExecute(...paramValues)
             if (result && typeof result.then === 'function') {
-              result.catch(apiSafeConsole.error)
+              result.catch(apiConsole.error)
             }
           }
         } catch (error) {
-          apiSafeConsole.error('Error executing function:', error)
+          console.error('Error executing function:', error)
         } finally {
           Object.assign(console, console)
         }
@@ -339,51 +226,29 @@ const APIExplorer: React.FC = () => {
 
   const renderParameter = (name: string, index: number) => {
     const paramType = parameterTypes[index]
-    const hasProvider = hasEnumProvider(paramType)
-    const dependency = PARAMETER_DEPENDENCIES[name]
-
-    let options: any[] = []
-    let isLoading = false
-    let error: Error | null = null
-    let isDynamicEnum = false
-
-    if (paramType === 'VariableInfo') {
-      options = variables || []
-      isLoading = variablesLoading
-      error = variablesError as Error
-      isDynamicEnum = true
-    } else if (!dependency) {
-      // Handle non-dependent parameters
-      const queryResult = enumQueries[index]
-      const {
-        data,
-        isLoading: queryLoading,
-        error: queryError,
-      } = queryResult || {}
-      options = data || []
-      isLoading = queryLoading
-      error = queryError as Error
-      isDynamicEnum = hasProvider && data !== null
-    }
+    const queryResult = enumQueries[index] || {}
+    const options =
+      paramType === 'VariableInfo' ? variables || [] : queryResult.data || []
+    const isLoading =
+      paramType === 'VariableInfo' ? variablesLoading : queryResult.isLoading
+    const error =
+      paramType === 'VariableInfo' ? variablesError : queryResult.error
+    // A parameter is a dynamic enum only if it's a VariableInfo type
+    // Static enums are handled separately in the APIExplorerParameter component
+    const isDynamicEnum = paramType === 'VariableInfo'
 
     return (
-      <ParameterInput
+      <APIExplorerParameter
         key={name}
         name={name}
-        value={functionParameters[name] || ''}
+        index={index}
+        paramType={paramType}
+        value={functionParameters[name]}
         onChange={handleParameterChange}
-        inputType={hasProvider ? 'enum' : 'text'}
         options={options}
+        isLoading={isLoading}
+        error={error as Error}
         isDynamicEnum={isDynamicEnum}
-        placeholder={
-          isLoading
-            ? 'Loading...'
-            : error
-              ? `Error: ${error.message}`
-              : `Enter ${name}`
-        }
-        disabled={isDynamicEnum && (isLoading || !!error)}
-        loading={isLoading}
       />
     )
   }
@@ -411,12 +276,11 @@ const APIExplorer: React.FC = () => {
         </div>
       </div>
       {selectedFunctionName &&
-        getMethodDescription(selectedExampleCategory, selectedFunctionName) && (
+        METHOD_DESCRIPTIONS[selectedExampleCategory]?.[
+          selectedFunctionName
+        ] && (
           <div className="text-sm text-gray-400 mb-4">
-            {getMethodDescription(
-              selectedExampleCategory,
-              selectedFunctionName,
-            )}
+            {METHOD_DESCRIPTIONS[selectedExampleCategory][selectedFunctionName]}
           </div>
         )}
       {parameterNames.length > 0 && (
