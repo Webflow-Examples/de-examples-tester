@@ -13,6 +13,7 @@ import {
   isDynamicEnumValue,
 } from '../types/dynamic-enums'
 import React from 'react'
+import SearchableDropdown from './SearchableDropdown'
 
 // Define proper type for inputConfig
 interface InputConfigType {
@@ -114,10 +115,17 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
 
       if (inputType === 'enum' || isDynamicEnum) {
         const selectedValue = e.target.value
+        console.log(`ParameterInput ${name}: selectedValue =`, selectedValue)
+        console.log(`ParameterInput ${name}: options =`, options)
+        
         const selectedOption = options.find((opt) => {
           if (typeof opt === 'string') return opt === selectedValue
           return opt.id === selectedValue
         })
+
+        console.log(`ParameterInput ${name}: selectedOption =`, selectedOption)
+        console.log(`ParameterInput ${name}: final value =`, selectedOption || selectedValue)
+        
         onChange(name, selectedOption || selectedValue)
         return
       }
@@ -142,6 +150,24 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
     }
 
     if (inputType === 'enum' || isDynamicEnum) {
+      // Use searchable dropdown if there are many options (more than 10)
+      const shouldUseSearchable = options.length > 10
+
+      if (shouldUseSearchable) {
+        return (
+          <SearchableDropdown
+            options={options}
+            value={value}
+            onChange={(selectedValue) => onChange(name, selectedValue)}
+            placeholder={effectivePlaceholder}
+            disabled={disabled || loading}
+            loading={loading}
+            className={config.className}
+          />
+        )
+      }
+
+      // Use regular select for fewer options
       return (
         <select
           className={config.className}

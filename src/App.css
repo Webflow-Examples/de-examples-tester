@@ -430,6 +430,105 @@ pre {
   padding: 8px;
 }
 
+/* Searchable Dropdown Styles */
+.searchable-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.searchable-dropdown button {
+  background-color: var(--background1);
+  color: var(--text1);
+  border: 1px solid var(--border1);
+  border-radius: 4px;
+  padding: 8px 12px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--input-inner-shadow);
+  transition: all 0.2s ease;
+}
+
+.searchable-dropdown button:hover:not(:disabled) {
+  border-color: var(--border2);
+  background-color: var(--background2);
+}
+
+.searchable-dropdown button:focus {
+  outline: none;
+  border-color: var(--blueBorder);
+  box-shadow: 0 0 0 2px rgba(0, 125, 240, 0.2);
+}
+
+.searchable-dropdown .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--background1);
+  border: 1px solid var(--border1);
+  border-radius: 4px;
+  box-shadow: var(--menu-shadow);
+  z-index: 1000;
+  max-height: 240px;
+  overflow: hidden;
+}
+
+.searchable-dropdown .search-input {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border1);
+}
+
+.searchable-dropdown .search-input input {
+  width: 100%;
+  background-color: var(--background2);
+  color: var(--text1);
+  border: 1px solid var(--border1);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 14px;
+  box-shadow: var(--input-inner-shadow);
+}
+
+.searchable-dropdown .search-input input:focus {
+  outline: none;
+  border-color: var(--blueBorder);
+  box-shadow: 0 0 0 2px rgba(0, 125, 240, 0.2);
+}
+
+.searchable-dropdown .options-list {
+  max-height: 192px;
+  overflow-y: auto;
+}
+
+.searchable-dropdown .option-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: var(--text1);
+  font-size: 14px;
+}
+
+.searchable-dropdown .option-item:hover {
+  background-color: var(--background2);
+}
+
+.searchable-dropdown .option-item.selected {
+  background-color: var(--actionPrimaryBackground);
+  color: var(--actionPrimaryText);
+}
+
+.searchable-dropdown .no-options {
+  padding: 8px 12px;
+  color: var(--text3);
+  font-size: 14px;
+  text-align: center;
+}
+
 /* Reset some basic elements */
 html,
 body {

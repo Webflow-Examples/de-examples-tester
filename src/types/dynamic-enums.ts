@@ -13,6 +13,13 @@ export interface DynamicEnumProvider<T extends DynamicEnumValue> {
   getById?: (id: string) => Promise<T | undefined>
 }
 
+// NEW: Interface for object selectors that return actual objects
+export interface ObjectSelector<T> {
+  getAll: () => Promise<{ id: string; name: string; object: T }[]>
+  getByName: (name: string) => Promise<T | undefined>
+  getById: (id: string) => Promise<T | undefined>
+}
+
 // Generic function to create a dynamic enum map
 export async function createDynamicEnumMap<T extends DynamicEnumValue>(
   items: any[],
@@ -28,6 +35,29 @@ export async function createDynamicEnumMap<T extends DynamicEnumValue>(
   return enumMap
 }
 
+// NEW: Generic function to create an object selector
+export async function createObjectSelector<T>(
+  items: any[],
+  transform: (item: any) => Promise<{ id: string; name: string; object: T }>,
+): Promise<ObjectSelector<T>> {
+  const itemMap = new Map<string, { id: string; name: string; object: T }>()
+  const nameMap = new Map<string, T>()
+
+  await Promise.all(
+    items.map(async (item) => {
+      const transformed = await transform(item)
+      itemMap.set(transformed.id, transformed)
+      nameMap.set(transformed.name, transformed.object)
+    }),
+  )
+
+  return {
+    getAll: async () => Array.from(itemMap.values()),
+    getByName: async (name: string) => nameMap.get(name),
+    getById: async (id: string) => itemMap.get(id)?.object,
+  }
+}
+
 // Type guards
 export function isDynamicEnumValue(value: any): value is DynamicEnumValue {
   return (
@@ -36,6 +66,17 @@ export function isDynamicEnumValue(value: any): value is DynamicEnumValue {
     'id' in value &&
     'name' in value &&
     'data' in value
+  )
+}
+
+// NEW: Type guard for object selectors
+export function isObjectSelector(value: any): value is ObjectSelector<any> {
+  return (
+    value &&
+    typeof value === 'object' &&
+    typeof value.getAll === 'function' &&
+    typeof value.getByName === 'function' &&
+    typeof value.getById === 'function'
   )
 }
 

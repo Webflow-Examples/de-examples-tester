@@ -1,27 +1,86 @@
-import type { StyleInfo } from '../types/dynamic-enums'
+import type {
+  StyleInfo,
+  DynamicEnumProvider,
+  ObjectSelector,
+} from '../types/dynamic-enums'
+import {
+  createDynamicEnumMap,
+  createObjectSelector,
+} from '../types/dynamic-enums'
 
 // Types for style collections
 export type StylesEnum = {
   [key: string]: StyleInfo
 }
 
+// NEW: Object selector for actual Style objects (lazy initialization)
+let _stylesObjectSelector: ObjectSelector<any> | null = null
+let _stylesObjectSelectorPromise: Promise<ObjectSelector<any>> | null = null
+
+export const getStylesObjectSelector = async (): Promise<
+  ObjectSelector<any>
+> => {
+  // If we already have a promise in progress, return it to avoid multiple simultaneous calls
+  if (_stylesObjectSelectorPromise) {
+    return _stylesObjectSelectorPromise
+  }
+
+  // If we already have the selector, return it
+  if (_stylesObjectSelector) {
+    return _stylesObjectSelector
+  }
+
+  // Create a new promise for the selector creation
+  _stylesObjectSelectorPromise = (async () => {
+    const styles = await webflow.getAllStyles()
+    _stylesObjectSelector = await createObjectSelector(
+      styles,
+      async (style) => ({
+        id: style.id,
+        name: await style.getName(),
+        object: style,
+      }),
+    )
+    _stylesObjectSelectorPromise = null // Clear the promise
+    return _stylesObjectSelector
+  })()
+
+  return _stylesObjectSelectorPromise
+}
+
+// Create the styles provider (keeping for backward compatibility)
+export const stylesProvider: DynamicEnumProvider<StyleInfo> = {
+  getAll: async () => {
+    const styles = await webflow.getAllStyles()
+    const styleInfos = await Promise.all(
+      styles.map(async (style) => ({
+        id: style.id,
+        name: await style.getName(),
+        data: { style },
+      })),
+    )
+    // Sort alphabetically by name
+    return styleInfos.sort((a, b) => a.name.localeCompare(b.name))
+  },
+  getByName: async (name: string) => {
+    const styles = await getStylesEnum()
+    return styles[name]
+  },
+}
+
 // Utility function to get all styles as an enum-like object
 export const getStylesEnum = async (): Promise<StylesEnum> => {
   const styles = await webflow.getAllStyles()
-  const stylesMap: StylesEnum = {}
-
-  await Promise.all(
-    styles.map(async (style) => {
-      const name = await style.getName()
-      stylesMap[name] = {
-        id: style.id,
-        name,
-        style,
-      }
-    }),
+  const styleInfos = await Promise.all(
+    styles.map(async (style) => ({
+      id: style.id,
+      name: await style.getName(),
+      data: { style },
+    })),
   )
-
-  return stylesMap
+  // Sort alphabetically by name
+  const sortedStyles = styleInfos.sort((a, b) => a.name.localeCompare(b.name))
+  return createDynamicEnumMap(sortedStyles, async (styleInfo) => styleInfo)
 }
 
 // Helper function to get a specific style by name
@@ -30,6 +89,14 @@ export const getStyleByName = async (
 ): Promise<StyleInfo | undefined> => {
   const styles = await getStylesEnum()
   return styles[name]
+}
+
+// NEW: Helper function to get actual Style object by name
+export const getStyleObjectByName = async (
+  name: string,
+): Promise<any | undefined> => {
+  const selector = await getStylesObjectSelector()
+  return await selector.getByName(name)
 }
 
 export const Styles = {
@@ -97,26 +164,11 @@ export const Styles = {
     }
   },
 
-  getStyleProperties: async () => {
-    // Get selected element
-    const element = await webflow.getSelectedElement()
-
-    if (element?.styles) {
-      // Get Element Styles
-      const styles = await element.getStyles()
-
-      // Initialize an empty object to store all properties
-      const allProperties: { [key: string]: any } = {}
-
-      for (let style of styles) {
-        // Use string type for styleName
-        const styleName: string = await style.getName()
-        const breakpoint: BreakpointAndPseudo = { breakpoint: 'xxl' }
-        const properties = await style.getProperties(breakpoint)
-        allProperties[styleName] = properties
-      }
-
-      console.log(allProperties)
+  getStyleProperties: async (style: Style) => {
+    // Now style is the actual Style object, not wrapped
+    if (style) {
+      const properties = await style.getProperties()
+      console.log(properties)
     }
   },
   setStyleProperties: async () => {
@@ -126,7 +178,7 @@ export const Styles = {
     if (selectedElement?.styles) {
       // Get Element Styles
       const styles = await selectedElement.getStyles()
-      const primaryStyle = styles[0]
+      const primaryStyle = styles?.[0]
 
       if (primaryStyle) {
         const propertyMap = {
@@ -150,13 +202,19 @@ export const Styles = {
       const styles = await selectedElement.getStyles()
 
       // For each style, list values of propertyName
-      const selectedPropertyList = await Promise.all(
-        styles.map(async (style) => {
-          const styleName = await style.getName()
-          const property = await style.getProperty(propertyName)
-          console.log(`Style Name: ${styleName}, ${propertyName}: ${property}`)
-        }),
-      )
+      if (styles) {
+        const selectedPropertyList = await Promise.all(
+          styles.map(async (style) => {
+            if (style) {
+              const styleName = await style.getName()
+              const property = await style.getProperty(propertyName)
+              console.log(
+                `Style Name: ${styleName}, ${propertyName}: ${property}`,
+              )
+            }
+          }),
+        )
+      }
     }
   },
 
@@ -170,8 +228,11 @@ export const Styles = {
     if (selectedElement?.styles) {
       // Get Element Styles
       const styles = await selectedElement.getStyles()
-      const primaryStyle = styles[0]
-      await primaryStyle.setProperty(styleProperty, propertyValue)
+      const primaryStyle = styles?.[0]
+      if (primaryStyle) {
+        await primaryStyle.setProperty(styleProperty, propertyValue)
+        console.log(primaryStyle.getProperty(styleProperty))
+      }
     }
   },
   clearAllStyleProperties: async (styleName: string) => {
@@ -188,24 +249,28 @@ export const Styles = {
     if (selectedElement?.styles) {
       // Get Element Styles
       const styles = await selectedElement.getStyles()
-      const primaryStyle = styles[0]
-      await primaryStyle.removeProperty(property)
+      const primaryStyle = styles?.[0]
+      if (primaryStyle) {
+        await primaryStyle.removeProperty(property)
+      }
     }
   },
-  removeMultipleStyles: async () => {
+  removeMultipleStyleProperties: async () => {
     // Get Selected Element
     const selectedElement = await webflow.getSelectedElement()
 
     if (selectedElement?.styles) {
       // Get Element Styles
       const styles = await selectedElement.getStyles()
-      const primaryStyle = styles[0]
-      const properties: StyleProperty[] = [
-        'background-color',
-        'accent-color',
-        'font-family',
-      ]
-      await primaryStyle.removeProperties(properties)
+      const primaryStyle = styles?.[0]
+      if (primaryStyle) {
+        const properties: StyleProperty[] = [
+          'background-color',
+          'accent-color',
+          'font-family',
+        ]
+        await primaryStyle.removeProperties(properties)
+      }
     }
   },
 
@@ -239,12 +304,119 @@ export const Styles = {
 
   // Variable Modes
 
-  getVariableMode: async (styleName: string) => {
-    // Get Style
-    const style = await webflow.getStyleByName(styleName)
-
+  getVariableModes: async () => {
     // Get Variable Mode
-    const variableMode = await style?.getVariableMode()
-    console.log(variableMode)
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      const styles = await selectedElement.getStyles()
+      if (styles) {
+        const primaryStyle = styles[0]
+        const variableModes = await primaryStyle?.getVariableModes()
+        console.log(variableModes)
+      }
+    }
+  },
+
+  getVariableMode: async (variableCollection: VariableCollection) => {
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+
+      // Get Variable Mode
+      if (primaryStyle && variableCollection) {
+        const variableMode =
+          await primaryStyle.getVariableMode(variableCollection)
+        const variableName = await variableMode?.getName()
+        console.log(variableName)
+      }
+    }
+  },
+
+  setVariableModes: async (selectedStyle: Style) => {
+    // This function gets variable modes from the style of the currently selected element, then sets them on the style selected in the explorer
+
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+      const variableModes = await primaryStyle?.getVariableModes()
+
+      // Set Variable Modes on Selected Style
+      if (variableModes) {
+        await selectedStyle?.setVariableModes(variableModes)
+      }
+    }
+  },
+
+  setVariableMode: async (
+    variableCollection: VariableCollection,
+    variableMode: VariableMode,
+  ) => {
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+
+      // Set Variable Mode
+      if (primaryStyle && variableCollection) {
+        await primaryStyle.setVariableMode(variableCollection, variableMode)
+        console.log('Variable mode set successfully')
+      }
+    }
+  },
+
+  removeVariableMode: async (variableCollection: VariableCollection) => {
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+
+      await primaryStyle?.removeVariableMode(variableCollection)
+    }
+  },
+
+  removeVariableModes: async (variableCollection: VariableCollection) => {
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+
+      // Get Variable Modes
+      const variableModes = await variableCollection?.getAllVariableModes()
+      const remove = await primaryStyle?.removeVariableModes(variableModes)
+      console.log(remove)
+    }
+  },
+
+  removeAllVariableModes: async () => {
+    // Get Selected Element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement?.styles) {
+      // Get Styles
+      const styles = await selectedElement.getStyles()
+      const primaryStyle = styles?.[0] // Get the primary style
+
+      // Get Variable Modes
+      const remove = await primaryStyle?.removeAllVariableModes()
+      console.log(remove)
+    }
   },
 }

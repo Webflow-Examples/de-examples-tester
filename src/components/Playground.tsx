@@ -1,18 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import MonacoEditor, { useMonaco } from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
+import type { editor } from 'monaco-editor'
 import CodeBlock from './CodeBlock'
 import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
 
-// Extend Window interface to include Monaco
-declare global {
-  interface Window {
-    monaco: typeof monaco
-  }
-}
-
 // Custom theme definition to match PrismJS tomorrow theme
-const MONACO_THEME: monaco.editor.IStandaloneThemeData = {
+const MONACO_THEME: editor.IStandaloneThemeData = {
   base: 'vs-dark',
   inherit: true,
   rules: [
@@ -38,10 +31,13 @@ const MONACO_THEME: monaco.editor.IStandaloneThemeData = {
 const defaultCode = `// Explore the Webflow Designer API
 // Try typing "webflow." to see all available methods.
 
-// Get site information
-const siteInfo = await webflow.getSiteInfo();
-console.log('Site ID:', siteInfo.siteId);
-console.log('Site name:', siteInfo.siteName);`
+// Get style information of selected element
+const selectedElement = await webflow.getSelectedElement();
+const elementStyles = await selectedElement.getStyles();
+const primaryStyle = elementStyles?.[0];
+const styleProperties = await primaryStyle.getProperties();
+console.log(styleProperties);
+`
 
 const Playground: React.FC = () => {
   const [code, setCode] = useState(defaultCode)
@@ -50,54 +46,103 @@ const Playground: React.FC = () => {
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
+  const isMountedRef = useRef(true)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+      // Dispose of the editor if it exists
+      if (editorRef.current) {
+        try {
+          editorRef.current.dispose()
+        } catch (error) {
+          // Silently handle disposal errors
+          if (
+            error &&
+            typeof error === 'object' &&
+            'type' in error &&
+            (error as any).type === 'cancelation'
+          ) {
+            return
+          }
+          if (
+            error &&
+            typeof error === 'object' &&
+            'name' in error &&
+            (error as any).name === 'Canceled'
+          ) {
+            return
+          }
+          console.warn('Monaco editor disposal error:', error)
+        }
+      }
+    }
+  }, [])
 
   // Configure Monaco editor settings
   useEffect(() => {
-    if (monaco) {
-      // Relax TypeScript diagnostics
-      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: false,
-        noSyntaxValidation: false,
-        diagnosticCodesToIgnore: [],
-      })
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-        allowJs: true,
-        checkJs: false,
-        strict: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-        suppressImplicitAnyIndexErrors: true,
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        module: monaco.languages.typescript.ModuleKind.ESNext,
-      })
-      // Relax JavaScript diagnostics as well
-      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: false,
-        noSyntaxValidation: false,
-        diagnosticCodesToIgnore: [],
-      })
-      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-        allowJs: true,
-        checkJs: false,
-        strict: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-        suppressImplicitAnyIndexErrors: true,
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        module: monaco.languages.typescript.ModuleKind.ESNext,
-      })
+    if (monaco && isMountedRef.current) {
+      try {
+        // Relax TypeScript diagnostics
+        monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+          noSemanticValidation: false,
+          noSyntaxValidation: false,
+          diagnosticCodesToIgnore: [],
+        })
+        monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+          allowJs: true,
+          checkJs: false,
+          strict: false,
+          noUnusedLocals: false,
+          noUnusedParameters: false,
+          suppressImplicitAnyIndexErrors: true,
+          target: monaco.languages.typescript.ScriptTarget.ESNext,
+          module: monaco.languages.typescript.ModuleKind.ESNext,
+        })
+        // Relax JavaScript diagnostics as well
+        monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+          noSemanticValidation: false,
+          noSyntaxValidation: false,
+          diagnosticCodesToIgnore: [],
+        })
+        monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+          allowJs: true,
+          checkJs: false,
+          strict: false,
+          noUnusedLocals: false,
+          noUnusedParameters: false,
+          suppressImplicitAnyIndexErrors: true,
+          target: monaco.languages.typescript.ScriptTarget.ESNext,
+          module: monaco.languages.typescript.ModuleKind.ESNext,
+        })
 
-      // Load and configure designer extension typings
-      configureMonacoWithDesignerTypings(monaco)
+        // Load and configure designer extension typings
+        if (isMountedRef.current) {
+          configureMonacoWithDesignerTypings(monaco)
+        }
+      } catch (error) {
+        // Silently handle cancellation errors
+        if (
+          error &&
+          typeof error === 'object' &&
+          'type' in error &&
+          (error as any).type === 'cancelation'
+        ) {
+          return
+        }
+        if (
+          error &&
+          typeof error === 'object' &&
+          'name' in error &&
+          (error as any).name === 'Canceled'
+        ) {
+          return
+        }
+        console.warn('Monaco configuration error:', error)
+      }
     }
   }, [monaco])
-
-  useEffect(() => {
-    // Define the custom theme when Monaco is loaded
-    if (window.monaco) {
-      window.monaco.editor.defineTheme('prism-tomorrow', MONACO_THEME)
-    }
-  }, [])
 
   // Safe console implementation
   const safeConsole = {
@@ -237,17 +282,74 @@ const Playground: React.FC = () => {
           }}
           options={editorOptions}
           theme="prism-tomorrow"
+          loading={
+            <div
+              style={{
+                height: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#181818',
+                color: '#8ac2ff',
+                fontSize: 14,
+              }}
+            >
+              Loading editor...
+            </div>
+          }
           beforeMount={(monaco) => {
-            monaco.editor.defineTheme('prism-tomorrow', MONACO_THEME)
-            monaco.editor.setTheme('prism-tomorrow')
+            try {
+              monaco.editor.defineTheme('prism-tomorrow', MONACO_THEME)
+              monaco.editor.setTheme('prism-tomorrow')
+            } catch (error) {
+              // Silently handle cancellation errors
+              if (
+                error &&
+                typeof error === 'object' &&
+                'type' in error &&
+                (error as any).type === 'cancelation'
+              ) {
+                return
+              }
+              if (
+                error &&
+                typeof error === 'object' &&
+                'name' in error &&
+                (error as any).name === 'Canceled'
+              ) {
+                return
+              }
+              console.warn('Monaco beforeMount error:', error)
+            }
           }}
           onMount={(editor, monaco) => {
-            editorRef.current = editor
-            if (monaco) {
-              editor.addCommand(
-                monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-                () => runCode(codeRef.current),
-              )
+            try {
+              editorRef.current = editor
+              if (monaco && isMountedRef.current) {
+                editor.addCommand(
+                  monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+                  () => runCode(codeRef.current),
+                )
+              }
+            } catch (error) {
+              // Silently handle cancellation errors
+              if (
+                error &&
+                typeof error === 'object' &&
+                'type' in error &&
+                (error as any).type === 'cancelation'
+              ) {
+                return
+              }
+              if (
+                error &&
+                typeof error === 'object' &&
+                'name' in error &&
+                (error as any).name === 'Canceled'
+              ) {
+                return
+              }
+              console.warn('Monaco onMount error:', error)
             }
           }}
         />

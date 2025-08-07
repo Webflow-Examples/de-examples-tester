@@ -1,10 +1,52 @@
-import type { AssetInfo, DynamicEnumProvider } from '../types/dynamic-enums'
-import { createDynamicEnumMap } from '../types/dynamic-enums'
+import type {
+  AssetInfo,
+  DynamicEnumProvider,
+  ObjectSelector,
+} from '../types/dynamic-enums'
+import {
+  createDynamicEnumMap,
+  createObjectSelector,
+} from '../types/dynamic-enums'
 
 // Types for asset collections
 export type AssetsEnum = Record<string, AssetInfo>
 
-// Create the assets provider
+// NEW: Object selector for actual Asset objects (lazy initialization)
+let _assetsObjectSelector: ObjectSelector<any> | null = null
+let _assetsObjectSelectorPromise: Promise<ObjectSelector<any>> | null = null
+
+export const getAssetsObjectSelector = async (): Promise<
+  ObjectSelector<any>
+> => {
+  // If we already have a promise in progress, return it to avoid multiple simultaneous calls
+  if (_assetsObjectSelectorPromise) {
+    return _assetsObjectSelectorPromise
+  }
+
+  // If we already have the selector, return it
+  if (_assetsObjectSelector) {
+    return _assetsObjectSelector
+  }
+
+  // Create a new promise for the selector creation
+  _assetsObjectSelectorPromise = (async () => {
+    const assets = await webflow.getAllAssets()
+    _assetsObjectSelector = await createObjectSelector(
+      assets,
+      async (asset) => ({
+        id: asset.id,
+        name: await asset.getName(),
+        object: asset,
+      }),
+    )
+    _assetsObjectSelectorPromise = null // Clear the promise
+    return _assetsObjectSelector
+  })()
+
+  return _assetsObjectSelectorPromise
+}
+
+// Create the assets provider (keeping for backward compatibility)
 export const assetsProvider: DynamicEnumProvider<AssetInfo> = {
   getAll: async () => {
     const assets = await webflow.getAllAssets()
@@ -40,6 +82,14 @@ export const getAssetByName = async (
 ): Promise<AssetInfo | undefined> => {
   const assets = await getAssetsEnum()
   return assets[name]
+}
+
+// NEW: Helper function to get actual Asset object by name
+export const getAssetObjectByName = async (
+  name: string,
+): Promise<any | undefined> => {
+  const selector = await getAssetsObjectSelector()
+  return await selector.getByName(name)
 }
 
 export enum ValidFileTypesEnum {
@@ -128,7 +178,7 @@ export const Assets = {
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
-      type: fileTypeEnum.id,
+      type: fileTypeEnum,
     })
 
     console.log('file', file)
@@ -159,13 +209,11 @@ export const Assets = {
       console.log(`Asset URL: ${url}`)
     }
   },
-  getAltText: async (asset: AssetInfo) => {
-    // Get Asset by ID
-    const selAsset = await webflow.getAssetById(asset.data.id)
-
-    if (selAsset) {
-      // Get asset URL
-      const altText = await selAsset.getAltText()
+  getAltText: async (asset: Asset) => {
+    // Now asset is the actual Asset object, not wrapped
+    if (asset) {
+      // Get asset alt text
+      const altText = await asset.getAltText()
       console.log(`Asset Alt Text: ${altText}`)
     }
   },

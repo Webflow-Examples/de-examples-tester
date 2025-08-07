@@ -92,7 +92,11 @@ const APIExplorer: React.FC = () => {
   })
 
   // Fetch enum values
-  const enumQueries = useEnumQueries(parameterTypes, parameterNames)
+  const enumQueries = useEnumQueries(
+    parameterTypes,
+    parameterNames,
+    functionParameters,
+  )
 
   useEffect(() => {
     Prism.highlightAll()
@@ -200,9 +204,34 @@ const APIExplorer: React.FC = () => {
       if (funcToExecute) {
         try {
           setApiOutput('')
+
           const paramValues =
             parameterNames.length > 0
-              ? parameterNames.map((name: string) => functionParameters[name])
+              ? parameterNames.map((name: string, index: number) => {
+                  const paramType = parameterTypes[index]
+                  const value = functionParameters[name]
+
+                  // Extract actual object for ObjectSelector types
+                  if (
+                    paramType === 'Style' ||
+                    paramType === 'Asset' ||
+                    paramType === 'VariableCollection' ||
+                    paramType === 'Variable' ||
+                    paramType === 'VariableMode'
+                  ) {
+                    // For ObjectSelector types, extract the actual object from data.object
+                    if (
+                      value &&
+                      typeof value === 'object' &&
+                      value.data &&
+                      value.data.object
+                    ) {
+                      return value.data.object
+                    }
+                  }
+
+                  return value
+                })
               : []
 
           const apiConsole = createAPIConsole(setApiOutput)
@@ -233,16 +262,31 @@ const APIExplorer: React.FC = () => {
       paramType === 'VariableInfo' ? variablesLoading : queryResult.isLoading
     const error =
       paramType === 'VariableInfo' ? variablesError : queryResult.error
-    // A parameter is a dynamic enum only if it's a VariableInfo type
-    // Static enums are handled separately in the APIExplorerParameter component
-    const isDynamicEnum = paramType === 'VariableInfo'
+
+    // Check if this is a dynamic enum (ends with "Info") or an ObjectSelector type
+    const isDynamicEnum =
+      paramType.endsWith('Info') ||
+      paramType === 'Style' ||
+      paramType === 'Asset' ||
+      paramType === 'VariableCollection' ||
+      paramType === 'Variable' ||
+      paramType === 'VariableMode'
+
+    // For clean API examples, we want to pass the actual objects, not wrappers
+    // So we'll use custom parameter types that show the real API
+    const cleanParamType =
+      paramType === 'StyleInfo'
+        ? 'Style'
+        : paramType === 'AssetInfo'
+          ? 'Asset'
+          : paramType
 
     return (
       <APIExplorerParameter
         key={name}
         name={name}
         index={index}
-        paramType={paramType}
+        paramType={cleanParamType}
         value={functionParameters[name]}
         onChange={handleParameterChange}
         options={options}

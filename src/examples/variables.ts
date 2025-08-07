@@ -2,12 +2,103 @@ import type {
   VariableCollectionInfo,
   VariableInfo,
   DynamicEnumProvider,
+  ObjectSelector,
 } from '../types/dynamic-enums'
-import { createDynamicEnumMap } from '../types/dynamic-enums'
+import {
+  createDynamicEnumMap,
+  createObjectSelector,
+} from '../types/dynamic-enums'
 
 // Types for collections
 export type VariableCollections = Record<string, VariableCollectionInfo>
 export type Variables = Record<string, VariableInfo>
+
+// NEW: Object selector for actual VariableCollection objects (lazy initialization)
+let _variableCollectionsObjectSelector: ObjectSelector<any> | null = null
+let _variableCollectionsObjectSelectorPromise: Promise<
+  ObjectSelector<any>
+> | null = null
+
+export const getVariableCollectionsObjectSelector = async (): Promise<
+  ObjectSelector<any>
+> => {
+  // If we already have a promise in progress, return it to avoid multiple simultaneous calls
+  if (_variableCollectionsObjectSelectorPromise) {
+    return _variableCollectionsObjectSelectorPromise
+  }
+
+  // If we already have the selector, return it
+  if (_variableCollectionsObjectSelector) {
+    return _variableCollectionsObjectSelector
+  }
+
+  // Create a new promise for the selector creation
+  _variableCollectionsObjectSelectorPromise = (async () => {
+    const collections = await webflow.getAllVariableCollections()
+    _variableCollectionsObjectSelector = await createObjectSelector(
+      collections,
+      async (collection) => ({
+        id: collection.id,
+        name: await collection.getName(),
+        object: collection,
+      }),
+    )
+    _variableCollectionsObjectSelectorPromise = null // Clear the promise
+    return _variableCollectionsObjectSelector
+  })()
+
+  return _variableCollectionsObjectSelectorPromise
+}
+
+// NEW: Object selector for actual Variable objects (lazy initialization)
+let _variablesObjectSelector: ObjectSelector<any> | null = null
+let _variablesObjectSelectorPromise: Promise<ObjectSelector<any>> | null = null
+
+export const getVariablesObjectSelector = async (): Promise<
+  ObjectSelector<any>
+> => {
+  // If we already have a promise in progress, return it to avoid multiple simultaneous calls
+  if (_variablesObjectSelectorPromise) {
+    return _variablesObjectSelectorPromise
+  }
+
+  // If we already have the selector, return it
+  if (_variablesObjectSelector) {
+    return _variablesObjectSelector
+  }
+
+  // Create a new promise for the selector creation
+  _variablesObjectSelectorPromise = (async () => {
+    // Get all collections first
+    const collections = await webflow.getAllVariableCollections()
+
+    // Get all variables from all collections
+    const allVariables = []
+    for (const collection of collections) {
+      const variables = await collection.getAllVariables()
+      for (const variable of variables) {
+        allVariables.push({
+          ...variable,
+          collectionId: collection.id,
+          collectionName: await collection.getName(),
+        })
+      }
+    }
+
+    _variablesObjectSelector = await createObjectSelector(
+      allVariables,
+      async (variable) => ({
+        id: variable.id,
+        name: `${await variable.getName()} (${variable.collectionName})`,
+        object: variable,
+      }),
+    )
+    _variablesObjectSelectorPromise = null // Clear the promise
+    return _variablesObjectSelector
+  })()
+
+  return _variablesObjectSelectorPromise
+}
 
 // Create the collections provider
 export const collectionsProvider: DynamicEnumProvider<VariableCollectionInfo> =
@@ -91,6 +182,57 @@ export const getVariablesEnum = async (
   }))
 }
 
+// NEW: Helper function to get actual VariableCollection object by name
+export const getVariableCollectionObjectByName = async (
+  name: string,
+): Promise<any | undefined> => {
+  const selector = await getVariableCollectionsObjectSelector()
+  return await selector.getByName(name)
+}
+
+// NEW: Helper function to get actual Variable object by name
+export const getVariableObjectByName = async (
+  name: string,
+): Promise<any | undefined> => {
+  const selector = await getVariablesObjectSelector()
+  return await selector.getByName(name)
+}
+
+// NEW: Function to create VariableMode ObjectSelector for a specific collection
+export const createVariableModeObjectSelector = async (
+  collectionId: string,
+): Promise<ObjectSelector<any>> => {
+  const collection = await webflow.getVariableCollectionById(collectionId)
+  if (!collection) {
+    throw new Error(`Collection with ID ${collectionId} not found`)
+  }
+
+  const variableModes = await collection.getAllVariableModes()
+  return createObjectSelector(variableModes, async (mode) => ({
+    id: mode.id,
+    name: await mode.getName(),
+    object: mode,
+  }))
+}
+
+// NEW: Cached VariableMode ObjectSelectors to avoid recreating them
+const variableModeSelectorsCache = new Map<string, ObjectSelector<any>>()
+
+// NEW: Function to get VariableMode ObjectSelector for a collection (with caching)
+export const getVariableModeObjectSelector = async (
+  collectionId: string,
+): Promise<ObjectSelector<any>> => {
+  // Check if we already have a selector for this collection
+  if (variableModeSelectorsCache.has(collectionId)) {
+    return variableModeSelectorsCache.get(collectionId)!
+  }
+
+  // Create new selector
+  const selector = await createVariableModeObjectSelector(collectionId)
+  variableModeSelectorsCache.set(collectionId, selector)
+  return selector
+}
+
 interface WebflowVariable {
   id: string
   getName: () => Promise<string>
@@ -168,23 +310,19 @@ export const Variables = {
       console.log(collectionName)
     },
 
-    getCollectionAndVariables: async () => {
-      // Fetch the default variable collection
-      const defaultVariableCollection =
-        await webflow.getDefaultVariableCollection()
-
-      if (defaultVariableCollection) {
+    getCollectionAndVariables: async (
+      variableCollection: VariableCollection,
+    ) => {
+      if (variableCollection) {
         // Print Collection ID
-        console.log(
-          'Default Variable Collection ID:',
-          defaultVariableCollection.id,
-        )
+        console.log('Default Variable Collection ID:', variableCollection.id)
 
         // Fetch all variables within the default collection
-        const variables = await defaultVariableCollection.getAllVariables()
+        const variables = await variableCollection.getAllVariables()
 
         if (variables.length > 0) {
-          console.log('List of Variables in Default Collection:')
+          const collectionName = await variableCollection.getName()
+          console.log(`List of Variables in ${collectionName}:`)
 
           // Print variable details
           for (var i in variables) {
@@ -203,14 +341,17 @@ export const Variables = {
 
   // Variable Creation
   variableCreation: {
-    createColorVariable: async () => {
+    createColorVariable: async (
+      variableCollection: VariableCollection,
+      color: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
-      // Create Color Variable with a HEX Codre
+      // Create Color Variable with a HEX Code
       const myColorVariable = await collection?.createColorVariable(
         'primary',
-        '#ffcc11',
+        color,
       )
       console.log(myColorVariable)
     },
@@ -226,10 +367,10 @@ export const Variables = {
       )
 
       // Get the binding to the webflowBlue variable
-      const webflowBlueBinding = await webflowBlue?.getBinding()
+      const webflowBlueBinding = (await webflowBlue?.getBinding()) as string
 
       // Function to create a string that uses the binding and CSS color-mix function
-      const colorMix = (binding, color, opacity) =>
+      const colorMix = (binding: string, color: string, opacity: number) =>
         `color-mix(in srgb, ${binding} , ${color} ${opacity}%)`
 
       // Create a color variable that uses a CSS function
@@ -296,18 +437,24 @@ export const Variables = {
 
   // Variable Management
   variableManagement: {
-    getVariableById: async (id: string) => {
+    getVariableById: async (
+      variableCollection: VariableCollection,
+      id: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       // Get variable by ID
       const variableById = await collection?.getVariable(id)
       console.log(variableById)
     },
 
-    getVariableByName: async (name: string) => {
+    getVariableByName: async (
+      variableCollection: VariableCollection,
+      name: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       // Get Variable by Name
       const variableByName = (await collection?.getVariableByName(
@@ -316,14 +463,19 @@ export const Variables = {
       console.log(variableByName)
     },
 
-    editVariable: async () => {
+    editVariable: async (
+      variableCollection: VariableCollection,
+      variableName: string,
+      newName: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       if (collection) {
         // Get variable and reset name
-        const variable = await collection.getVariableByName('Space Cadet')
-        await variable?.setName('Our awesome bg color')
+        const variable = await collection.getVariableByName(variableName)
+        console.log(variable)
+        await variable?.setName(newName)
       }
     },
     getVariableValue: async (
@@ -439,26 +591,29 @@ export const Variables = {
   },
   // Variable Modes
   variableModes: {
-    getAllVariableModes: async () => {
-      // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
-
+    getAllVariableModes: async (variableCollection: VariableCollection) => {
       // Get All Variable Modes
-      const variableModes = await collection?.getAllVariableModes()
+      const variableModes = await variableCollection?.getAllVariableModes()
       console.log(variableModes)
     },
 
-    getVariableModeById: async (modeId: string) => {
+    getVariableModeById: async (
+      variableCollection: VariableCollection,
+      modeId: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       // Get Variable Mode by ID
       const variableMode = await collection?.getVariableModeById(modeId)
       console.log(variableMode)
     },
-    getVariableModeByName: async (modeName: string) => {
+    getVariableModeByName: async (
+      variableCollection: VariableCollection,
+      modeName: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       // Get Variable Mode by Name
       const variableMode = await collection?.getVariableModeByName(modeName)
@@ -466,9 +621,12 @@ export const Variables = {
     },
 
     // Create Variable Mode
-    createVariableMode: async (modeName: string) => {
+    createVariableMode: async (
+      variableCollection: VariableCollection,
+      modeName: string,
+    ) => {
       // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
+      const collection = variableCollection
 
       // Create Variable Mode
       const variableMode = await collection?.createVariableMode(modeName)
@@ -477,13 +635,10 @@ export const Variables = {
     },
 
     // Remove Variable Mode
-    removeVariableMode: async (modeId: string) => {
-      // Get Collection
-      const collection = await webflow.getDefaultVariableCollection()
-
-      // Get Variable Mode
-      const variableMode = await collection?.getVariableModeById(modeId)
-
+    removeVariableMode: async (
+      variableCollection: VariableCollection,
+      variableMode: VariableMode,
+    ) => {
       // Remove Variable Mode
       variableMode?.remove()
     },

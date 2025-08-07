@@ -15,6 +15,9 @@ export const PARAMETER_DEPENDENCIES: ParameterDependencies = {
   variableName: {
     dependsOn: 'collection',
   },
+  variableMode: {
+    dependsOn: 'variableCollection',
+  },
   // Add more dependent parameters here as needed
 }
 
