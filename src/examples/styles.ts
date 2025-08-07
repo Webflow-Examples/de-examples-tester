@@ -309,7 +309,7 @@ export const Styles = {
     // Variable Modes
 
     getVariableModes: async () => {
-      // Get Variable Mode
+      // Get Selected Element
       const selectedElement = await webflow.getSelectedElement()
 
       if (selectedElement?.styles) {
@@ -335,8 +335,8 @@ export const Styles = {
         if (primaryStyle && variableCollection) {
           const variableMode =
             await primaryStyle.getVariableMode(variableCollection)
-          const variableName = await variableMode?.getName()
-          console.log(variableName)
+          const variableModeName = await variableMode?.getName()
+          console.log(variableModeName)
         }
       }
     },
