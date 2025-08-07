@@ -100,323 +100,328 @@ export const getStyleObjectByName = async (
 }
 
 export const Styles = {
-  getAllStyles: async () => {
-    // Get all Styles
-    const allStyles = await webflow.getAllStyles()
+  StyleManagement: {
+    getAllStyles: async () => {
+      // Get all Styles
+      const allStyles = await webflow.getAllStyles()
 
-    // List Styles
-    if (allStyles.length > 0) {
-      console.log('List of all styles:')
+      // List Styles
+      if (allStyles.length > 0) {
+        console.log('List of all styles:')
 
-      allStyles.forEach(async (style, index) => {
-        // Print style names and ids
-        console.log(
-          `${index + 1}. Style Name: ${await style.getName()}, Style ID: ${style.id}`,
-        )
-      })
-    } else {
-      console.log('No styles found in the current context.')
-    }
-  },
-  getStyleByName: async (styleName: string) => {
-    // Retrieve the style by name
-    const retrievedStyle = await webflow.getStyleByName(styleName)
-
-    if (retrievedStyle) {
-      // Get and print properties of the retrieved style
-      const styleProperties = await retrievedStyle.getProperties()
-      console.log('Style properties:', styleProperties)
-    } else {
-      console.log(`Style ${styleName} not found.`)
-    }
-  },
-  createStyle: async (styleName: string) => {
-    // Create new style
-    const newStyle = await webflow.createStyle(styleName)
-
-    // Set properties for the style
-    newStyle.setProperties({
-      'background-color': 'blue',
-      'font-size': '16px',
-      'font-weight': 'bold',
-    })
-
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
-
-    if (selectedElement?.styles) {
-      // Apply style to selected element
-      await selectedElement.setStyles([newStyle])
-    } else {
-      console.log('No element selected')
-    }
-  },
-  removeStyle: async (styleName: string) => {
-    // Retrieve the style by name
-    const retrievedStyle = await webflow.getStyleByName(styleName)
-
-    if (retrievedStyle) {
-      // Remove Style
-      await webflow.removeStyle(retrievedStyle)
-      console.log(`Style: ${styleName} was removed`)
-    } else {
-      console.log(`Style ${styleName} not found.`)
-    }
-  },
-
-  getStyleProperties: async (style: Style) => {
-    // Now style is the actual Style object, not wrapped
-    if (style) {
-      const properties = await style.getProperties()
-      console.log(properties)
-    }
-  },
-  setStyleProperties: async () => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
-
-    if (selectedElement?.styles) {
-      // Get Element Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0]
-
-      if (primaryStyle) {
-        const propertyMap = {
-          'background-color': 'blue',
-          'font-size': '16px',
-          'font-weight': 'bold',
-        }
-
-        await primaryStyle.setProperties(propertyMap)
+        allStyles.forEach(async (style, index) => {
+          // Print style names and ids
+          console.log(
+            `${index + 1}. Style Name: ${await style.getName()}, Style ID: ${style.id}`,
+          )
+        })
       } else {
-        console.log('Please choose an element with styles')
+        console.log('No styles found in the current context.')
       }
-    }
-  },
-  getStyleProperty: async (propertyName: StyleProperty) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    },
+    getStyleByName: async (styleName: string) => {
+      // Retrieve the style by name
+      const retrievedStyle = await webflow.getStyleByName(styleName)
 
-    if (selectedElement?.styles) {
-      // Get Element Styles
-      const styles = await selectedElement.getStyles()
-
-      // For each style, list values of propertyName
-      if (styles) {
-        const selectedPropertyList = await Promise.all(
-          styles.map(async (style) => {
-            if (style) {
-              const styleName = await style.getName()
-              const property = await style.getProperty(propertyName)
-              console.log(
-                `Style Name: ${styleName}, ${propertyName}: ${property}`,
-              )
-            }
-          }),
-        )
+      if (retrievedStyle) {
+        // Get and print properties of the retrieved style
+        const styleProperties = await retrievedStyle.getProperties()
+        console.log('Style properties:', styleProperties)
+      } else {
+        console.log(`Style ${styleName} not found.`)
       }
-    }
-  },
+    },
+    createStyle: async (styleName: string) => {
+      // Create new style
+      const newStyle = await webflow.createStyle(styleName)
 
-  setStyleProperty: async (
-    styleProperty: StyleProperty,
-    propertyValue: string,
-  ) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+      // Set properties for the style
+      newStyle.setProperties({
+        'background-color': 'blue',
+        'font-size': '16px',
+        'font-weight': 'bold',
+      })
 
-    if (selectedElement?.styles) {
-      // Get Element Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0]
-      if (primaryStyle) {
-        await primaryStyle.setProperty(styleProperty, propertyValue)
-        console.log(primaryStyle.getProperty(styleProperty))
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Apply style to selected element
+        await selectedElement.setStyles([newStyle])
+      } else {
+        console.log('No element selected')
       }
-    }
-  },
-  clearAllStyleProperties: async (styleName: string) => {
-    // Retrieve the style by name
-    const retrievedStyle = await webflow.getStyleByName(styleName)
+    },
+    removeStyle: async (styleName: string) => {
+      // Retrieve the style by name
+      const retrievedStyle = await webflow.getStyleByName(styleName)
 
-    // Clear Style Properties
-    await retrievedStyle?.removeAllProperties()
-  },
-  removeSingleStyleProperty: async (property: StyleProperty) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
-
-    if (selectedElement?.styles) {
-      // Get Element Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0]
-      if (primaryStyle) {
-        await primaryStyle.removeProperty(property)
+      if (retrievedStyle) {
+        // Remove Style
+        await webflow.removeStyle(retrievedStyle)
+        console.log(`Style: ${styleName} was removed`)
+      } else {
+        console.log(`Style ${styleName} not found.`)
       }
-    }
-  },
-  removeMultipleStyleProperties: async () => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    },
+    createStyleApplySelectedElement: async () => {
+      // Get selected element
+      const selectedElement = await webflow.getSelectedElement()
 
-    if (selectedElement?.styles) {
-      // Get Element Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0]
-      if (primaryStyle) {
-        const properties: StyleProperty[] = [
-          'background-color',
-          'accent-color',
-          'font-family',
-        ]
-        await primaryStyle.removeProperties(properties)
+      // Create new style
+      const newStyle = await webflow.createStyle('My Custom Style')
+
+      // Create a variable
+      const collection = await webflow.getDefaultVariableCollection()
+      const webflowBlue = await collection?.createColorVariable(
+        'Webflow Blue',
+        '#146EF5',
+      )
+
+      // Create a PropertyMap object
+      const propertyMap: PropertyMap = {
+        'background-color': webflowBlue as ColorVariable,
+        'font-size': '16px',
+        'font-weight': 'bold',
       }
-    }
+
+      // Set style properties
+      await newStyle.setProperties(propertyMap)
+
+      // apply newStyle to element
+      if (selectedElement?.styles) await selectedElement.setStyles([newStyle])
+    },
   },
 
-  createStyleApplySelectedElement: async () => {
-    // Get selected element
-    const selectedElement = await webflow.getSelectedElement()
-
-    // Create new style
-    const newStyle = await webflow.createStyle('My Custom Style')
-
-    // Create a variable
-    const collection = await webflow.getDefaultVariableCollection()
-    const webflowBlue = await collection?.createColorVariable(
-      'Webflow Blue',
-      '#146EF5',
-    )
-
-    // Create a PropertyMap object
-    const propertyMap: PropertyMap = {
-      'background-color': webflowBlue as ColorVariable,
-      'font-size': '16px',
-      'font-weight': 'bold',
-    }
-
-    // Set style properties
-    await newStyle.setProperties(propertyMap)
-
-    // apply newStyle to element
-    if (selectedElement?.styles) await selectedElement.setStyles([newStyle])
-  },
-
-  // Variable Modes
-
-  getVariableModes: async () => {
-    // Get Variable Mode
-    const selectedElement = await webflow.getSelectedElement()
-
-    if (selectedElement?.styles) {
-      const styles = await selectedElement.getStyles()
-      if (styles) {
-        const primaryStyle = styles[0]
-        const variableModes = await primaryStyle?.getVariableModes()
-        console.log(variableModes)
+  StyleProperties: {
+    getStyleProperties: async (style: Style) => {
+      // Now style is the actual Style object, not wrapped
+      if (style) {
+        const properties = await style.getProperties()
+        console.log(properties)
       }
-    }
+    },
+    setStyleProperties: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Element Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0]
+
+        if (primaryStyle) {
+          const propertyMap = {
+            'background-color': 'blue',
+            'font-size': '16px',
+            'font-weight': 'bold',
+          }
+
+          await primaryStyle.setProperties(propertyMap)
+        } else {
+          console.log('Please choose an element with styles')
+        }
+      }
+    },
+    getStyleProperty: async (propertyName: StyleProperty) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Element Styles
+        const styles = await selectedElement.getStyles()
+
+        // For each style, list values of propertyName
+        if (styles) {
+          const selectedPropertyList = await Promise.all(
+            styles.map(async (style) => {
+              if (style) {
+                const styleName = await style.getName()
+                const property = await style.getProperty(propertyName)
+                console.log(
+                  `Style Name: ${styleName}, ${propertyName}: ${property}`,
+                )
+              }
+            }),
+          )
+        }
+      }
+    },
+
+    setStyleProperty: async (
+      styleProperty: StyleProperty,
+      propertyValue: string,
+    ) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Element Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0]
+        if (primaryStyle) {
+          await primaryStyle.setProperty(styleProperty, propertyValue)
+          console.log(primaryStyle.getProperty(styleProperty))
+        }
+      }
+    },
+    clearAllStyleProperties: async (styleName: string) => {
+      // Retrieve the style by name
+      const retrievedStyle = await webflow.getStyleByName(styleName)
+
+      // Clear Style Properties
+      await retrievedStyle?.removeAllProperties()
+    },
+    removeSingleStyleProperty: async (property: StyleProperty) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Element Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0]
+        if (primaryStyle) {
+          await primaryStyle.removeProperty(property)
+        }
+      }
+    },
+    removeMultipleStyleProperties: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Element Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0]
+        if (primaryStyle) {
+          const properties: StyleProperty[] = [
+            'background-color',
+            'accent-color',
+            'font-family',
+          ]
+          await primaryStyle.removeProperties(properties)
+        }
+      }
+    },
   },
 
-  getVariableMode: async (variableCollection: VariableCollection) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+  VariableModes: {
+    // Variable Modes
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
-
+    getVariableModes: async () => {
       // Get Variable Mode
-      if (primaryStyle && variableCollection) {
-        const variableMode =
-          await primaryStyle.getVariableMode(variableCollection)
-        const variableName = await variableMode?.getName()
-        console.log(variableName)
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        const styles = await selectedElement.getStyles()
+        if (styles) {
+          const primaryStyle = styles[0]
+          const variableModes = await primaryStyle?.getVariableModes()
+          console.log(variableModes)
+        }
       }
-    }
-  },
+    },
 
-  setVariableModes: async (selectedStyle: Style) => {
-    // This function gets variable modes from the style of the currently selected element, then sets them on the style selected in the explorer
+    getVariableMode: async (variableCollection: VariableCollection) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
 
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
-      const variableModes = await primaryStyle?.getVariableModes()
-
-      // Set Variable Modes on Selected Style
-      if (variableModes) {
-        await selectedStyle?.setVariableModes(variableModes)
+        // Get Variable Mode
+        if (primaryStyle && variableCollection) {
+          const variableMode =
+            await primaryStyle.getVariableMode(variableCollection)
+          const variableName = await variableMode?.getName()
+          console.log(variableName)
+        }
       }
-    }
-  },
+    },
 
-  setVariableMode: async (
-    variableCollection: VariableCollection,
-    variableMode: VariableMode,
-  ) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    setVariableModes: async (selectedStyle: Style) => {
+      // This function gets variable modes from the style of the currently selected element, then sets them on the style selected in the explorer
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
 
-      // Set Variable Mode
-      if (primaryStyle && variableCollection) {
-        await primaryStyle.setVariableMode(variableCollection, variableMode)
-        console.log('Variable mode set successfully')
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
+        const variableModes = await primaryStyle?.getVariableModes()
+
+        // Set Variable Modes on Selected Style
+        if (variableModes) {
+          await selectedStyle?.setVariableModes(variableModes)
+        }
       }
-    }
-  },
+    },
 
-  removeVariableMode: async (variableCollection: VariableCollection) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    setVariableMode: async (
+      variableCollection: VariableCollection,
+      variableMode: VariableMode,
+    ) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
 
-      await primaryStyle?.removeVariableMode(variableCollection)
-    }
-  },
+        // Set Variable Mode
+        if (primaryStyle && variableCollection) {
+          await primaryStyle.setVariableMode(variableCollection, variableMode)
+          console.log('Variable mode set successfully')
+        }
+      }
+    },
 
-  removeVariableModes: async (variableCollection: VariableCollection) => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    removeVariableMode: async (variableCollection: VariableCollection) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
 
-      // Get Variable Modes
-      const variableModes = await variableCollection?.getAllVariableModes()
-      const remove = await primaryStyle?.removeVariableModes(variableModes)
-      console.log(remove)
-    }
-  },
+        await primaryStyle?.removeVariableMode(variableCollection)
+      }
+    },
 
-  removeAllVariableModes: async () => {
-    // Get Selected Element
-    const selectedElement = await webflow.getSelectedElement()
+    removeVariableModes: async (variableCollection: VariableCollection) => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
 
-    if (selectedElement?.styles) {
-      // Get Styles
-      const styles = await selectedElement.getStyles()
-      const primaryStyle = styles?.[0] // Get the primary style
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
 
-      // Get Variable Modes
-      const remove = await primaryStyle?.removeAllVariableModes()
-      console.log(remove)
-    }
+        // Get Variable Modes
+        const variableModes = await variableCollection?.getAllVariableModes()
+        const remove = await primaryStyle?.removeVariableModes(variableModes)
+        console.log(remove)
+      }
+    },
+
+    removeAllVariableModes: async () => {
+      // Get Selected Element
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement?.styles) {
+        // Get Styles
+        const styles = await selectedElement.getStyles()
+        const primaryStyle = styles?.[0] // Get the primary style
+
+        // Get Variable Modes
+        const remove = await primaryStyle?.removeAllVariableModes()
+        console.log(remove)
+      }
+    },
   },
 }
