@@ -171,6 +171,71 @@ export const Elements = {
       }
     },
 
+    BulkAddElementsNavMenu: async () => {
+      // Start by creating some styles that will be applied to the nav container.
+
+      let navStyle = await webflow.getStyleByName('navContainer')
+      if (!navStyle) {
+        navStyle = await webflow.createStyle('navContainer')
+      }
+      await navStyle.setProperties({
+        display: 'flex',
+        'row-gap': '20px',
+        'padding-left': '15px',
+        'padding-right': '15px',
+        'padding-top': '15px',
+        'padding-bottom': '15px',
+        'background-color': '#f5f5f5',
+        'border-radius': '8px',
+      })
+
+      let navItemStyle = await webflow.getStyleByName('navItem')
+      if (!navItemStyle) {
+        navItemStyle = await webflow.createStyle('navItem')
+      }
+      await navItemStyle.setProperties({
+        color: '#333',
+        'text-decoration': 'none',
+        'padding-left': '12px',
+        'padding-right': '12px',
+        'padding-top': '8px',
+        'padding-bottom': '8px',
+        'border-radius': '4px',
+        'font-weight': '500',
+      })
+
+      // Get the selected element as the container
+      const selectedElement = await webflow.getSelectedElement()
+
+      // Create a nav container
+      const navMenu = webflow.elementBuilder(webflow.elementPresets.DOM)
+      navMenu.setTag('nav')
+      navMenu.setStyles([navStyle])
+
+      // Menu items to add
+      const menuItems = ['Home', 'About', 'Services', 'Portfolio', 'Contact']
+
+      // Create all menu items at once and store references for later
+      const menuItemRefs = []
+      menuItems.forEach((itemText) => {
+        const item = navMenu.append(webflow.elementPresets.DOM)
+        item.setTag('a')
+        item.setAttribute('href', '#')
+        item.setTextContent(itemText)
+        item.setStyles([navItemStyle])
+        // Store reference to set text later
+        menuItemRefs.push(item)
+      })
+
+      // Add the entire menu to the canvas in one operation
+      if (selectedElement?.children) {
+        await selectedElement.append(navMenu)
+        console.log(
+          'Navigation structure with 5 items created in one operation',
+        )
+      }
+    },
+
     BulkAddElementSVG: async () => {
       // Get the selected element as the container
       const selectedElement = await webflow.getSelectedElement()

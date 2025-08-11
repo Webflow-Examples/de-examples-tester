@@ -1,3 +1,37 @@
+import type { ComponentInfo } from '../types/dynamic-enums'
+
+// Types for component collections
+export type ComponentsEnum = {
+  [key: string]: ComponentInfo
+}
+
+// Utility function to get all components as an enum-like object
+export const getComponentsEnum = async (): Promise<ComponentsEnum> => {
+  const components = await webflow.getAllComponents()
+  const componentsMap: ComponentsEnum = {}
+
+  await Promise.all(
+    components.map(async (component) => {
+      const name = await component.getName()
+      componentsMap[name] = {
+        id: component.id,
+        name,
+        component,
+      }
+    }),
+  )
+
+  return componentsMap
+}
+
+// Helper function to get a specific component by name
+export const getComponentByName = async (
+  name: string,
+): Promise<ComponentInfo | undefined> => {
+  const components = await getComponentsEnum()
+  return components[name]
+}
+
 export const Components = {
   getAllComponents: async () => {
     // Get all components

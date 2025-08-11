@@ -10,7 +10,7 @@ import pagesRaw from '../examples/pages.ts?raw'
 import paymentsRaw from '../examples/payments.ts?raw'
 import stylesRaw from '../examples/styles.ts?raw'
 import variablesRaw from '../examples/variables.ts?raw'
-import webflowRaw from '../examples/utilities.ts?raw'
+import utilitiesRaw from '../examples/utilities.ts?raw'
 
 // Map category names to their raw file contents
 const RAW_FILES_MAP = {
@@ -22,7 +22,7 @@ const RAW_FILES_MAP = {
   payments: paymentsRaw,
   styles: stylesRaw,
   variables: variablesRaw,
-  webflow: webflowRaw,
+  utilities: utilitiesRaw,
 }
 
 // This hook is responsible for fetching and parsing function code, and extracting parameters.

@@ -2817,6 +2817,12 @@ interface FormTextInputElement
   setName(name: string): Promise<null>;
   getRequired(): Promise<boolean>;
   setRequired(value: boolean): Promise<null>;
+  getInputType(): Promise<
+    'text' | 'email' | 'password' | 'tel' | 'number' | 'url' | null
+  >;
+  setInputType(
+    type: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url'
+  ): Promise<null>;
 }
 
 interface FormWrapperElement

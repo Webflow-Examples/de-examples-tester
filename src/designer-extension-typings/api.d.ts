@@ -33,6 +33,8 @@ interface WebflowApi {
    * console.log('Site Name:', siteInfo.siteName);
    * console.log('Shortened Site Name:', siteInfo.shortName);
    * console.log('Domains:', siteInfo.domains);
+   * console.log('Workspace ID:', siteInfo.workspaceId);
+   * console.log('Workspace Slug:', siteInfo.workspaceSlug);
    * ```
    */
   getSiteInfo(): Promise<{
@@ -41,6 +43,8 @@ interface WebflowApi {
     shortName: string;
     isPasswordProtected: boolean;
     isPrivateStaging: boolean;
+    workspaceId: string;
+    workspaceSlug: string;
     domains: Array<{
       url: string;
       lastPublished: string | null;
@@ -386,8 +390,9 @@ interface WebflowApi {
    * Notifies the user with a message using a specific style. Error messages provide user's with the opportunity to
    * close the Designer Extension.
    * @param opts - An object containing the following notification options:
-   * - type: The type of notification to display. One of 'Error', 'Info', 'Success'.
+   * - type: The type of notification to display. One of 'Error', 'Info', 'Success', 'Warning'.
    * - message: The message to display in the notification.
+   * - dismissAfter: (optional) Number of milliseconds after which the notification will be auto-dismissed. If not provided, uses default 4000ms.
    * @returns A Promise that resolves when the notification is displayed to the user.
    * @example
    * ```ts
@@ -395,11 +400,13 @@ interface WebflowApi {
    * webflow.notify({ type: 'Error', message: 'Something went wrong, try again!' }); // Error notification
    * webflow.notify({ type: 'Success', message: 'Successfully did something!' }); // Success notification
    * webflow.notify({ type: 'Warning', message: 'Something is not right, please check again!' }); // Warning notification
+   * webflow.notify({ type: 'Error', message: 'Something went wrong!', dismissAfter: 5000 }); // Error notification with custom dismiss
    * ```
    */
   notify(opts: {
     type: 'Error' | 'Info' | 'Success' | 'Warning';
     message: string;
+    dismissAfter?: number;
   }): Promise<void>;
   /**
    * Allows you to register your custom functions (callbacks) to be executed when certain events happen. This event

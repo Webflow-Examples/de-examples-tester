@@ -38,7 +38,7 @@ interface ColorVariable {
    * ```
    */
   set(
-    value: ColorValue | ColorVariable,
+    value: ColorValue | ColorVariable | CustomValue,
     options?: VariableOptions
   ): Promise<null>;
   /**
@@ -52,7 +52,9 @@ interface ColorVariable {
    * console.log(await newVariable1.get());
    * ```
    */
-  get(options?: VariableOptions): Promise<ColorValue | ColorVariable>;
+  get(
+    options?: VariableOptions
+  ): Promise<ColorValue | ColorVariable | CustomValue>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -64,6 +66,36 @@ interface ColorVariable {
    * ```
    */
   remove(): Promise<boolean>;
+  /**
+   * Gets a CSS string representing a binding to the variable.
+   *
+   * This string can be used in custom CSS values to ensure the binding will not break
+   * if the variable is renamed.
+   *
+   * @returns A Promise that resolves into a string representing the variable's name binding. (e.g. `var(--my-color-variable)`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableBinding = await variable.getBinding()
+   * ```
+   */
+  getBinding(): Promise<string>;
+  /**
+   * Gets a CSS string representing the variable's name.
+   *
+   * This string can be used in custom CSS with a variable (e.g. binding with a fallback value).
+   *
+   *
+   * @returns A Promise that resolves into a string representing the variable's name. (e.g. `--my-color-variable`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableCSSName = await variable.getCSSName()
+   * ```
+   */
+  getCSSName(): Promise<string>;
 }
 
 interface SizeVariable {
@@ -105,7 +137,7 @@ interface SizeVariable {
    * ```
    */
   set(
-    value: SizeValue | SizeVariable,
+    value: SizeValue | SizeVariable | CustomValue,
     options?: VariableOptions
   ): Promise<null>;
   /**
@@ -119,7 +151,9 @@ interface SizeVariable {
    * console.log(await newVariable1.get());
    * ```
    */
-  get(options?: VariableOptions): Promise<SizeValue | SizeVariable>;
+  get(
+    options?: VariableOptions
+  ): Promise<SizeValue | SizeVariable | CustomValue>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -130,6 +164,35 @@ interface SizeVariable {
    * ```
    */
   remove(): Promise<boolean>;
+  /**
+   * Gets a CSS string representing a binding to the variable.
+   *
+   * This string can be used in custom CSS values to ensure the binding will not break
+   * if the variable is renamed.
+   *
+   * @returns A Promise that resolves into a string representing the variable's name binding. (e.g. `var(--my-size-variable)`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableBinding = await variable.getBinding()
+   * ```
+   */
+  getBinding(): Promise<string>;
+  /**
+   * Gets a CSS string representing the variable's name.
+   *
+   * This string can be used in custom CSS with a variable (e.g. binding with a fallback value).
+   *
+   * @returns A Promise that resolves into a string representing the variable's name. (e.g. `--my-size-variable`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableCSSName = await variable.getCSSName()
+   * ```
+   */
+  getCSSName(): Promise<string>;
 }
 
 interface NumberVariable {
@@ -174,7 +237,7 @@ interface NumberVariable {
    * ```
    */
   set(
-    value: NumberValue | NumberVariable,
+    value: NumberValue | NumberVariable | CustomValue,
     options?: VariableOptions
   ): Promise<null>;
 
@@ -189,7 +252,9 @@ interface NumberVariable {
    * console.log(await newVariable.get());
    * ```
    */
-  get(options?: VariableOptions): Promise<NumberValue | NumberVariable>;
+  get(
+    options?: VariableOptions
+  ): Promise<NumberValue | NumberVariable | CustomValue>;
 
   /**
    * Removes the variable from the default collection.
@@ -201,6 +266,35 @@ interface NumberVariable {
    * ```
    */
   remove(): Promise<boolean>;
+  /**
+   * Gets a CSS string representing a binding to the variable.
+   *
+   * This string can be used in custom CSS values to ensure the binding will not break
+   * if the variable is renamed.
+   *
+   * @returns A Promise that resolves into a string representing the variable's name binding. (e.g. `var(--my-number-variable)`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableBinding = await variable.getBinding()
+   * ```
+   */
+  getBinding(): Promise<string>;
+  /**
+   * Gets a CSS string representing the variable's name.
+   *
+   * This string can be used in custom CSS with a variable (e.g. binding with a fallback value).
+   *
+   * @returns A Promise that resolves into a string representing the variable's CSS name. (e.g. `--my-number-variable`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableCSSName = await variable.getCSSName()
+   * ```
+   */
+  getCSSName(): Promise<string>;
 }
 
 interface PercentageVariable {
@@ -244,7 +338,7 @@ interface PercentageVariable {
    * ```
    */
   set(
-    value: PercentageValue | PercentageVariable,
+    value: PercentageValue | PercentageVariable | CustomValue,
     options?: VariableOptions
   ): Promise<null>;
 
@@ -259,7 +353,9 @@ interface PercentageVariable {
    * console.log(await newVariable.get());
    * ```
    */
-  get(options?: VariableOptions): Promise<PercentageValue | PercentageVariable>;
+  get(
+    options?: VariableOptions
+  ): Promise<PercentageValue | PercentageVariable | CustomValue>;
 
   /**
    * Removes the variable from the default collection.
@@ -271,6 +367,35 @@ interface PercentageVariable {
    * ```
    */
   remove(): Promise<boolean>;
+  /**
+   * Gets a CSS string representing a binding to the variable.
+   *
+   * This string can be used in custom CSS values to ensure the binding will not break
+   * if the variable is renamed.
+   *
+   * @returns A Promise that resolves into a string representing the variable's name binding. (e.g. `var(--my-percentage-variable)`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableBinding = await variable.getBinding()
+   * ```
+   */
+  getBinding(): Promise<string>;
+  /**
+   * Gets a CSS string representing the variable's name.
+   *
+   * This string can be used in custom CSS with a variable (e.g. binding with a fallback value).
+   *
+   * @returns A Promise that resolves into a string representing the variable's name. (e.g. `--my-percentage-variable`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableCSSName = await variable.getCSSName()
+   * ```
+   */
+  getCSSName(): Promise<string>;
 }
 
 interface FontFamilyVariable {
@@ -312,7 +437,7 @@ interface FontFamilyVariable {
    * ```
    */
   set(
-    value: FontFamilyValue | FontFamilyVariable,
+    value: FontFamilyValue | FontFamilyVariable | CustomValue,
     options?: VariableOptions
   ): Promise<null>;
   /**
@@ -326,7 +451,9 @@ interface FontFamilyVariable {
    * console.log(await newVariable1.get());
    * ```
    */
-  get(options?: VariableOptions): Promise<FontFamilyValue | FontFamilyVariable>;
+  get(
+    options?: VariableOptions
+  ): Promise<FontFamilyValue | FontFamilyVariable | CustomValue>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -337,6 +464,35 @@ interface FontFamilyVariable {
    * ```
    */
   remove(): Promise<boolean>;
+  /**
+   * Gets a CSS string representing a binding to the variable.
+   *
+   * This string can be used in custom CSS values to ensure the binding will not break
+   * if the variable is renamed.
+   *
+   * @returns A Promise that resolves into a string representing the variable's name binding. (e.g. `var(--my-font-family-variable)`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableBinding = await variable.getBinding()
+   * ```
+   */
+  getBinding(): Promise<string>;
+  /**
+   * Gets a CSS string representing the variable's name.
+   *
+   * This string can be used in custom CSS with a variable (e.g. binding with a fallback value).
+   *
+   * @returns A Promise that resolves into a string representing the variable's name. (e.g. `--my-font-family-variable`)
+   * @example
+   * ```ts
+   * const collection = await webflow.getDefaultVariableCollection();
+   * const variable = await collection.getVariable('id-123')
+   * const variableCSSName = await variable.getCSSName()
+   * ```
+   */
+  getCSSName(): Promise<string>;
 }
 
 type Variable =
@@ -354,23 +510,23 @@ interface VariableCollection {
   getAllVariables(): Promise<Array<Variable>>;
   createColorVariable(
     name: string,
-    value: string | ColorVariable
+    value: string | ColorVariable | CustomValue
   ): Promise<ColorVariable>;
   createSizeVariable(
     name: string,
-    value: SizeValue | SizeVariable
+    value: SizeValue | SizeVariable | CustomValue
   ): Promise<SizeVariable>;
   createNumberVariable(
     name: string,
-    value: number | NumberVariable
+    value: number | NumberVariable | CustomValue
   ): Promise<NumberVariable>;
   createPercentageVariable(
     name: string,
-    value: number | PercentageVariable
+    value: number | PercentageVariable | CustomValue
   ): Promise<PercentageVariable>;
   createFontFamilyVariable(
     name: string,
-    value: string | FontFamilyVariable
+    value: string | FontFamilyVariable | CustomValue
   ): Promise<FontFamilyVariable>;
   /**
    * Sets the name of the variable collection.
@@ -490,4 +646,10 @@ type SizeUnit =
 type VariableOptions = {
   /** The mode to get/set the variable value for. */
   mode?: VariableMode;
+  /** Whether to return custom values. */
+  customValues?: boolean;
+};
+type CustomValue = {
+  type: 'custom';
+  value: string;
 };

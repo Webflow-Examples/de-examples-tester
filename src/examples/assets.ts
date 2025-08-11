@@ -1,3 +1,97 @@
+import type {
+  AssetInfo,
+  DynamicEnumProvider,
+  ObjectSelector,
+} from '../types/dynamic-enums'
+import {
+  createDynamicEnumMap,
+  createObjectSelector,
+} from '../types/dynamic-enums'
+
+// Types for asset collections
+export type AssetsEnum = Record<string, AssetInfo>
+
+// NEW: Object selector for actual Asset objects (lazy initialization)
+let _assetsObjectSelector: ObjectSelector<any> | null = null
+let _assetsObjectSelectorPromise: Promise<ObjectSelector<any>> | null = null
+
+export const getAssetsObjectSelector = async (): Promise<
+  ObjectSelector<any>
+> => {
+  // If we already have a promise in progress, return it to avoid multiple simultaneous calls
+  if (_assetsObjectSelectorPromise) {
+    return _assetsObjectSelectorPromise
+  }
+
+  // If we already have the selector, return it
+  if (_assetsObjectSelector) {
+    return _assetsObjectSelector
+  }
+
+  // Create a new promise for the selector creation
+  _assetsObjectSelectorPromise = (async () => {
+    const assets = await webflow.getAllAssets()
+    _assetsObjectSelector = await createObjectSelector(
+      assets,
+      async (asset) => ({
+        id: asset.id,
+        name: await asset.getName(),
+        object: asset,
+      }),
+    )
+    _assetsObjectSelectorPromise = null // Clear the promise
+    return _assetsObjectSelector
+  })()
+
+  return _assetsObjectSelectorPromise
+}
+
+// Create the assets provider (keeping for backward compatibility)
+export const assetsProvider: DynamicEnumProvider<AssetInfo> = {
+  getAll: async () => {
+    const assets = await webflow.getAllAssets()
+    return Promise.all(
+      assets.map(async (asset) => ({
+        id: asset.id,
+        name: await asset.getName(),
+        type: await asset.getMimeType(),
+        data: { asset },
+      })),
+    )
+  },
+  getByName: async (name: string) => {
+    const assets = await getAssetsEnum()
+    return assets[name]
+  },
+}
+
+// Utility function to get all assets as an enum-like object
+export const getAssetsEnum = async (): Promise<AssetsEnum> => {
+  const assets = await webflow.getAllAssets()
+  return createDynamicEnumMap(assets, async (asset) => ({
+    id: asset.id,
+    name: await asset.getName(),
+    type: await asset.getMimeType(),
+    data: { asset },
+  }))
+}
+
+// Helper function to get a specific asset by name
+export const getAssetByName = async (
+  name: string,
+): Promise<AssetInfo | undefined> => {
+  const assets = await getAssetsEnum()
+  return assets[name]
+}
+
+// NEW: Helper function to get actual Asset object by name
+export const getAssetObjectByName = async (
+  name: string,
+): Promise<any | undefined> => {
+  const selector = await getAssetsObjectSelector()
+  return await selector.getByName(name)
+}
+
 export enum ValidFileTypesEnum {
   JPEG = 'image/jpeg',
   JPG = 'image/jpg',
@@ -84,16 +178,19 @@ export const Assets = {
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
-      type: 'image/png',
+      type: fileTypeEnum,
     })
+
+    console.log('file', file)
 
     try {
       // Create and upload the asset to webflow
       const asset = await webflow.createAsset(file)
       console.log(asset)
     } catch (err) {
-      console.error(`Cause:${err.cause.tag}`)
-      console.error(`Cause:${err.message}`)
+      const error = err as { cause: { tag: string }; message: string }
+      console.error(`Cause:${error.cause.tag}`)
+      console.error(`Cause:${error.message}`)
     }
   },
   getAssetById: async (asset_id: string) => {
@@ -112,13 +209,10 @@ export const Assets = {
       console.log(`Asset URL: ${url}`)
     }
   },
-  getAltText: async (assetId: string) => {
-    // Get Asset by ID
-    const asset = await webflow.getAssetById(assetId)
-    console.log(asset)
-
+  getAltText: async (asset: Asset) => {
+    // Now asset is the actual Asset object, not wrapped
     if (asset) {
-      // Get asset URL
+      // Get asset alt text
       const altText = await asset.getAltText()
       console.log(`Asset Alt Text: ${altText}`)
     }

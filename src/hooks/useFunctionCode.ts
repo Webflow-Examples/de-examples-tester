@@ -10,7 +10,7 @@ import pagesRaw from '../examples/pages.ts?raw'
 import paymentsRaw from '../examples/payments.ts?raw'
 import stylesRaw from '../examples/styles.ts?raw'
 import variablesRaw from '../examples/variables.ts?raw'
-import webflowRaw from '../examples/utilities.ts?raw'
+import utilitiesRaw from '../examples/utilities.ts?raw'
 
 interface RawFilesMap {
   [key: string]: string
@@ -26,7 +26,7 @@ const RAW_FILES_MAP: RawFilesMap = {
   payments: paymentsRaw,
   styles: stylesRaw,
   variables: variablesRaw,
-  webflow: webflowRaw,
+  utilities: utilitiesRaw,
 }
 
 interface FunctionMatch {
@@ -198,14 +198,20 @@ const extractParameters = (functionText: string): FunctionMatch => {
   const types: string[] = []
 
   // Extract parameters from the function definition
-  const paramMatch = functionText.match(/\((.*?)\)/)
+  // Handle both async and non-async functions
+  const paramMatch = functionText.match(/(?:async\s*)?\(\s*([^)]*?)\s*\)/)
   if (paramMatch && paramMatch[1]) {
     const paramList = paramMatch[1].split(',')
     paramList.forEach((param) => {
-      const [name, type] = param.trim().split(':')
-      if (name && !name.includes('=')) {
-        params.push(name.trim())
-        types.push((type || 'any').trim())
+      const trimmedParam = param.trim()
+      if (trimmedParam) {
+        const colonIndex = trimmedParam.indexOf(':')
+        if (colonIndex > 0) {
+          const name = trimmedParam.substring(0, colonIndex).trim()
+          const type = trimmedParam.substring(colonIndex + 1).trim()
+          params.push(name)
+          types.push(type)
+        }
       }
     })
   }
