@@ -1,3 +1,5 @@
+/// <reference types="@webflow/designer-extension-typings" />
+
 import type {
   VariableCollectionInfo,
   VariableInfo,
@@ -518,6 +520,28 @@ export const Variables = {
       return { value, type }
     },
 
+    getVariableBinding: async (
+      variableCollection: VariableCollection,
+      variable: string,
+    ) => {
+      // Get Variable
+      const myVariable = await variableCollection?.getVariableByName(variable)
+      const binding = await myVariable?.getBinding()
+
+      // Output the binding
+      console.log(binding)
+    },
+
+    getVariableCSSName: async (
+      variableCollection: VariableCollection,
+      variable: string,
+    ) => {
+      // Get Variable
+      const myVariable = await variableCollection?.getVariableByName(variable)
+      const cssName = await myVariable?.getCSSName()
+      console.log(cssName)
+    },
+
     setVariableValue: async (name: string) => {
       // Get Collection
       const collection = await webflow.getDefaultVariableCollection()
@@ -559,7 +583,7 @@ export const Variables = {
         await style?.setProperties({ 'font-size': variable })
     },
 
-    variableAlias: async () => {
+    getVariableAlias: async () => {
       // Get Collection
       const collection = await webflow.getDefaultVariableCollection()
 
@@ -572,9 +596,13 @@ export const Variables = {
       if (firstVariable) {
         // Create second variable as an alias of the first
         const secondVariable = await collection?.createColorVariable(
-          'Space Cadet',
+          'Aliased Variable',
           firstVariable,
         )
+
+        const alias = await secondVariable?.get()
+        // This will output the ID of the aliased variable
+        console.log(alias)
       }
     },
 

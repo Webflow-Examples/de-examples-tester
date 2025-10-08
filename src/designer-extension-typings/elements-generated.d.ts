@@ -130,7 +130,7 @@ interface DOMElement
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    AppConnections {
   readonly id: FullElementId;
   readonly type: 'DOM';
   readonly plugin: 'Builtin';
@@ -140,32 +140,6 @@ interface DOMElement
   setAttribute(name: string, value: string): Promise<null>;
   getAllAttributes(): Promise<Array<NamedValue> | null>;
   removeAttribute(name: string): Promise<null>;
-}
-
-interface AnimationElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'Animation';
-  readonly plugin: 'Animation';
-}
-
-interface SplineElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'Spline';
-  readonly plugin: 'Animation';
 }
 
 interface SearchFormElement
@@ -287,9 +261,9 @@ interface BlockquoteElement
 
 interface CodeBlockElement
   extends WebflowElement,
-    NoCustomAttributes,
-    NoDomId,
-    NoStyles,
+    CustomAttributes,
+    DomId,
+    Styles,
     NoChildren,
     NoTextContent,
     NoAppConnections {
@@ -531,6 +505,45 @@ interface InlineCodeElement
   readonly id: FullElementId;
   readonly type: 'InlineCode';
   readonly plugin: 'Basic';
+}
+
+interface AnimationElement
+  extends WebflowElement,
+    CustomAttributes,
+    DomId,
+    Styles,
+    NoChildren,
+    NoTextContent,
+    NoAppConnections {
+  readonly id: FullElementId;
+  readonly type: 'Animation';
+  readonly plugin: 'Animation';
+}
+
+interface SplineElement
+  extends WebflowElement,
+    CustomAttributes,
+    DomId,
+    Styles,
+    NoChildren,
+    NoTextContent,
+    NoAppConnections {
+  readonly id: FullElementId;
+  readonly type: 'Spline';
+  readonly plugin: 'Animation';
+}
+
+interface RiveElement
+  extends WebflowElement,
+    CustomAttributes,
+    DomId,
+    Styles,
+    NoChildren,
+    NoTextContent,
+    NoAppConnections {
+  readonly id: FullElementId;
+  readonly type: 'Rive';
+  readonly plugin: 'Animation';
 }
 
 interface BackgroundVideoWrapperElement
@@ -4341,25 +4354,23 @@ interface UserErrorMsgElement
   readonly plugin: 'Users';
 }
 
-interface CodeIslandElement
+interface FrameElement
   extends WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
-    NoChildren,
+    Children,
     NoTextContent,
     NoAppConnections {
   readonly id: FullElementId;
-  readonly type: 'CodeIsland';
-  readonly plugin: 'Code';
+  readonly type: 'Frame';
+  readonly plugin: 'Frame';
 }
 
 type AnyElement =
   | ComponentElement
   | UnknownElement
   | DOMElement
-  | AnimationElement
-  | SplineElement
   | SearchFormElement
   | SearchInputElement
   | SearchButtonElement
@@ -4387,6 +4398,9 @@ type AnyElement =
   | SuperscriptElement
   | SubscriptElement
   | InlineCodeElement
+  | AnimationElement
+  | SplineElement
+  | RiveElement
   | BackgroundVideoWrapperElement
   | BackgroundVideoPlayPauseButtonElement
   | BackgroundVideoPlayPauseButtonPlayingElement
@@ -4677,4 +4691,4 @@ type AnyElement =
   | UserResetPasswordErrorMsgElement
   | UserUpdatePasswordErrorMsgElement
   | UserErrorMsgElement
-  | CodeIslandElement;
+  | FrameElement;

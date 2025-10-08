@@ -170,10 +170,10 @@ interface Style {
    * @param options - Options to remove variable modes based on breakpoints and pseudo classes / states.
    * @example
    * ```ts
-   * await myStyle.removeVariableModes({
-   *   'collection-id-1': 'mode-id-1',
-   *   'collection-id-2': 'mode-id-2',
-   * });
+   * const collection = await webflow.getVariableCollectionById('collection-id');
+   * const mode = await collection.getVariableModeByName('Dark');
+   * const modeTwo = await collection.getVariableModeByName('Light');
+   * await myStyle.removeVariableModes([mode, modeTwo]);
    * ```
    */
   removeVariableModes(

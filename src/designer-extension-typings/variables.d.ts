@@ -38,8 +38,8 @@ interface ColorVariable {
    * ```
    */
   set(
-    value: ColorValue | ColorVariable | CustomValue,
-    options?: VariableOptions
+    value: ColorValue | ColorVariable | CustomValue | null,
+    options?: VariableSetOptions
   ): Promise<null>;
   /**
    * Get the variable’s value.
@@ -53,8 +53,8 @@ interface ColorVariable {
    * ```
    */
   get(
-    options?: VariableOptions
-  ): Promise<ColorValue | ColorVariable | CustomValue>;
+    options?: VariableGetOptions
+  ): Promise<ColorValue | ColorVariable | CustomValue | null>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -137,8 +137,8 @@ interface SizeVariable {
    * ```
    */
   set(
-    value: SizeValue | SizeVariable | CustomValue,
-    options?: VariableOptions
+    value: SizeValue | SizeVariable | CustomValue | null,
+    options?: VariableSetOptions
   ): Promise<null>;
   /**
    * Get the variable’s value.
@@ -152,8 +152,8 @@ interface SizeVariable {
    * ```
    */
   get(
-    options?: VariableOptions
-  ): Promise<SizeValue | SizeVariable | CustomValue>;
+    options?: VariableGetOptions
+  ): Promise<SizeValue | SizeVariable | CustomValue | null>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -237,8 +237,8 @@ interface NumberVariable {
    * ```
    */
   set(
-    value: NumberValue | NumberVariable | CustomValue,
-    options?: VariableOptions
+    value: NumberValue | NumberVariable | CustomValue | null,
+    options?: VariableSetOptions
   ): Promise<null>;
 
   /**
@@ -253,8 +253,8 @@ interface NumberVariable {
    * ```
    */
   get(
-    options?: VariableOptions
-  ): Promise<NumberValue | NumberVariable | CustomValue>;
+    options?: VariableGetOptions
+  ): Promise<NumberValue | NumberVariable | CustomValue | null>;
 
   /**
    * Removes the variable from the default collection.
@@ -338,8 +338,8 @@ interface PercentageVariable {
    * ```
    */
   set(
-    value: PercentageValue | PercentageVariable | CustomValue,
-    options?: VariableOptions
+    value: PercentageValue | PercentageVariable | CustomValue | null,
+    options?: VariableSetOptions
   ): Promise<null>;
 
   /**
@@ -354,8 +354,8 @@ interface PercentageVariable {
    * ```
    */
   get(
-    options?: VariableOptions
-  ): Promise<PercentageValue | PercentageVariable | CustomValue>;
+    options?: VariableGetOptions
+  ): Promise<PercentageValue | PercentageVariable | CustomValue | null>;
 
   /**
    * Removes the variable from the default collection.
@@ -437,8 +437,8 @@ interface FontFamilyVariable {
    * ```
    */
   set(
-    value: FontFamilyValue | FontFamilyVariable | CustomValue,
-    options?: VariableOptions
+    value: FontFamilyValue | FontFamilyVariable | CustomValue | null,
+    options?: VariableSetOptions
   ): Promise<null>;
   /**
    * Get the variable’s value.
@@ -452,8 +452,8 @@ interface FontFamilyVariable {
    * ```
    */
   get(
-    options?: VariableOptions
-  ): Promise<FontFamilyValue | FontFamilyVariable | CustomValue>;
+    options?: VariableGetOptions
+  ): Promise<FontFamilyValue | FontFamilyVariable | CustomValue | null>;
   /**
    * Removes a variable from the default collection.
    * @returns A Promise that resolves into a boolean indicating whether deleting the variable was successful or not.
@@ -510,23 +510,28 @@ interface VariableCollection {
   getAllVariables(): Promise<Array<Variable>>;
   createColorVariable(
     name: string,
-    value: string | ColorVariable | CustomValue
+    value: string | ColorVariable | CustomValue,
+    modes?: {[key: VariableModeId]: string | ColorVariable | CustomValue}
   ): Promise<ColorVariable>;
   createSizeVariable(
     name: string,
-    value: SizeValue | SizeVariable | CustomValue
+    value: SizeValue | SizeVariable | CustomValue,
+    modes?: {[key: VariableModeId]: SizeValue | SizeVariable | CustomValue}
   ): Promise<SizeVariable>;
   createNumberVariable(
     name: string,
-    value: number | NumberVariable | CustomValue
+    value: number | NumberVariable | CustomValue,
+    modes?: {[key: VariableModeId]: number | NumberVariable | CustomValue}
   ): Promise<NumberVariable>;
   createPercentageVariable(
     name: string,
-    value: number | PercentageVariable | CustomValue
+    value: number | PercentageVariable | CustomValue,
+    modes?: {[key: VariableModeId]: number | PercentageVariable | CustomValue}
   ): Promise<PercentageVariable>;
   createFontFamilyVariable(
     name: string,
-    value: string | FontFamilyVariable | CustomValue
+    value: string | FontFamilyVariable | CustomValue,
+    modes?: {[key: VariableModeId]: string | FontFamilyVariable | CustomValue}
   ): Promise<FontFamilyVariable>;
   /**
    * Sets the name of the variable collection.
@@ -643,11 +648,19 @@ type SizeUnit =
   | 'vmax'
   | 'vmin'
   | 'ch';
-type VariableOptions = {
+type VariableSetOptions = {
   /** The mode to get/set the variable value for. */
   mode?: VariableMode;
   /** Whether to return custom values. */
   customValues?: boolean;
+};
+type VariableGetOptions = {
+  /** The mode to get/set the variable value for. */
+  mode?: VariableMode;
+  /** Whether to return custom values. */
+  customValues?: boolean;
+  /** Whether to not return the base value and instead return null. */
+  doNotInheritFromBase?: boolean;
 };
 type CustomValue = {
   type: 'custom';

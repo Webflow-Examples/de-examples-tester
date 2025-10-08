@@ -1,9 +1,6 @@
 // This file was automatically generated. See designer-extensions docs.
 
 type ElementPresets = {
-  Animation: ElementPreset<AnyElement>;
-  Spline: ElementPreset<AnyElement>;
-  Rive: ElementPreset<AnyElement>;
   SearchForm: ElementPreset<AnyElement>;
   DOM: ElementPreset<DOMElement>;
   DivBlock: ElementPreset<BlockElement>;
@@ -19,6 +16,9 @@ type ElementPresets = {
   RichText: ElementPreset<RichTextElement>;
   CodeBlock: ElementPreset<CodeBlockElement>;
   Image: ElementPreset<AnyElement>;
+  Animation: ElementPreset<AnyElement>;
+  Spline: ElementPreset<AnyElement>;
+  Rive: ElementPreset<AnyElement>;
   BackgroundVideoWrapper: ElementPreset<BackgroundVideoWrapperElement>;
   CommercePaypalCheckoutFormContainer: ElementPreset<AnyElement>;
   CommerceCheckoutFormContainer: ElementPreset<AnyElement>;
