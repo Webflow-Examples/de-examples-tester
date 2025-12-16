@@ -2,16 +2,19 @@ import type { APIConsole } from '../types/api-explorer.types'
 
 type SetOutputFunction = React.Dispatch<React.SetStateAction<string>>
 
+// Helper to safely get the original console, falling back to native console
+const getOriginalConsole = (): Console => (window as any).ogConsole ?? console
+
 export const createAPIConsole = (setOutput: SetOutputFunction): APIConsole => ({
   log: (...args: any[]) => {
-    ;(window as any).ogConsole.log(...args)
+    getOriginalConsole().log(...args)
     setOutput(
       (prev: string) =>
         prev + args.map((arg) => formatConsoleArg(arg)).join(' ') + '\n',
     )
   },
   error: (...args: any[]) => {
-    ;(window as any).ogConsole.error(...args)
+    getOriginalConsole().error(...args)
     setOutput(
       (prev: string) =>
         prev +
@@ -21,7 +24,7 @@ export const createAPIConsole = (setOutput: SetOutputFunction): APIConsole => ({
     )
   },
   warn: (...args: any[]) => {
-    ;(window as any).ogConsole.warn(...args)
+    getOriginalConsole().warn(...args)
     setOutput(
       (prev: string) =>
         prev +
@@ -31,7 +34,7 @@ export const createAPIConsole = (setOutput: SetOutputFunction): APIConsole => ({
     )
   },
   info: (...args: any[]) => {
-    ;(window as any).ogConsole.info(...args)
+    getOriginalConsole().info(...args)
     setOutput(
       (prev: string) =>
         prev +

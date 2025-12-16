@@ -202,6 +202,8 @@ const APIExplorer: React.FC = () => {
         : topCategory[selectedFunctionName]
 
       if (funcToExecute) {
+        // Save original console before try block so it's accessible in finally
+        const originalConsole = { ...console }
         try {
           setApiOutput('')
 
@@ -235,7 +237,6 @@ const APIExplorer: React.FC = () => {
               : []
 
           const apiConsole = createAPIConsole(setApiOutput)
-          const originalConsole = { ...console }
           ;(window as any).ogConsole = (window as any).ogConsole || {
             ...console,
           }
@@ -250,7 +251,7 @@ const APIExplorer: React.FC = () => {
         } catch (error) {
           console.error('Error executing function:', error)
         } finally {
-          Object.assign(console, console)
+          Object.assign(console, originalConsole)
         }
       }
     }
