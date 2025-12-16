@@ -236,6 +236,9 @@ const APIExplorer: React.FC = () => {
 
           const apiConsole = createAPIConsole(setApiOutput)
           const originalConsole = { ...console }
+          ;(window as any).ogConsole = (window as any).ogConsole || {
+            ...console,
+          }
           Object.assign(console, apiConsole)
 
           if (typeof funcToExecute === 'function') {

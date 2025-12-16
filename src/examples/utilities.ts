@@ -231,4 +231,29 @@ export const Utilities = {
     const pseudoMode = await webflow.getPseudoMode()
     console.log('Pseudo Mode:', pseudoMode)
   },
+
+  getElementSnapshot: async () => {
+    // Get the currently selected element
+    const selectedElement = await webflow.getSelectedElement()
+
+    if (selectedElement) {
+      // Capture a screenshot of the element
+      console.log('Getting screenshot of element...')
+      const screenshot = await webflow.getElementSnapshot(selectedElement)
+
+      if (screenshot) {
+        console.log('Screenshot captured successfully!')
+        console.log('Base64 string:', screenshot.substring(0, 100) + '...')
+
+        console.log(
+          '%c ',
+          `font-size:400px; background:url(${screenshot}) no-repeat; background-size: contain;`,
+        )
+      } else {
+        console.log('Failed to capture screenshot')
+      }
+    } else {
+      console.log('No element selected. Please select an element first.')
+    }
+  },
 }
