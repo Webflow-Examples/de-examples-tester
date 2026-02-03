@@ -189,6 +189,14 @@ interface Style {
    * ```
    */
   removeAllVariableModes(options?: BreakpointAndPseudo): Promise<null>;
+  /**
+   * Retrieves the parent style for a combo class and otherwise returns null.
+   * @example
+   * ```ts
+   * const parentStyle = await myStyle.getParent();
+   * ```
+   */
+  getParent(): Promise<Style | null>;
 }
 
 type StyleId = string;

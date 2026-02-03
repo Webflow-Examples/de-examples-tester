@@ -191,6 +191,22 @@ export const Styles = {
       // apply newStyle to element
       if (selectedElement?.styles) await selectedElement.setStyles([newStyle])
     },
+    isComboClass: async (style: Style) => {
+      if (style?.isComboClass()) {
+        console.log('Style is a combo class')
+      } else {
+        console.log('Style is not a combo class')
+      }
+    },
+    getParentStyle: async (style: Style) => {
+      if (style?.isComboClass()) {
+        const parentStyle = await style?.getParent()
+        const parentStyleName = await parentStyle?.getName()
+        console.log(parentStyleName)
+      } else {
+        console.log('Style is not a combo class')
+      }
+    },
   },
 
   StyleProperties: {
