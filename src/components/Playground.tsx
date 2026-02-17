@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import MonacoEditor, { useMonaco } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
+import { transform } from 'sucrase'
 import CodeBlock from './CodeBlock'
 import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
+import ClipboardIcon from './icons/ClipboardIcon'
+import ClearIcon from './icons/ClearIcon'
 
 // Custom theme definition to match PrismJS tomorrow theme
 const MONACO_THEME: editor.IStandaloneThemeData = {
@@ -26,7 +29,7 @@ const MONACO_THEME: editor.IStandaloneThemeData = {
     'editorCursor.foreground': '#c5c8c6',
     'editorWhitespace.foreground': '#969896',
   },
-} as const
+}
 
 const defaultCode = `// Explore the Webflow Designer API
 // Try typing "webflow." to see all available methods.
@@ -43,6 +46,10 @@ const Playground: React.FC = () => {
   const [code, setCode] = useState(defaultCode)
   const [output, setOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
+  const [language, setLanguage] = useState<'javascript' | 'typescript'>(
+    'javascript',
+  )
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
@@ -219,8 +226,13 @@ const Playground: React.FC = () => {
     try {
       // Clear output and start fresh
       setOutput('')
+      const jsCode = transform(codeToRun, {
+        transforms: ['typescript', 'imports'],
+        jsxPragma: 'React.createElement',
+        jsxFragmentPragma: 'React.Fragment',
+      }).code
       // Wrap code in async function for await support
-      const asyncCode = `(async (webflow, console) => {\n${codeToRun}\n})`
+      const asyncCode = `(async (webflow, console) => {\n${jsCode}\n})`
       // eslint-disable-next-line no-new-func
       const fn = eval(asyncCode)
       await fn((window as any).webflow, safeConsole)
@@ -271,11 +283,75 @@ const Playground: React.FC = () => {
           overflow: 'hidden',
         }}
       >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 12px',
+            borderBottom: '1px solid #282a2e',
+            background: '#1e1e1e',
+          }}
+        >
+          <div style={{ fontSize: 11, color: 'rgb(255 255 255 / 0.5)' }}>
+            Playground
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              gap: 4,
+              background: '#282a2e',
+              borderRadius: 4,
+              padding: 2,
+            }}
+          >
+            <button
+              onClick={() => setLanguage('javascript')}
+              style={{
+                background:
+                  language === 'javascript' ? '#3c3f45' : 'transparent',
+                border: 'none',
+                color:
+                  language === 'javascript'
+                    ? '#8ac2ff'
+                    : 'rgb(255 255 255 / 0.6)',
+                padding: '4px 10px',
+                fontSize: 10,
+                fontWeight: 500,
+                borderRadius: 3,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              JS
+            </button>
+            <button
+              onClick={() => setLanguage('typescript')}
+              style={{
+                background:
+                  language === 'typescript' ? '#3c3f45' : 'transparent',
+                border: 'none',
+                color:
+                  language === 'typescript'
+                    ? '#8ac2ff'
+                    : 'rgb(255 255 255 / 0.6)',
+                padding: '4px 10px',
+                fontSize: 10,
+                fontWeight: 500,
+                borderRadius: 3,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              TS
+            </button>
+          </div>
+        </div>
         <MonacoEditor
           height="200px"
-          defaultLanguage="typescript"
+          defaultLanguage={language}
           value={code}
-          path="webflow-playground.js"
+          path={`webflow-playground.${language === 'typescript' ? 'ts' : 'js'}`}
           onChange={(value) => {
             setCode(value || '')
             codeRef.current = value || ''
@@ -375,8 +451,50 @@ const Playground: React.FC = () => {
           overflow: 'hidden',
           transition: 'opacity 0.2s ease-in-out',
           padding: '0 16px 16px',
+          position: 'relative',
         }}
       >
+        <div
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 24,
+            zIndex: 10,
+            display: 'flex',
+            gap: 8,
+          }}
+        >
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(output)
+              setIsCopied(true)
+              setTimeout(() => setIsCopied(false), 2000)
+            }}
+            title="Copy to clipboard"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgb(255 255 255 / 0.6)',
+              cursor: 'pointer',
+              padding: 4,
+            }}
+          >
+            {isCopied ? 'Copied!' : <ClipboardIcon />}
+          </button>
+          <button
+            onClick={() => setOutput('')}
+            title="Clear output"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgb(255 255 255 / 0.6)',
+              cursor: 'pointer',
+              padding: 4,
+            }}
+          >
+            <ClearIcon />
+          </button>
+        </div>
         <label
           style={{
             fontWeight: 500,
@@ -388,11 +506,7 @@ const Playground: React.FC = () => {
         >
           Output
         </label>
-        <CodeBlock
-          code={output || ' '}
-          language="javascript"
-          onClear={output ? () => setOutput('') : undefined}
-        />
+        <CodeBlock code={output || ' '} language="javascript" />
       </div>
     </div>
   )

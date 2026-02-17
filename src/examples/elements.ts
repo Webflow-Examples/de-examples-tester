@@ -846,5 +846,169 @@ export const Elements = {
         await selectedElement?.setName(name)
       }
     },
+    getFormSettings: async () => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (
+        selectedElement &&
+        'getSettings' in selectedElement &&
+        (selectedElement.type === 'FormForm' ||
+          selectedElement.type === 'FormWrapper')
+      ) {
+        const settings = await selectedElement.getSettings()
+        console.log(settings)
+      } else {
+        console.log('Selected element is not a Form or Form Wrapper.')
+      }
+    },
+
+    setFormSettings: async () => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (
+        selectedElement &&
+        'setSettings' in selectedElement &&
+        (selectedElement.type === 'FormForm' ||
+          selectedElement.type === 'FormWrapper')
+      ) {
+        await selectedElement.setSettings({
+          action: 'https://webhook.site/be45a9c3-9ada-4d1a-b91d-5616bcb65448',
+          method: 'post',
+          state: 'normal',
+          name: 'Contact Form',
+        })
+        console.log('Form settings updated.')
+      } else {
+        console.log('Selected element is not a Form or Form Wrapper.')
+      }
+    },
+
+    createFormWithTextarea: async () => {
+      // Get the selected element to attach the form to
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement && selectedElement.children) {
+        // Create the form block by appending the FormForm preset
+        const formWrapper = await selectedElement.append(
+          webflow.elementPresets.FormForm,
+        )
+
+        // The FormForm preset creates a FormWrapper that contains the Form element
+        // We need to get the actual form element to append fields to it
+        if (formWrapper.type === 'FormWrapper') {
+          const children = await formWrapper.getChildren()
+          const form = children.find((child) => child.type === 'FormForm')
+
+          if (form && form.children) {
+            const formChildren = await form.getChildren()
+            const submitButton = formChildren.find(
+              (child) => child.type === 'FormButton',
+            )
+
+            if (submitButton) {
+              // Create and insert a label before the submit button
+              const label = await submitButton.before(
+                webflow.elementPresets.FormBlockLabel,
+              )
+              if (label.type === 'FormBlockLabel') {
+                await label.setTextContent('Your Message')
+              }
+
+              // Create and insert a textarea before the submit button
+              await submitButton.before(webflow.elementPresets.FormTextarea)
+            }
+          }
+        }
+        console.log('Form with textarea created successfully.')
+      } else {
+        console.log('Please select an element that can contain children.')
+      }
+    },
+  },
+  formInputOperations: {
+    getInputName: async () => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (selectedElement && 'getName' in selectedElement) {
+        const name = await selectedElement.getName()
+        console.log(name)
+      } else {
+        console.log('Selected element does not have a getName method.')
+      }
+    },
+
+    setInputName: async (name: string) => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (selectedElement && 'setName' in selectedElement) {
+        await selectedElement.setName(name)
+        console.log(`Input name set to: ${name}`)
+      } else {
+        console.log('Selected element does not have a setName method.')
+      }
+    },
+    isRequired: async () => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (selectedElement && 'getRequired' in selectedElement) {
+        const required = await selectedElement.getRequired()
+        console.log(`Is required: ${required}`)
+      } else {
+        console.log('Selected element does not have an isRequired method.')
+      }
+    },
+
+    setIsRequired: async (required: boolean) => {
+      const selectedElement = await webflow.getSelectedElement()
+      if (selectedElement && 'setRequired' in selectedElement) {
+        await selectedElement.setRequired(required)
+        console.log(`Is required set to: ${required}`)
+      } else {
+        console.log('Selected element does not have a setIsRequired method.')
+      }
+    },
+    createSelectWithCustomDOM: async () => {
+      const selectedElement = await webflow.getSelectedElement()
+
+      if (selectedElement && selectedElement.children) {
+        // Create a wrapper div using the element builder
+        const wrapper = webflow.elementBuilder(webflow.elementPresets.DOM)
+        wrapper.setTag('div')
+
+        // Create a select element using the DOM preset and append it to the wrapper
+        const select = wrapper.append(webflow.elementPresets.DOM)
+        select.setTag('select')
+        select.setAttribute('name', 'custom-select')
+
+        // Define the options for the select field
+        const choices = [
+          { name: 'First choice', value: 'first' },
+          { name: 'Second choice', value: 'second' },
+          { name: 'Third choice', value: 'third' },
+        ]
+
+        // Create and append option elements
+        choices.forEach((choice) => {
+          const option = select.append(webflow.elementPresets.DOM)
+          option.setTag('option')
+          option.setAttribute('value', choice.value)
+          option.setTextContent(choice.name)
+        })
+
+        // Add the wrapper with the custom select element to the page
+        const wrapperElement = await selectedElement.append(wrapper)
+
+        if (wrapperElement && wrapperElement.children) {
+          // Prepend a FormBlockLabel to the wrapper
+          const label = await wrapperElement.prepend(
+            webflow.elementPresets.FormBlockLabel,
+          )
+          if (label.type === 'FormBlockLabel') {
+            await label.setTextContent('Custom Select Field')
+          }
+        }
+
+        console.log(
+          'Custom select field with wrapper and label created successfully.',
+        )
+      } else {
+        console.log('Please select an element that can contain child elements.')
+      }
+    },
   },
 }

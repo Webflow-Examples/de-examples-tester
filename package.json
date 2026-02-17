@@ -16,7 +16,7 @@
     "@types/node": "^22.13.5",
     "@types/prismjs": "^1.26.3",
     "@vitejs/plugin-react": "^4.0.0",
-    "@webflow/designer-extension-typings": "^2.0.23",
+    "@webflow/designer-extension-typings": "^2.0.25",
     "@webflow/webflow-cli": "^1.8.6",
     "@xatom/wf-app-hot-reload": "^1.0.5",
     "concurrently": "^6.3.0",
@@ -46,6 +46,7 @@
     "react-dom": "^18.2.0",
     "react-resizable": "^3.0.5",
     "source-map": "^0.7.4",
+    "sucrase": "^3.35.0",
     "typedoc": "^0.25.12"
   }
 }
