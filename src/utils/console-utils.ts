@@ -2,36 +2,47 @@ import type { APIConsole } from '../types/api-explorer.types'
 
 type SetOutputFunction = React.Dispatch<React.SetStateAction<string>>
 
+// Helper to safely get the original console, falling back to native console
+const getOriginalConsole = (): Console => (window as any).ogConsole ?? console
+
 export const createAPIConsole = (setOutput: SetOutputFunction): APIConsole => ({
-  log: (...args: any[]) =>
+  log: (...args: any[]) => {
+    getOriginalConsole().log(...args)
     setOutput(
       (prev: string) =>
         prev + args.map((arg) => formatConsoleArg(arg)).join(' ') + '\n',
-    ),
-  error: (...args: any[]) =>
+    )
+  },
+  error: (...args: any[]) => {
+    getOriginalConsole().error(...args)
     setOutput(
       (prev: string) =>
         prev +
         '[Error] ' +
         args.map((arg) => formatConsoleArg(arg)).join(' ') +
         '\n',
-    ),
-  warn: (...args: any[]) =>
+    )
+  },
+  warn: (...args: any[]) => {
+    getOriginalConsole().warn(...args)
     setOutput(
       (prev: string) =>
         prev +
         '[Warn] ' +
         args.map((arg) => formatConsoleArg(arg)).join(' ') +
         '\n',
-    ),
-  info: (...args: any[]) =>
+    )
+  },
+  info: (...args: any[]) => {
+    getOriginalConsole().info(...args)
     setOutput(
       (prev: string) =>
         prev +
         '[Info] ' +
         args.map((arg) => formatConsoleArg(arg)).join(' ') +
         '\n',
-    ),
+    )
+  },
 })
 
 const formatConsoleArg = (arg: any): string => {
