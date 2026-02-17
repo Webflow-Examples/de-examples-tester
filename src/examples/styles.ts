@@ -199,12 +199,20 @@ export const Styles = {
       }
     },
     getParentStyle: async (style: Style) => {
-      if (style?.isComboClass()) {
-        const parentStyle = await style?.getParent()
-        const parentStyleName = await parentStyle?.getName()
-        console.log(parentStyleName)
+      if (await style.isComboClass()) {
+        const parentStyle = await style.getParent()
+
+        if (parentStyle) {
+          const parentStyleName = await parentStyle.getName()
+          const parentProps = await parentStyle.getProperties()
+          const comboProps = await style.getProperties()
+
+          console.log('Parent Style:', parentStyleName)
+          console.log('Inherited from parent:', parentProps)
+          console.log('Overrides in combo class:', comboProps)
+        }
       } else {
-        console.log('Style is not a combo class')
+        console.log('Style is not a combo class - no parent exists')
       }
     },
   },
