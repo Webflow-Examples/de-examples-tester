@@ -80,6 +80,22 @@ interface WebflowApi {
    */
   setSelectedElement(element: AnyElement): Promise<null | AnyElement>;
 
+  /**
+   * Captures a screenshot of the specified element.
+   * @returns A promise that resolves to a base64 string representing the screenshot of the element.
+   * @example
+   * ```ts
+   * const selectedElement = await webflow.getSelectedElement();
+   * if (selectedElement) {
+   *   const screenshot = await webflow.getElementSnapshot(selectedElement);
+   *   console.log('Screenshot:', screenshot);
+   * }else{
+   *   console.log('No element selected');
+   * }
+   * ```
+   */
+  getElementSnapshot(element: AnyElement): Promise<null | string>;
+
   elementBuilder(elementPreset: ElementPreset<AnyElement>): BuilderElement;
   /**
    * Get the current media query breakpoint ID.

@@ -439,6 +439,32 @@ export const Variables = {
 
   // Variable Management
   variableManagement: {
+    getAllVariables: async (variableCollection: VariableCollection) => {
+      try {
+        const variables = await variableCollection?.getAllVariables()
+        if (!variables) {
+          console.log('No variables in this collection.')
+          return
+        }
+
+        const variablePromises = variables.map(async (variable) => {
+          const name = await variable.getName()
+          const value = await variable.get({ customValues: true })
+          return {
+            id: variable.id,
+            name: name,
+            type: variable.type,
+            value: value,
+          }
+        })
+
+        const variableArray = await Promise.all(variablePromises)
+        console.log('All Variables:', variableArray)
+      } catch (error) {
+        console.error('Failed to get all variables:', error)
+      }
+    },
+
     getVariableById: async (
       variableCollection: VariableCollection,
       id: string,
@@ -490,13 +516,28 @@ export const Variables = {
       )
       const selVariable = await selCollection?.getVariable(variable.id)
 
-      // Get variable value. Include option to return custom values
+      // Get variable value, add option to return variables with custom values
       let value = await selVariable?.get({ customValues: true })
 
-      console.log(`Raw value: ${JSON.stringify(value)}`)
+      // Log the raw value and get the variable's type
+      console.log(`Raw value from .get(): ${JSON.stringify(value)}`)
       let type = selVariable?.type
 
-      // If the variable is a custom value, return the value
+      // The `get()` method can return different types of values.
+      // For simple variables, it's a primitive. (Number, Percentage, Color, etc.)
+      // Variable references return an object with the referenced variable's ID.
+      // Custom variables return an object.
+
+      // A variable reference (alias) is returned as an object with the referenced variable's ID: { id: '...' }
+      if (value && typeof value === 'object' && 'id' in value) {
+        const referencedVariable = await selCollection?.getVariable(value.id)
+        const referencedName = await referencedVariable?.getName()
+        value = `Alias to: ${referencedName}`
+        type = `Referenced ${type}`
+      }
+
+      // A custom value is returned as an object: { type: 'custom', value: '...' }
+      // Extract the inner value for display.
       if (
         value &&
         typeof value === 'object' &&
@@ -507,13 +548,7 @@ export const Variables = {
         type = `Custom ${type}`
       }
 
-      // If the variable is a variable reference, return the referenced variable name
-      if (value && typeof value === 'object' && 'id' in value) {
-        let referencedVariable = await selCollection?.getVariable(value.id)
-        value = await referencedVariable?.getName()
-        type = `Referenced ${type}`
-      }
-
+      // Output the variable type and value
       console.log(`Variable Type: ${type}`)
       console.log(`Variable Value: ${value}`)
 
