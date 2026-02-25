@@ -115,6 +115,7 @@ export const permissionsMap: PermissionsMap = {
     createStyle: { permissions: ['canCreateStyles'] },
     removeStyle: { permissions: ['canModifyStyles'] },
     getStyleByName: { permissions: ['canAccessCanvas'] },
+    getStyleByName_path: { permissions: ['canAccessCanvas'] },
     getAllStyles: { permissions: ['canAccessCanvas'] },
   },
 

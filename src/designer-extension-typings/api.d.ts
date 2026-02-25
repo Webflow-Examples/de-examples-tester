@@ -239,14 +239,16 @@ interface WebflowApi {
    * ```
    */
   createStyle(name: string, options?: {parent?: Style}): Promise<Style>;
+  createStyle(name: string, options?: {parent?: Style}): Promise<Style>;
   /**
-   * Fetch a style by its name.
-   * @param name - The name of the style to retrieve.
+   * Fetch a style by its name or path.
+   * @param nameOrPath - The name or path of the style to retrieve.
    * @returns A Promise that resolves to one of the following:
    * - null if no style with the given name is found.
    * - Style object representing the style with the specified name.
    * @example
    * ```ts
+   * // Get a style by name
    * const styleName = 'myStyle';
    * const style = await webflow.getStyleByName(styleName);
    * if (style) {
@@ -254,9 +256,18 @@ interface WebflowApi {
    * } else {
    *   // Style not found
    * }
-   * ```
+   *
+   * // Get a nested style by path
+   * const stylePath = ['parent', 'child'];
+   * const style = await webflow.getStyleByName(stylePath);
+   * if (style) {
+   *   // Style found, handle it
+   * } else {
+   *   // Style not found
+   * }
+   *```
    */
-  getStyleByName(name: string): Promise<null | Style>;
+  getStyleByName(nameOrPath: string | string[]): Promise<null | Style>;
   /**
    * Fetch an array of all styles available in the Webflow project.
    * @returns A Promise that resolves to an array of Style objects representing all the styles present on the
