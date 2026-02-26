@@ -131,6 +131,18 @@ export const Styles = {
         console.log(`Style ${styleName} not found.`)
       }
     },
+    getStyleByPath: async (styleParentName: string, styleName: string) => {
+      // Retrieve the style by parent name and style name
+      const retrievedStyle = await webflow.getStyleByName([styleParentName, styleName])
+
+      if (retrievedStyle) {
+        // Get and print properties of the retrieved style
+        const styleProperties = await retrievedStyle.getProperties();
+        console.log("Style properties:", styleProperties);
+      } else {
+        console.log(`Style ${styleName} with parent ${styleParentName} not found.`);
+      }
+    },
     createStyle: async (styleName: string) => {
       // Create new style
       const newStyle = await webflow.createStyle(styleName)
