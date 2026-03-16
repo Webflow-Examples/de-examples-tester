@@ -185,6 +185,29 @@ interface WebflowApi {
    */
   getComponentByName(a: string, b?: string): Promise<Component>;
   /**
+   * Gets the number of instances of a component.
+   * @returns A Promise that resolves to the number of instances of the component across the entire site.
+   * @example
+   * ```ts
+   * // Audit component usage across the site
+   * const components = await webflow.getAllComponents();
+   * for (const component of components) {
+   *   const name = await component.getName();
+   *   const count = await component.getInstanceCount();
+   *   console.log(`${name}: ${count} instances`);
+   * }
+   * // Guard against removing a component that's still in use
+   * const hero = components[0];
+   * const instanceCount = await hero.getInstanceCount();
+   * if (instanceCount > 0) {
+   *   console.log(`Cannot safely remove — ${instanceCount} instances exist`);
+   * } else {
+   *   await webflow.unregisterComponent(hero);
+   * }
+   * ```
+   */
+  getInstanceCount(): Promise<number>;
+  /**
    * Focus the designer on a Component. When a component is in focus, all Globals pertain specifically to that
    * Component, not the entire Site.
    * @param instance - A Component Instance that is present on the page. If there’s no current instance, you’ll

@@ -64,6 +64,24 @@ export const Components = {
     console.log(marketingHero.id);
   },
 
+  getInstanceCount: async () => {
+    // Audit component usage across the site
+    const components = await webflow.getAllComponents();
+    for (const component of components) {
+      const name = await component.getName();
+      const count = await component.getInstanceCount();
+      console.log(`${name}: ${count} instances`);
+    }
+    // Guard against removing a component that's still in use
+    const hero = components[0];
+    const instanceCount = await hero.getInstanceCount();
+    if (instanceCount > 0) {
+      console.log(`Cannot safely remove — ${instanceCount} instances exist`);
+    } else {
+      await webflow.unregisterComponent(hero);
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
