@@ -182,6 +182,16 @@ export const Components = {
     }
   },
 
+  createComponentWithoutRoot: async () => {
+    // Create a hero component in the Sections group that is not within an existing element
+    const hero = await webflow.registerComponent({
+      name: 'Hero Section',
+      group: 'Sections',
+      description: 'A reusable hero section with heading and CTA',
+    });
+    console.log(`Component registered with ID: ${hero.id}`)
+  },
+
   deleteComponent: async () => {
     // Get selected element
     const selectedElement = await webflow.getSelectedElement()

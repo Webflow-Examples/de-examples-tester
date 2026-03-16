@@ -134,6 +134,31 @@ interface SharedApi {
     name: string,
     root: AnyElement | ElementPreset<AnyElement> | Component
   ): Promise<Component>;
+
+  /**
+   * Create a component that is not inside any element.
+   * @param options - The options for the component
+   * @param options.name - The name of the component (required)
+   * @param options.group - The group/folder to place the component in (optional)
+   * @param options.description - A description for the component (optional)
+   * @returns A Promise resolving to an object containing the newly created Component - with the id property.
+   * @example
+   * ```ts
+   * // Create a hero component in the Sections group that is not within an existing element
+   * const hero = await webflow.registerComponent({
+   *   name: 'Hero Section',
+   *   group: 'Sections',
+   *   description: 'A reusable hero section with heading and CTA',
+   * });
+   *
+   * // Example Response
+   * {id: '204d04de-bf48-5b5b-0ca8-6ec4c5364fd2'}
+   * ```
+   */
+  createComponentWithoutRoot(
+    options: ComponentOptions
+  ): Promise<Component>;
+
   /**
    * Create a blank component.
    * @param options - Options for creating the blank component.
