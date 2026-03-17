@@ -51,6 +51,8 @@ export const permissionsMap: PermissionsMap = {
     registerComponent: { permissions: ['canCreateComponents'] },
     unregisterComponent: { permissions: ['canCreateComponents'] },
     getAllComponents: { permissions: ['canAccessCanvas'] },
+    getComponentByName: { permissions: ['canAccessCanvas'] },
+    getComponentByNameAndGroup: { permissions: ['canAccessCanvas'] },
     enterComponent: { permissions: ['canModifyComponents'] },
     exitComponent: { permissions: ['canAccessCanvas'] },
   },

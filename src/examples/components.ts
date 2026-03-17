@@ -52,6 +52,18 @@ export const Components = {
     }
   },
 
+  getComponentByName: async () => {
+    // Fetch a component by name only
+    const heroSection = await webflow.getComponentByName('Hero');
+    console.log(heroSection.id);
+  },
+
+  getComponentByNameAndGroup: async () => {
+    // Fetch a component scoped to a group
+    const marketingHero = await webflow.getComponentByName('Marketing', 'Hero');
+    console.log(marketingHero.id);
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
