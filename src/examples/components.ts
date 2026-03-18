@@ -192,6 +192,27 @@ export const Components = {
     console.log(`Component registered with ID: ${hero.id}`)
   },
 
+  createComponentFromElement: async () => {
+    // Convert an existing element into a component
+    const selectedElement = await webflow.getSelectedElement()
+    if (selectedElement) {
+      const heroComponent = await webflow.registerComponent(
+        {
+          name: 'Hero Section',
+          group: 'Sections',
+          description: 'Main hero with heading and CTA'
+        },
+        selectedElement
+      )
+    }
+  },
+
+  duplicateComponent: async () => {
+    // Duplicate a component
+    const [original] = await webflow.getAllComponents()
+    const copy = await webflow.registerComponent({ name: 'Card Copy' }, original)
+  },
+
   deleteComponent: async () => {
     // Get selected element
     const selectedElement = await webflow.getSelectedElement()

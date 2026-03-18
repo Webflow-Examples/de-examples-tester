@@ -132,31 +132,31 @@ interface SharedApi {
    */
   registerComponent(
     name: string,
-    root: AnyElement | ElementPreset<AnyElement> | Component
+    root?: AnyElement | ElementPreset<AnyElement> | Component | ComponentId
   ): Promise<Component>;
 
   /**
-   * Create a component that is not inside any element.
-   * @param options - The options for the component
-   * @param options.name - The name of the component (required)
-   * @param options.group - The group/folder to place the component in (optional)
-   * @param options.description - A description for the component (optional)
+   * Create a component by converting an element into a component or duplicating a component.
+   * @param options - The options for the new component.
+   * @param root - An Element that will become the Root Element of the Component.
    * @returns A Promise resolving to an object containing the newly created Component - with the id property.
    * @example
    * ```ts
-   * // Create a hero component in the Sections group that is not within an existing element
-   * const hero = await webflow.registerComponent({
-   *   name: 'Hero Section',
-   *   group: 'Sections',
-   *   description: 'A reusable hero section with heading and CTA',
-   * });
-   *
-   * // Example Response
-   * {id: '204d04de-bf48-5b5b-0ca8-6ec4c5364fd2'}
+   * // Convert an existing element into a component
+   * const selectedElement = await webflow.getSelectedElement()
+   * const heroComponent = await webflow.registerComponent(
+   *   {
+   *     name: 'Hero Section',
+   *     group: 'Sections',
+   *     description: 'Main hero with heading and CTA'
+   *   },
+   *   selectedElement
+   * )
    * ```
    */
-  createComponentWithoutRoot(
-    options: ComponentOptions
+  registerComponent(
+    options: ComponentOptions,
+    root?: AnyElement | ElementPreset<AnyElement> | Component | ComponentId
   ): Promise<Component>;
 
   /**

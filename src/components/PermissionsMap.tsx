@@ -50,6 +50,8 @@ export const permissionsMap: PermissionsMap = {
     getRootElement: { permissions: ['canAccessCanvas'] },
     registerComponent: { permissions: ['canCreateComponents'] },
     createComponentWithoutRoot: { permissions: ['canCreateComponents'] },
+    createComponentFromElement: { permissions: ['canCreateComponents'] },
+    duplicateComponent: { permissions: ['canCreateComponents'] },
     unregisterComponent: { permissions: ['canCreateComponents'] },
     getAllComponents: { permissions: ['canAccessCanvas'] },
     getComponentByName: { permissions: ['canAccessCanvas'] },
