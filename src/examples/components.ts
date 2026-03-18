@@ -193,7 +193,7 @@ export const Components = {
   },
 
   createComponentFromElement: async () => {
-    // Convert an existing element into a component
+    // Convert an existing element into a component, by default replacing the element with the new component
     const selectedElement = await webflow.getSelectedElement()
     if (selectedElement) {
       const heroComponent = await webflow.registerComponent(
