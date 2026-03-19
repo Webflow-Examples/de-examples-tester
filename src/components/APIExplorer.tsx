@@ -187,8 +187,8 @@ const APIExplorer: React.FC = () => {
         : topCategory[selectedFunctionName]
 
       if (funcToExecute) {
-        // Save original console before try block so it's accessible in finally
         const originalConsole = { ...console }
+
         try {
           setApiOutput('')
 
@@ -230,13 +230,19 @@ const APIExplorer: React.FC = () => {
           if (typeof funcToExecute === 'function') {
             const result = funcToExecute(...paramValues)
             if (result && typeof result.then === 'function') {
-              result.catch(apiConsole.error)
+              // Restore console after the async function completes, not before
+              result
+                .catch(apiConsole.error)
+                .finally(() => Object.assign(console, originalConsole))
+            } else {
+              Object.assign(console, originalConsole)
             }
+          } else {
+            Object.assign(console, originalConsole)
           }
         } catch (error) {
-          console.error('Error executing function:', error)
-        } finally {
           Object.assign(console, originalConsole)
+          console.error('Error executing function:', error)
         }
       }
     }
