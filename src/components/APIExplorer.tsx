@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-typescript.js'
@@ -36,12 +36,21 @@ import designerExtensionTypings from '@/designer-extension-typings/index.d.ts?ra
 
 const examples: { [key: string]: any } = examplesImport as any
 
-const APIExplorer: React.FC = () => {
-  const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
-  const [selectedFunctionName, setSelectedFunctionName] = useState('')
+interface APIExplorerProps {
+  selectedExampleCategory: string
+  setSelectedExampleCategory: (value: string) => void
+  selectedFunctionName: string
+  setSelectedFunctionName: (value: string) => void
+}
+
+const APIExplorer: React.FC<APIExplorerProps> = ({
+  selectedExampleCategory,
+  setSelectedExampleCategory,
+  selectedFunctionName,
+  setSelectedFunctionName,
+}) => {
   const [functionParameters, setFunctionParameters] = useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
-  const hasInitializedRef = useRef(false)
 
   // Fetch function code and parameters
   const { functionCode, parameterNames, parameterTypes, setParameterNames } =
@@ -104,28 +113,6 @@ const APIExplorer: React.FC = () => {
   useEffect(() => {
     setApiOutput('')
   }, [selectedFunctionName, selectedExampleCategory])
-
-  // Auto-initialize first example and function
-  useEffect(() => {
-    if (!hasInitializedRef.current) {
-      hasInitializedRef.current = true
-      const firstCategory = Object.keys(examples)[0]
-      setSelectedExampleCategory(firstCategory)
-
-      const categoryContent = examples[firstCategory] || {}
-      const firstSubcategory = Object.keys(categoryContent)[0]
-
-      if (
-        typeof categoryContent[firstSubcategory] === 'object' &&
-        !('type' in (categoryContent[firstSubcategory] || {}))
-      ) {
-        const firstFunction = Object.keys(categoryContent[firstSubcategory])[0]
-        setSelectedFunctionName(`${firstSubcategory}.${firstFunction}`)
-      } else {
-        setSelectedFunctionName(firstSubcategory)
-      }
-    }
-  }, [])
 
   const exampleCategories: CategoryOption[] = Object.keys(examples).map(
     (key) => ({
