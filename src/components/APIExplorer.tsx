@@ -41,7 +41,6 @@ const APIExplorer: React.FC = () => {
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
   const [functionParameters, setFunctionParameters] = useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
-  const hasAutoExecutedRef = useRef(false)
   const hasInitializedRef = useRef(false)
 
   // Fetch function code and parameters
@@ -128,19 +127,6 @@ const APIExplorer: React.FC = () => {
     }
   }, [])
 
-  // Auto-run function if no parameters needed
-  useEffect(() => {
-    if (
-      selectedFunctionName &&
-      parameterNames.length === 0 &&
-      selectedExampleCategory &&
-      !hasAutoExecutedRef.current
-    ) {
-      hasAutoExecutedRef.current = true
-      handleFunctionExecution()
-    }
-  }, [selectedFunctionName, selectedExampleCategory, parameterNames])
-
   const exampleCategories: CategoryOption[] = Object.keys(examples).map(
     (key) => ({
       value: key,
@@ -181,7 +167,6 @@ const APIExplorer: React.FC = () => {
 
   const handleFunctionChange = (value: string) => {
     setSelectedFunctionName(value)
-    hasAutoExecutedRef.current = false
   }
 
   const handleParameterChange = (name: string, value: any) => {
@@ -331,7 +316,7 @@ const APIExplorer: React.FC = () => {
             {METHOD_DESCRIPTIONS[selectedExampleCategory][selectedFunctionName]}
           </div>
         )}
-      {parameterNames.length > 0 && (
+      {selectedFunctionName && (
         <div className="flex-row items-end gap-2">
           <div className="flex-1">
             {parameterNames.map((name: string, index: number) =>
