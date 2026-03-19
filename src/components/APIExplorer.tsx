@@ -350,7 +350,6 @@ const APIExplorer: React.FC = () => {
             <label className="w-form-label">Output</label>
           </div>
           <CodeBlock
-            onClear={() => setApiOutput('')}
             code={apiOutput || '// Run the method to see output'}
             language="javascript"
           />
