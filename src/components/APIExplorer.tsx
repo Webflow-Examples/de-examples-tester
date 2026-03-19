@@ -351,7 +351,7 @@ const APIExplorer: React.FC = () => {
           </div>
           <CodeBlock
             code={apiOutput || '// Run the method to see output'}
-            language="javascript"
+            language="none"
           />
         </div>
       )}
