@@ -9,6 +9,9 @@ import { loader } from '@monaco-editor/react'
 import Playground from './components/Playground'
 import TabNavigation from './components/TabNavigation'
 import APIExplorer from './components/APIExplorer'
+import examplesImport from './examples/examples'
+
+const examples = examplesImport
 
 const TABS = [
   { key: 'api', label: 'API Explorer' },
@@ -26,11 +29,36 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('api')
+  const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
+  const [selectedFunctionName, setSelectedFunctionName] = useState('')
   const containerRef = useRef(null)
+  const hasInitializedRef = useRef(false)
 
   useEffect(() => {
     // Set initial size
     webflow.setExtensionSize({ height: 425, width: 500 })
+  }, [])
+
+  // Auto-initialize first example and function
+  useEffect(() => {
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true
+      const firstCategory = Object.keys(examples)[0]
+      setSelectedExampleCategory(firstCategory)
+
+      const categoryContent = examples[firstCategory] || {}
+      const firstSubcategory = Object.keys(categoryContent)[0]
+
+      if (
+        typeof categoryContent[firstSubcategory] === 'object' &&
+        !('type' in (categoryContent[firstSubcategory] || {}))
+      ) {
+        const firstFunction = Object.keys(categoryContent[firstSubcategory])[0]
+        setSelectedFunctionName(`${firstSubcategory}.${firstFunction}`)
+      } else {
+        setSelectedFunctionName(firstSubcategory)
+      }
+    }
   }, [])
 
   // Global error handler for Monaco Editor cancellation errors
@@ -133,7 +161,14 @@ const App = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
-      {activeTab === 'api' && <APIExplorer />}
+      {activeTab === 'api' && (
+        <APIExplorer
+          selectedExampleCategory={selectedExampleCategory}
+          setSelectedExampleCategory={setSelectedExampleCategory}
+          selectedFunctionName={selectedFunctionName}
+          setSelectedFunctionName={setSelectedFunctionName}
+        />
+      )}
       {activeTab === 'code' && <Playground />}
       <footer className="wf-footer">
         <img
