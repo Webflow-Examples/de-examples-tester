@@ -307,7 +307,7 @@ export const Elements = {
       if (selectedElement) {
         // Insert DIV before selected Element
         const newDiv = await selectedElement.before(
-          webflow.elementPresets.DivBlock,
+          'div',
         )
 
         // Print element details
@@ -322,7 +322,7 @@ export const Elements = {
       if (selectedElement) {
         // Insert DIV after selected Element
         const newDiv = await selectedElement.after(
-          webflow.elementPresets.DivBlock,
+          'div',
         )
 
         // Print element details
@@ -337,7 +337,7 @@ export const Elements = {
       // Check if element supports child elements
       if (el?.children) {
         // Append newElement as a child to of the selected element
-        const newElement = await el?.append(webflow.elementPresets.DivBlock)
+        const newElement = await el?.append('div')
 
         // Print element Details
         console.log(JSON.stringify(newElement))
@@ -351,7 +351,7 @@ export const Elements = {
       // Check if element supports child elements
       if (el?.children) {
         // Prepend newElement as a child to of the selected element
-        const newElement = await el?.prepend(webflow.elementPresets.DivBlock)
+        const newElement = await el?.prepend('div')
 
         // Print element Details
         console.log(JSON.stringify(newElement))

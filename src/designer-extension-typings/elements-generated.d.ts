@@ -2,7 +2,7 @@
 
 type InsertOrMoveElement = <
   el extends AnyElement,
-  target extends el | ElementPreset<el> | Component | BuilderElement,
+  target extends el | ElementPreset<el> | Component | BuilderElement | string,
 >(
   this: {id: FullElementId},
   that: target

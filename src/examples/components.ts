@@ -151,7 +151,7 @@ export const Components = {
 
     if (root.children) {
       // Append DIV block to Root element
-      await root?.append(webflow.elementPresets.DivBlock)
+      await root?.append('div')
     }
   },
 
