@@ -169,6 +169,22 @@ interface WebflowApi {
    */
   getAllComponents(): Promise<Array<Component>>;
   /**
+   * Retrieve a component based on its name and optionally its group.
+   * Component instance.
+   * @returns A Promise resolving to the component
+   * @example
+   * ```ts
+   * // Fetch a component by name only
+   * const heroSection = await webflow.getComponentByName('Hero');
+   * console.log(heroSection.id);
+   *
+   * // Fetch a component scoped to a group
+   * const marketingHero = await webflow.getComponentByName('Marketing', 'Hero');
+   * console.log(marketingHero.id);
+   * ```
+   */
+  getComponentByName(a: string, b?: string): Promise<Component>;
+  /**
    * Focus the designer on a Component. When a component is in focus, all Globals pertain specifically to that
    * Component, not the entire Site.
    * @param instance - A Component Instance that is present on the page. If there’s no current instance, you’ll
