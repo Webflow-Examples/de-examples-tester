@@ -53,6 +53,7 @@ export const permissionsMap: PermissionsMap = {
     getAllComponents: { permissions: ['canAccessCanvas'] },
     getComponentByName: { permissions: ['canAccessCanvas'] },
     getComponentByNameAndGroup: { permissions: ['canAccessCanvas'] },
+    getInstanceCount: { permissions: ['canAccessCanvas'] },
     enterComponent: { permissions: ['canModifyComponents'] },
     exitComponent: { permissions: ['canAccessCanvas'] },
   },
