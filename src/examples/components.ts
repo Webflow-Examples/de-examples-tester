@@ -120,7 +120,7 @@ export const Components = {
     }
   },
 
-  enterComponent: async () => {
+  selectComponent: async () => {
     // Step 1: Fetch the currently selected element
     const selectedElement = await webflow.getSelectedElement()
 
