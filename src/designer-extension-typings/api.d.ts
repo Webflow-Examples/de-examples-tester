@@ -218,6 +218,36 @@ interface WebflowApi {
    * await webflow.enterComponent(heroComponentInstance);
    * ```
    */
+  /**
+   * Open a Component's canvas or a page for editing in the Designer.
+   * @param target - A Component, ComponentInstance, or page object
+   * @returns A Promise that resolves when the canvas or page switch is successful.
+   * @example
+   * ```ts
+   * `// Open a Component canvas by ID
+   * await webflow.openCanvas({ componentId: 'component-id' });
+   *
+   * // Open a Component canvas by Component reference
+   * const components = await webflow.getAllComponents();
+   * const hero = components[0];
+   * await webflow.openCanvas(hero);
+   *
+   * // Open a Component canvas via an instance reference
+   * const selectedElement = await webflow.getSelectedElement();
+   * if (selectedElement?.type === 'ComponentInstance') {
+   *   await webflow.openCanvas(selectedElement as ComponentElement);
+   * }
+   *
+   * // Navigate to a page by ID
+   * await webflow.openCanvas({ pageId: 'page-id' });
+   *
+   * // Navigate to a page by reference (equivalent to webflow.switchPage)
+   * const pagesAndFolders = await webflow.getAllPagesAndFolders();
+   * const pages = pagesAndFolders?.filter((i): i is Page => i.type === 'Page');
+   * await webflow.openCanvas(pages[0]);
+   * ```
+   */
+  openCanvas()
   enterComponent(instance: ComponentElement): Promise<null>;
   /**
    * Return to the broader context of the entire site or page.
