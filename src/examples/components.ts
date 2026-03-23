@@ -120,6 +120,14 @@ export const Components = {
     }
   },
 
+  openComponentCanvas: async () => {
+    // Open the canvas for the Component that has an instance selected in the Designer
+    const selected = await webflow.getSelectedElement();
+    if (selected?.type === 'ComponentInstance') {
+      await webflow.openCanvas(selected);
+    }
+  },
+
   selectComponent: async () => {
     // Step 1: Fetch the currently selected element
     const selectedElement = await webflow.getSelectedElement()
