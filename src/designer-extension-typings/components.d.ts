@@ -31,7 +31,52 @@ interface Component {
    * ```
    */
   setName(name: string): Promise<null>;
+  /**
+   * Retrieve all variants of a component.
+   * @returns A Promise resolving to an array containing all variants of the component
+   * @example
+   * ```ts
+   * const component = (await webflow.getAllComponents())[0];
+   * const variants = await component.getVariants();
+   * console.log(variants);
+   * // [
+   * //   { id: 'base', name: 'Primary', isSelected: true },
+   * //   { id: 'xxxx', name: 'Secondary', isSelected: false },
+   * // ]
+   * // Find which variant the user is currently editing
+   * const activeVariant = variants.find(v => v.isSelected);
+   * console.log(`Currently editing: ${activeVariant.name}`);
+   * ```
+   */
+  getVariants(): Promise<Array<Variant>>;
+  /**
+   * Retrieves the selected variant of a component.
+   * @returns A Promise resolving to a variant
+   * @example
+   * ```ts
+   * const selectedVariant = await heroComponent.getSelectedVariant();
+   * // {
+   * //   id: 'variant-123',
+   * //   name: 'Secondary Hero',
+   * //   isSelected: true,
+   * // }
+   * // // When no variant is explicitly selected, returns base
+   * // const base = await heroComponent.getSelectedVariant();
+   * // {
+   * //   id: 'base',
+   * //   name: 'Primary',
+   * //   isSelected: true,
+   * // }
+   * ```
+   */
+  getSelectedVariant(): Promise<Variant>;
   getRootElement(): Promise<null | AnyElement>;
 }
 
 type ComponentId = string;
+
+interface Variant {
+  id: string;
+  name: string;
+  isSelected: boolean;
+}

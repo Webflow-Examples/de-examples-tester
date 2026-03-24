@@ -80,6 +80,31 @@ export const Components = {
     } else {
       await webflow.unregisterComponent(hero);
     }
+  getVariants: async () => {
+    const component = (await webflow.getAllComponents())[0]
+    const variants = await component.getVariants()
+    console.log(variants)
+    // [
+    //   { id: 'base', name: 'Primary', isSelected: true },
+    //   { id: 'xxxx', name: 'Secondary', isSelected: false },
+    // ]
+    // Find which variant the user is currently editing
+    const activeVariant = variants.find(v => v.isSelected)
+    console.log(`Currently editing: ${activeVariant?.name}`)
+  },
+
+  getSelectedVariant: async () => {
+    const heroComponent = webflow.getComponentByName('hero')
+    // When no variant is explicitly selected, returns base
+    const base = await heroComponent.getSelectedVariant()
+    console.log(JSON.stringify(base))
+    /*
+    {
+      id: 'base',
+      name: 'Primary',
+      isSelected: true,
+    }
+    */
   },
 
   createComponent: async () => {

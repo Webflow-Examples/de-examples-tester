@@ -138,6 +138,7 @@ interface WebflowApi {
     name: string,
     root: AnyElement | ElementPreset<AnyElement> | Component
   ): Promise<Component>;
+  getComponentByName(string): Promise<null | Component>;
   /**
    * Delete a component from the Designer. If there are any instances of the Component within the site, they will
    * be converted to regular Elements.
