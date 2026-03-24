@@ -80,6 +80,8 @@ export const Components = {
     } else {
       await webflow.unregisterComponent(hero);
     }
+  },
+
   getVariants: async () => {
     const component = (await webflow.getAllComponents())[0]
     const variants = await component.getVariants()
