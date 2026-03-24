@@ -80,3 +80,21 @@ interface Variant {
   name: string;
   isSelected: boolean;
 }
+
+interface SearchComponentsOptions {
+  /** Fuzzy search query matching Component panel search behavior */
+  q?: string;
+}
+interface ComponentLibrary {
+  name: string;
+  id: string;
+}
+interface ComponentSearchResult {
+  id: string;
+  name: string;
+  group: string;
+  description: string;
+  instances: number;
+  canEdit: boolean;
+  library: ComponentLibrary | null;
+}
