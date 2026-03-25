@@ -198,6 +198,13 @@ export const Components = {
     }
   },
 
+  setSelectedVariant: async () => {
+    const heroComponent = await webflow.getComponentByName('Hero');
+    if (heroComponent) {
+      await heroComponent.setSelectedVariant({ id: 'base' });
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
