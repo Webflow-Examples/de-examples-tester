@@ -63,6 +63,7 @@ export const permissionsMap: PermissionsMap = {
     getSelectedVariant: { permissions: ['canAccessCanvas'] },
     createVariant: { permissions: ['canModifyComponents'] },
     enterComponent: { permissions: ['canModifyComponents'] },
+    setSelectedVariant: { permissions: ['canModifyComponents'] },
     openCanvas: { permissions: ['canModifyComponents'] },
     selectComponent: { permissions: ['canModifyComponents'] },
     exitComponent: { permissions: ['canAccessCanvas'] },

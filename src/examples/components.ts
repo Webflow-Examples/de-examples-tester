@@ -203,6 +203,16 @@ export const Components = {
       },
     },
 
+    setSelectedVariant: {
+      displayName: "Set selected variant",
+      code: async () => {
+        const component = await webflow.getCurrentComponent()
+        if (component) {
+          await component.setSelectedVariant({ id: 'base' })
+        }
+      },
+    },
+
     createComponent: {
       displayName: 'Create component',
       code: async () => {
