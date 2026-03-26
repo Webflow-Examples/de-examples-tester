@@ -84,6 +84,8 @@ export const permissionsMap: PermissionsMap = {
     setStyles: { permissions: ['canDesign'] },
     getTag: { permissions: ['canAccessCanvas'] },
     setTag: { permissions: ['canDesign'] },
+    getDisplayName: { permissions: ['canAccessCanvas'] },
+    setDisplayName: { permissions: ['canDesign'] },
     getAttribute: { permissions: ['canAccessCanvas'] },
     setAttribute: { permissions: ['canDesign'] },
     getAllAttributes: { permissions: ['canAccessCanvas'] },
