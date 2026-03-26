@@ -64,6 +64,11 @@ export const Components = {
     console.log(marketingHero.id);
   },
 
+  searchComponents: async () => {
+    const heroes = await webflow.searchComponents({ q: 'Hero' });
+    console.log(heroes);
+  },
+
   getInstanceCount: async () => {
     // Audit component usage across the site
     const components = await webflow.getAllComponents();

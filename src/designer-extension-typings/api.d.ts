@@ -186,6 +186,16 @@ interface WebflowApi {
    */
   getComponentByName(a: string, b?: string): Promise<Component>;
   /**
+   * Searches for Components by name
+   * @returns A Promise that resolves to an array or objects with information about matching Components, not the `Component` objects themselves.
+   * @example
+   * ```ts
+   * const heroes = await webflow.searchComponents({ q: 'Hero' });
+   * console.log(heroes);
+   * ```
+  */
+  searchComponents(options: SearchComponentsOptions?): Promise<Array<ComponentSearchResult>>
+  /**
    * Gets the number of instances of a component.
    * @returns A Promise that resolves to the number of instances of the component across the entire site.
    * @example
