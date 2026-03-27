@@ -178,6 +178,13 @@ export const Components = {
     // Name conflicts auto-increment
     const variant2 = await component.createVariant({ name: 'Secondary Hero' })
     console.log(variant2.name) // 'Secondary Hero 2'
+
+    // Duplicate a variant by passing its ID as the second parameter
+    const duplicateVariant = await component.createVariant({
+      name: 'Duplicate of Secondary Hero',
+      isSelected: true,
+    }, variant.id)
+    console.log(duplicateVariant.name) // 'Duplicate of Secondary Hero'
   },
 
   createComponent: async () => {
