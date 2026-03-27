@@ -32,6 +32,34 @@ interface Component {
    */
   setName(name: string): Promise<null>;
   /**
+   * Get the settings (name, group, description) of a component.
+   * @returns A Promise resolving to the component's settings.
+   * @example
+   * ```ts
+   * const component = (await webflow.getAllComponents())[0];
+   * const settings = await component.getSettings();
+   * console.log(settings.name);        // 'Hero Section'
+   * console.log(settings.group);       // 'Sections'
+   * console.log(settings.description); // 'A reusable hero'
+   * ```
+   */
+  getSettings(): Promise<ComponentSettings>;
+  /**
+   * Update one or more settings on a component. All fields are optional.
+   * Updates happen immediately without requiring an explicit save().
+   * @param settings - A partial object of settings to update.
+   * @returns A Promise that resolves when the update is complete.
+   * @example
+   * ```ts
+   * await component.setSettings({
+   *   name: 'Hero Section v2',
+   *   group: 'Sections',
+   *   description: 'Updated hero with new CTA layout',
+   * });
+   * ```
+   */
+  setSettings(settings: Partial<ComponentSettings>): Promise<null>;
+  /**
    * Retrieve all variants of a component.
    * @returns A Promise resolving to an array containing all variants of the component
    * @example
@@ -74,6 +102,15 @@ interface Component {
 }
 
 type ComponentId = string;
+
+interface ComponentSettings {
+  /** The name of the component */
+  name: string;
+  /** The group/folder the component belongs to (empty string if not set) */
+  group: string;
+  /** The description of the component (empty string if not set) */
+  description: string;
+}
 
 interface Variant {
   id: string;
