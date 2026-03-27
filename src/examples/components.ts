@@ -164,6 +164,22 @@ export const Components = {
     */
   },
 
+  createVariant: async () => {
+    const component = (await webflow.getAllComponents())[0]
+
+    // Create a new variant and select it immediately
+    const variant = await component.createVariant({
+      name: 'Secondary Hero',
+      isSelected: true,
+    })
+    console.log(variant)
+    // { id: 'variant-123', name: 'Secondary Hero', isSelected: true }
+
+    // Name conflicts auto-increment
+    const variant2 = await component.createVariant({ name: 'Secondary Hero' })
+    console.log(variant2.name) // 'Secondary Hero 2'
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
