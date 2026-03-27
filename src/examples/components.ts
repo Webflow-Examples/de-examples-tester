@@ -69,6 +69,39 @@ export const Components = {
     console.log(heroes);
   },
 
+  getSettings: async () => {
+    // Get the first component's settings
+    const component = (await webflow.getAllComponents())[0]
+    const settings = await component.getSettings()
+    console.log(settings)
+    /*
+    {
+      name: 'Hero Section',
+      group: 'Sections',
+      description: 'A reusable hero with heading and CTA'
+    }
+    */
+  },
+
+  setSettings: async () => {
+    const component = (await webflow.getAllComponents())[0]
+
+    // Update only the description
+    await component.setSettings({
+      description: 'Updated hero layout with video background',
+    })
+
+    // Move to a different group
+    await component.setSettings({ group: 'Legacy' })
+
+    // Update everything at once
+    await component.setSettings({
+      name: 'Hero Section v2',
+      group: 'Sections',
+      description: 'Redesigned hero component',
+    })
+  },
+
   getInstanceCount: async () => {
     // Audit component usage across the site
     const components = await webflow.getAllComponents();
