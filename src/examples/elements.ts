@@ -79,6 +79,25 @@ export const Elements = {
       // Remove the selected element
       await el?.remove()
     },
+
+    getParentComponent: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element) {
+        // Get the component that directly contains the element
+        const parentComponent = await element.getParentComponent()
+
+        if (parentComponent) {
+          const name = await parentComponent.getName()
+          console.log(`Element is inside component: ${name}`)
+        } else {
+          console.log('Element is not inside a component.')
+        }
+      } else {
+        console.log('No element is currently selected.')
+      }
+    },
   },
 
   // Element Creation

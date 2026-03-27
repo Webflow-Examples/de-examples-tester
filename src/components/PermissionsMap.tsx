@@ -95,6 +95,7 @@ export const permissionsMap: PermissionsMap = {
     getAllElements: { permissions: ['canAccessCanvas'] },
     getRootElement: { permissions: ['canAccessCanvas'] },
     remove: { permissions: ['canDesign'] },
+    getParentComponent: { permissions: ['canAccessCanvas'] },
   },
 
   // Image Elements
