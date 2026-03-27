@@ -53,6 +53,7 @@ export const permissionsMap: PermissionsMap = {
     getAllComponents: { permissions: ['canAccessCanvas'] },
     getComponentByName: { permissions: ['canAccessCanvas'] },
     getComponentByNameAndGroup: { permissions: ['canAccessCanvas'] },
+    getCurrentComponent: { permissions: ['canAccessCanvas'] },
     searchComponents: { permissions: ['canAccessCanvas'] },
     getInstanceCount: { permissions: ['canAccessCanvas'] },
     getVariants: { permissions: ['canAccessCanvas'] },
@@ -97,6 +98,7 @@ export const permissionsMap: PermissionsMap = {
     getAllElements: { permissions: ['canAccessCanvas'] },
     getRootElement: { permissions: ['canAccessCanvas'] },
     remove: { permissions: ['canDesign'] },
+    getParentComponent: { permissions: ['canAccessCanvas'] },
   },
 
   // Image Elements

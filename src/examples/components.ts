@@ -64,6 +64,23 @@ export const Components = {
     console.log(marketingHero.id);
   },
 
+  getCurrentComponent: async () => {
+    // Get the component currently being edited
+    const component = await webflow.getCurrentComponent();
+
+    if (component) {
+      const name = await component.getName();
+      console.log(`Currently editing component: ${name}`);
+
+      // Get all elements inside the active component
+      const root = await component.getRootElement();
+      const children = await root.getChildren();
+      console.log(`Root has ${children.length} child element(s)`);
+    } else {
+      console.log('Not currently editing a component.');
+    }
+  },
+
   searchComponents: async () => {
     const heroes = await webflow.searchComponents({ q: 'Hero' });
     console.log(heroes);

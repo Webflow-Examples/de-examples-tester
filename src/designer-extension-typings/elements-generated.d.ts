@@ -22,6 +22,7 @@ interface WebflowElement {
   remove(this: {id: FullElementId}): Promise<null>;
   readonly before: InsertOrMoveElement;
   readonly after: InsertOrMoveElement;
+  getParentComponent(this: {id: FullElementId}): Promise<Component | null>;
 }
 
 interface CustomAttributes {
