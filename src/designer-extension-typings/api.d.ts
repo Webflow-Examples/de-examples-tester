@@ -186,6 +186,21 @@ interface WebflowApi {
    */
   getComponentByName(a: string, b?: string): Promise<Component>;
   /**
+   * Retrieves the component that is currently being edited.
+   * @returns A Promise that resolves to the current component, or null if no component is currently being edited.
+   * @example
+   * ```ts
+   * const component = await webflow.getCurrentComponent();
+   * if (component) {
+   *   const name = await component.getName();
+   *   console.log(`Currently editing component: ${name}`);
+   * } else {
+   *   console.log('Not currently editing a component.');
+   * }
+   * ```
+   */
+  getCurrentComponent(): Promise<Component | null>;
+  /**
    * Searches for Components by name
    * @returns A Promise that resolves to an array or objects with information about matching Components, not the `Component` objects themselves.
    * @example
