@@ -37,6 +37,7 @@ type ElementPresets = {
   CommerceCheckoutAdditionalInfoSummaryWrapper: ElementPreset<CommerceCheckoutAdditionalInfoSummaryWrapperElement>;
   CommerceDownloadsWrapper: ElementPreset<CommerceDownloadsWrapperElement>;
   DropdownWrapper: ElementPreset<DropdownWrapperElement>;
+  DropTarget: ElementPreset<DropTargetElement>;
   DynamoWrapper: ElementPreset<DynamoWrapperElement>;
   HtmlEmbed: ElementPreset<HtmlEmbedElement>;
   Video: ElementPreset<VideoElement>;
@@ -104,11 +105,5 @@ type ElementPresets = {
   LayoutFooterDark: ElementPreset<SectionElement>;
   LayoutFooterLight: ElementPreset<SectionElement>;
   LayoutFooterSubscribe: ElementPreset<SectionElement>;
-  UserAccountSubscriptionList: ElementPreset<UserAccountSubscriptionListWrapperElement>;
-  UserLogOutLogIn: ElementPreset<UserLogOutLogInElement>;
-  SignUp: ElementPreset<UserSignUpFormWrapperElement>;
-  LogIn: ElementPreset<UserLogInFormWrapperElement>;
-  UserAccount: ElementPreset<UserAccountWrapperElement>;
-  ResetPassword: ElementPreset<UserResetPasswordFormWrapperElement>;
-  UpdatePassword: ElementPreset<UserUpdatePasswordFormWrapperElement>;
+  Slot: ElementPreset<SlotElement>;
 };

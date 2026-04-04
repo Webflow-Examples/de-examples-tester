@@ -1,5 +1,50 @@
 // This file was automatically generated. See designer-extensions docs.
 
+type BlockElementTag =
+  | 'div'
+  | 'header'
+  | 'footer'
+  | 'nav'
+  | 'main'
+  | 'section'
+  | 'article'
+  | 'aside'
+  | 'address'
+  | 'figure';
+
+type TagToElement = {
+  div: BlockElement;
+  header: BlockElement;
+  footer: BlockElement;
+  nav: BlockElement;
+  main: BlockElement;
+  article: BlockElement;
+  aside: BlockElement;
+  address: BlockElement;
+  figure: BlockElement;
+  section: SectionElement;
+  p: ParagraphElement;
+  h1: HeadingElement;
+  h2: HeadingElement;
+  h3: HeadingElement;
+  h4: HeadingElement;
+  h5: HeadingElement;
+  h6: HeadingElement;
+  blockquote: BlockquoteElement;
+  pre: CodeBlockElement;
+  code: CodeBlockElement;
+  img: AnyElement;
+  video: VideoElement;
+  a: LinkElement;
+  button: LinkElement;
+  ul: ListElement;
+  ol: ListElement;
+  li: ListItemElement;
+  form: AnyElement;
+};
+
+type ElementTagName = keyof TagToElement;
+
 type InsertOrMoveElement = <
   el extends AnyElement,
   target extends el | ElementPreset<el> | Component | BuilderElement | string,
@@ -13,7 +58,11 @@ type InsertOrMoveElement = <
       ? elementType
       : target extends Component
         ? ComponentElement
-        : AnyElement
+        : target extends string
+          ? target extends ElementTagName
+            ? TagToElement[target]
+            : DOMElement
+          : AnyElement
 >;
 
 interface WebflowElement {
@@ -54,6 +103,16 @@ interface DomId {
 
 interface NoDomId {
   readonly domId: false;
+}
+
+interface DisplayName {
+  readonly displayName: true;
+  getDisplayName(this: {id: FullElementId}): Promise<null | string>;
+  setDisplayName(this: {id: FullElementId}, displayName: string): Promise<null>;
+}
+
+interface NoDisplayName {
+  readonly displayName: false;
 }
 
 interface Styles {
@@ -97,41 +156,64 @@ interface NoAppConnections {
   readonly appConnections: false;
 }
 
+interface ElementSettings {
+  searchBindableSources(
+    this: {id: FullElementId},
+    options?: SearchBindableSourcesOptions
+  ): Promise<Array<BindableSource>>;
+}
+
 interface ComponentElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
+    DisplayName,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'ComponentInstance';
   readonly plugin: '';
   getComponent(): Promise<Component>;
+  getSlots(): Promise<Array<SlotInstanceElement>>;
+  getProps(): Promise<Array<InstancePropSummary>>;
+  searchProps(
+    options?: SearchInstancePropsOptions
+  ): Promise<Array<InstanceProp>>;
+  setProps(
+    props: Array<SetInstancePropEntry>
+  ): Promise<Array<SetInstancePropEntry>>;
 }
 
 interface UnknownElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: '';
   readonly plugin: '';
 }
 
 interface DOMElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    AppConnections {
+    AppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DOM';
   readonly plugin: 'Builtin';
@@ -144,182 +226,226 @@ interface DOMElement
 }
 
 interface SearchFormElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchForm';
   readonly plugin: 'Search';
 }
 
 interface SearchInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchInput';
   readonly plugin: 'Search';
 }
 
 interface SearchButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchButton';
   readonly plugin: 'Search';
 }
 
 interface SearchResultEmptyElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchResultEmpty';
   readonly plugin: 'Search';
 }
 
 interface SearchResultWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchResultWrapper';
   readonly plugin: 'Search';
 }
 
 interface SearchResultListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchResultList';
   readonly plugin: 'Search';
 }
 
 interface SearchResultItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SearchResultItem';
   readonly plugin: 'Search';
 }
 
 interface BlockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Block';
   readonly plugin: 'Basic';
+  getTag(): Promise<null | BlockElementTag>;
+  setTag(tag: BlockElementTag): Promise<null>;
 }
 
 interface BlockquoteElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Blockquote';
   readonly plugin: 'Basic';
 }
 
 interface CodeBlockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CodeBlock';
   readonly plugin: 'Basic';
 }
 
 interface EmphasizedElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Emphasized';
   readonly plugin: 'Basic';
 }
 
 interface FigcaptionElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Figcaption';
   readonly plugin: 'Basic';
 }
 
 interface FigureElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Figure';
   readonly plugin: 'Basic';
 }
 
 interface HeadingElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Heading';
   readonly plugin: 'Basic';
@@ -328,26 +454,32 @@ interface HeadingElement
 }
 
 interface IframeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Iframe';
   readonly plugin: 'Basic';
 }
 
 interface ImageElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    AppConnections {
+    AppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Image';
   readonly plugin: 'Basic';
@@ -358,13 +490,16 @@ interface ImageElement
 }
 
 interface LinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Link';
   readonly plugin: 'Basic';
@@ -377,78 +512,96 @@ interface LinkElement
 }
 
 interface ListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'List';
   readonly plugin: 'Basic';
 }
 
 interface ListItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'ListItem';
   readonly plugin: 'Basic';
 }
 
 interface ParagraphElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Paragraph';
   readonly plugin: 'Basic';
 }
 
 interface RichTextElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'RichText';
   readonly plugin: 'Basic';
 }
 
 interface SpanElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Span';
   readonly plugin: 'Basic';
 }
 
 interface StringElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    NoDisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'String';
   readonly plugin: 'Basic';
@@ -457,2223 +610,2752 @@ interface StringElement
 }
 
 interface StrongElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Strong';
   readonly plugin: 'Basic';
 }
 
 interface SuperscriptElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Superscript';
   readonly plugin: 'Basic';
 }
 
 interface SubscriptElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Subscript';
   readonly plugin: 'Basic';
 }
 
 interface InlineCodeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'InlineCode';
   readonly plugin: 'Basic';
 }
 
 interface AnimationElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Animation';
   readonly plugin: 'Animation';
 }
 
 interface SplineElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Spline';
   readonly plugin: 'Animation';
 }
 
 interface RiveElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Rive';
   readonly plugin: 'Animation';
 }
 
 interface BackgroundVideoWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BackgroundVideoWrapper';
   readonly plugin: 'BackgroundVideo';
 }
 
 interface BackgroundVideoPlayPauseButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BackgroundVideoPlayPauseButton';
   readonly plugin: 'BackgroundVideo';
 }
 
 interface BackgroundVideoPlayPauseButtonPlayingElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BackgroundVideoPlayPauseButtonPlaying';
   readonly plugin: 'BackgroundVideo';
 }
 
 interface BackgroundVideoPlayPauseButtonPausedElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BackgroundVideoPlayPauseButtonPaused';
   readonly plugin: 'BackgroundVideo';
 }
 
 interface BodyElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     NoStyles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Body';
   readonly plugin: 'Body';
 }
 
 interface CommerceAddToCartFormElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartForm';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartQuantityInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartQuantityInput';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartErrorElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartError';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOutOfStockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOutOfStock';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionListWithSelectorTypesElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionListWithSelectorTypes';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOption';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionSelectElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionSelect';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionPillGroupElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionPillGroup';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartOptionPillElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartOptionPill';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceBuyNowButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceBuyNowButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOpenLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOpenLink';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOpenLinkCountElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOpenLinkCount';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOpenLinkIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOpenLinkIcon';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartContainerWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartContainerWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartHeaderElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartHeader';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartHeadingElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartHeading';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartFormWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartFormWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartFormElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartForm';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartEmptyStateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartEmptyState';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartErrorStateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartErrorState';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartFooterElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartFooter';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartLineItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartLineItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartCheckoutButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartCheckoutButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartItemImageElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartItemImage';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartItemInfoElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartItemInfo';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartProductNameElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartProductName';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartProductPriceElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartProductPrice';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartQuantityElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartQuantity';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartCloseLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartCloseLink';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartCloseLinkIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartCloseLinkIcon';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartRemoveLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartRemoveLink';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOrderValueElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOrderValue';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartCheckoutActionsElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartCheckoutActions';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOptionListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOptionList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOptionListItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOptionListItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOptionListItemLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOptionListItemLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartOptionListItemValueElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartOptionListItemValue';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartQuickCheckoutActionsElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartQuickCheckoutActions';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartQuickCheckoutButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartQuickCheckoutButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartApplePayButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartApplePayButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartApplePayIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartApplePayIcon';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceQuickCheckoutGoogleIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceQuickCheckoutGoogleIcon';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceQuickCheckoutMicrosoftIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceQuickCheckoutMicrosoftIcon';
   readonly plugin: 'Commerce';
 }
 
 interface CommercePayPalCheckoutButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommercePayPalCheckoutButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBlockContentElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBlockContent';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBlockHeaderElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBlockHeader';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutColumnElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutColumn';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutFormContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutFormContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutRowElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutRow';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutCardExpirationDateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutCardExpirationDate';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutCardNumberElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutCardNumber';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutCardSecurityCodeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutCardSecurityCode';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutCustomerInfoWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutCustomerInfoWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutErrorStateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutErrorState';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutPaymentInfoWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutPaymentInfoWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutPlaceOrderButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutPlaceOrderButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutEmailInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutEmailInput';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingAddressWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingAddressWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingCountrySelectorElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingCountrySelector';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingFullNameElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingFullName';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingStreetAddressElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingStreetAddress';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingStreetAddressOptionalElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingStreetAddressOptional';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingCityElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingCity';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingZipPostalCodeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingZipPostalCode';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingStateProvinceElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingStateProvince';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceOrderConfirmationElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceOrderConfirmation';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceOrderConfirmationContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceOrderConfirmationContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceOrderConfirmationHeaderWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceOrderConfirmationHeaderWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingAddressWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingAddressWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingCountrySelectorElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingCountrySelector';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingFullNameElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingFullName';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingStreetAddressElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingStreetAddress';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingStreetAddressOptionalElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingStreetAddressOptional';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingCityElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingCity';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingZipPostalCodeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingZipPostalCode';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingStateProvinceElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingStateProvince';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingAddressToggleWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingAddressToggleWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingAddressToggleCheckboxElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingAddressToggleCheckbox';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutBillingAddressToggleLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutBillingAddressToggleLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemsWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemsWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemsListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemsList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceBoldTextBlockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceBoldTextBlock';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemDescriptionWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemDescriptionWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemQuantityWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemQuantityWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemOptionListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemOptionList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemOptionListItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemOptionListItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemOptionListItemLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemOptionListItemLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemOptionListItemValueElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemOptionListItemValue';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemTrialTextWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemTrialTextWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodsWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodsWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodsEmptyStateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodsEmptyState';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodsListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodsList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodRadioButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodRadioButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodDescriptionBlockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodDescriptionBlock';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodNameBlockElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodNameBlock';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingMethodBlockWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingMethodBlockWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutCustomerInfoSummaryWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutCustomerInfoSummaryWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutShippingSummaryWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutShippingSummaryWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutPaymentSummaryWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutPaymentSummaryWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderSummaryWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderSummaryWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryBlockHeaderElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryBlockHeader';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryLineItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryLineItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryTotalElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryTotal';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryTextSpacingOnDivElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryTextSpacingOnDiv';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutSummaryFlexBoxDivElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutSummaryFlexBoxDiv';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderItemDescriptionPriceElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderItemDescriptionPrice';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderSummaryExtraItemsListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderSummaryExtraItemsList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutOrderSummaryExtraItemsListItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutOrderSummaryExtraItemsListItem';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutErrorMsgElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutErrorMsg';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCartErrorMsgElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCartErrorMsg';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceAddToCartErrorMsgElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceAddToCartErrorMsg';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceLayoutMainElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceLayoutMain';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceLayoutSidebarElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceLayoutSidebar';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceLayoutContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceLayoutContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommercePaypalCheckoutFormContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommercePaypalCheckoutFormContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommercePaypalCheckoutErrorStateElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommercePaypalCheckoutErrorState';
   readonly plugin: 'Commerce';
 }
 
 interface CommercePaypalCheckoutErrorMessageElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommercePaypalCheckoutErrorMessage';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalInputsContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalInputsContainer';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalInfoSummaryWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalInfoSummaryWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalTextAreaElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalTextArea';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalTextInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalTextInput';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalCheckboxElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalCheckbox';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutAdditionalCheckboxWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutAdditionalCheckboxWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutDiscountsElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutDiscounts';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutDiscountsButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutDiscountsButton';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutDiscountsInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutDiscountsInput';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceCheckoutDiscountsLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceCheckoutDiscountsLabel';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceDownloadsWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceDownloadsWrapper';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceDownloadsListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceDownloadsList';
   readonly plugin: 'Commerce';
 }
 
 interface CommerceDownloadsItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CommerceDownloadsItem';
   readonly plugin: 'Commerce';
 }
 
 interface DropdownLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DropdownLink';
   readonly plugin: 'Dropdown';
 }
 
 interface DropdownListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DropdownList';
   readonly plugin: 'Dropdown';
 }
 
 interface DropdownToggleElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DropdownToggle';
   readonly plugin: 'Dropdown';
 }
 
 interface DropdownWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DropdownWrapper';
   readonly plugin: 'Dropdown';
 }
 
-interface DynamoWrapperElement
-  extends WebflowElement,
+interface DropTargetElement
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
+  readonly id: FullElementId;
+  readonly type: 'DropTarget';
+  readonly plugin: 'PageBuilding';
+}
+
+interface DynamoWrapperElement
+  extends
+    WebflowElement,
+    CustomAttributes,
+    DomId,
+    Styles,
+    Children,
+    NoTextContent,
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DynamoWrapper';
   readonly plugin: 'Dynamo';
 }
 
 interface DynamoListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DynamoList';
   readonly plugin: 'Dynamo';
 }
 
 interface DynamoItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DynamoItem';
   readonly plugin: 'Dynamo';
 }
 
 interface DynamoEmptyElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'DynamoEmpty';
   readonly plugin: 'Dynamo';
 }
 
 interface HtmlEmbedElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'HtmlEmbed';
   readonly plugin: 'Embed';
 }
 
 interface VideoElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Video';
   readonly plugin: 'Embed';
 }
 
 interface YouTubeVideoElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'YouTubeVideo';
   readonly plugin: 'Embed';
 }
 
 interface LightboxWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'LightboxWrapper';
   readonly plugin: 'Lightbox';
 }
 
 interface FormBlockLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormBlockLabel';
   readonly plugin: 'Form';
 }
 
 interface FormButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormButton';
   readonly plugin: 'Form';
 }
 
 interface FormCheckboxInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormCheckboxInput';
   readonly plugin: 'Form';
@@ -2684,39 +3366,48 @@ interface FormCheckboxInputElement
 }
 
 interface FormCheckboxWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormCheckboxWrapper';
   readonly plugin: 'Form';
 }
 
 interface FormErrorMessageElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormErrorMessage';
   readonly plugin: 'Form';
 }
 
 interface FormFormElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    AppConnections {
+    AppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormForm';
   readonly plugin: 'Form';
@@ -2727,26 +3418,32 @@ interface FormFormElement
 }
 
 interface FormInlineLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormInlineLabel';
   readonly plugin: 'Form';
 }
 
 interface FormRadioInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormRadioInput';
   readonly plugin: 'Form';
@@ -2757,26 +3454,32 @@ interface FormRadioInputElement
 }
 
 interface FormRadioWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormRadioWrapper';
   readonly plugin: 'Form';
 }
 
 interface FormSelectElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormSelect';
   readonly plugin: 'Form';
@@ -2787,26 +3490,32 @@ interface FormSelectElement
 }
 
 interface FormSuccessMessageElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormSuccessMessage';
   readonly plugin: 'Form';
 }
 
 interface FormTextareaElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormTextarea';
   readonly plugin: 'Form';
@@ -2817,13 +3526,16 @@ interface FormTextareaElement
 }
 
 interface FormTextInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormTextInput';
   readonly plugin: 'Form';
@@ -2840,13 +3552,16 @@ interface FormTextInputElement
 }
 
 interface FormWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    AppConnections {
+    AppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormWrapper';
   readonly plugin: 'Form';
@@ -2857,26 +3572,32 @@ interface FormWrapperElement
 }
 
 interface FormReCaptchaElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormReCaptcha';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadWrapper';
   readonly plugin: 'Form';
@@ -2887,1482 +3608,1088 @@ interface FormFileUploadWrapperElement
 }
 
 interface FormFileUploadDefaultElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadDefault';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadUploadingElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadUploading';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadUploadingBtnElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadUploadingBtn';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadUploadingIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadUploadingIcon';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadSuccessElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadSuccess';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadFileElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadFile';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadFileNameElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadFileName';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadRemoveLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadRemoveLink';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadErrorElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadError';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadErrorMsgElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadErrorMsg';
   readonly plugin: 'Form';
 }
 
-interface UserFormUploadErrorMsgElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormUploadErrorMsg';
-  readonly plugin: 'Form';
-}
-
 interface FormFileUploadInputElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadInput';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadLabelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadLabel';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadInfoElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadInfo';
   readonly plugin: 'Form';
 }
 
 interface FormFileUploadTextElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FormFileUploadText';
   readonly plugin: 'Form';
 }
 
 interface IconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Icon';
   readonly plugin: 'Icon';
 }
 
 interface HreflangsElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Hreflangs';
   readonly plugin: 'Localization';
 }
 
 interface LocalesWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'LocalesWrapper';
   readonly plugin: 'Localization';
 }
 
 interface LocalesEmptyElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'LocalesEmpty';
   readonly plugin: 'Localization';
 }
 
 interface LocalesListElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'LocalesList';
   readonly plugin: 'Localization';
 }
 
 interface LocalesItemElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'LocalesItem';
   readonly plugin: 'Localization';
 }
 
 interface ContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Container';
   readonly plugin: 'Layout';
 }
 
 interface RowElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Row';
   readonly plugin: 'Layout';
 }
 
 interface ColumnElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Column';
   readonly plugin: 'Layout';
 }
 
 interface SectionElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Section';
   readonly plugin: 'Layout';
 }
 
 interface GridElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Grid';
   readonly plugin: 'Layout';
 }
 
 interface LayoutElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Layout';
   readonly plugin: 'Layout';
 }
 
 interface CellElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Cell';
   readonly plugin: 'Layout';
 }
 
 interface BlockContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BlockContainer';
   readonly plugin: 'Layout';
 }
 
 interface VFlexElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'VFlex';
   readonly plugin: 'Layout';
 }
 
 interface HFlexElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'HFlex';
   readonly plugin: 'Layout';
 }
 
 interface NavbarBrandElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarBrand';
   readonly plugin: 'Navbar';
 }
 
 interface NavbarButtonElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarButton';
   readonly plugin: 'Navbar';
 }
 
 interface NavbarContainerElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarContainer';
   readonly plugin: 'Navbar';
 }
 
 interface NavbarLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarLink';
   readonly plugin: 'Navbar';
 }
 
 interface NavbarMenuElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarMenu';
   readonly plugin: 'Navbar';
 }
 
 interface NavbarWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'NavbarWrapper';
   readonly plugin: 'Navbar';
 }
 
 interface PaginationElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Pagination';
   readonly plugin: 'Pagination';
 }
 
 interface PaginationPreviousElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'PaginationPrevious';
   readonly plugin: 'Pagination';
 }
 
 interface PaginationNextElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'PaginationNext';
   readonly plugin: 'Pagination';
 }
 
 interface PaginationPreviousIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'PaginationPreviousIcon';
   readonly plugin: 'Pagination';
 }
 
 interface PaginationNextIconElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'PaginationNextIcon';
   readonly plugin: 'Pagination';
 }
 
 interface PaginationCountElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'PaginationCount';
   readonly plugin: 'Pagination';
 }
 
 interface SliderArrowElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SliderArrow';
   readonly plugin: 'Slider';
 }
 
 interface SliderMaskElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SliderMask';
   readonly plugin: 'Slider';
 }
 
 interface SliderNavElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SliderNav';
   readonly plugin: 'Slider';
 }
 
 interface SliderSlideElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SliderSlide';
   readonly plugin: 'Slider';
 }
 
 interface SliderWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'SliderWrapper';
   readonly plugin: 'Slider';
 }
 
 interface MetaElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Meta';
   readonly plugin: 'Ssr';
 }
 
 interface TitleElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Title';
   readonly plugin: 'Ssr';
 }
 
 interface CustomCodeElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'CustomCode';
   readonly plugin: 'Ssr';
 }
 
 interface CommentElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Comment';
   readonly plugin: 'Ssr';
 }
 
 interface FacebookPixelElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FacebookPixel';
   readonly plugin: 'Ssr';
 }
 
 interface GoogleAnalyticsElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'GoogleAnalytics';
   readonly plugin: 'Ssr';
 }
 
 interface TabsContentElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'TabsContent';
   readonly plugin: 'Tabs';
 }
 
 interface TabsLinkElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     TextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'TabsLink';
   readonly plugin: 'Tabs';
 }
 
 interface TabsMenuElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'TabsMenu';
   readonly plugin: 'Tabs';
 }
 
 interface TabsPaneElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'TabsPane';
   readonly plugin: 'Tabs';
 }
 
 interface TabsWrapperElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'TabsWrapper';
   readonly plugin: 'Tabs';
 }
 
 interface FacebookElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Facebook';
   readonly plugin: 'Widget';
 }
 
 interface MapWidgetElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     NoDomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'MapWidget';
   readonly plugin: 'Widget';
 }
 
 interface TwitterElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Twitter';
   readonly plugin: 'Widget';
 }
 
 interface GooglePlusElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     NoCustomAttributes,
     NoDomId,
     NoStyles,
     NoChildren,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'GooglePlus';
   readonly plugin: 'Widget';
 }
 
-interface UserAccountWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountFormWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountFormWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountFormElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountForm';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountFormSaveButtonElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountFormSaveButton';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountFormCancelButtonElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountFormCancelButton';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionListWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionListWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionListEmptyElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionListEmpty';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionListElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionList';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionListItemElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionListItem';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionListItemInfoElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionListItemInfo';
-  readonly plugin: 'Users';
-}
-
-interface UserAccountSubscriptionCancelButtonElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserAccountSubscriptionCancelButton';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpFormWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpFormWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpFormElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpForm';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpVerificationMessageElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpVerificationMessage';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpRedirectWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpRedirectWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpTermsOfServiceWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpTermsOfServiceWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpTermsOfServiceCheckboxInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpTermsOfServiceCheckboxInput';
-  readonly plugin: 'Users';
-}
-
-interface UserLogInFormWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserLogInFormWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserLogInFormElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserLogInForm';
-  readonly plugin: 'Users';
-}
-
-interface UserUpdatePasswordFormWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserUpdatePasswordFormWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserUpdatePasswordFormElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserUpdatePasswordForm';
-  readonly plugin: 'Users';
-}
-
-interface UserResetPasswordFormWrapperElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserResetPasswordFormWrapper';
-  readonly plugin: 'Users';
-}
-
-interface UserResetPasswordFormElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserResetPasswordForm';
-  readonly plugin: 'Users';
-}
-
-interface UserLogOutLogInElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserLogOutLogIn';
-  readonly plugin: 'Users';
-}
-
-interface UserFormBlockLabelElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    Children,
-    TextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormBlockLabel';
-  readonly plugin: 'Users';
-}
-
-interface UserFormButtonElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormButton';
-  readonly plugin: 'Users';
-}
-
-interface UserFormCheckboxInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormCheckboxInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormTextInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormTextInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormEmailInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormEmailInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormNameInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormNameInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormPasswordInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormPasswordInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormSelectElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormSelect';
-  readonly plugin: 'Users';
-}
-
-interface UserFormNumberInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormNumberInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormFileUploadInputElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormFileUploadInput';
-  readonly plugin: 'Users';
-}
-
-interface UserFormUploadNameElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormUploadName';
-  readonly plugin: 'Users';
-}
-
-interface UserFormHeaderElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormHeader';
-  readonly plugin: 'Users';
-}
-
-interface UserFormFooterElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormFooter';
-  readonly plugin: 'Users';
-}
-
-interface UserFormPageWrapElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormPageWrap';
-  readonly plugin: 'Users';
-}
-
 interface BlockContentElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BlockContent';
   readonly plugin: 'Users';
 }
 
 interface BlockHeaderElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'BlockHeader';
   readonly plugin: 'Users';
 }
 
 interface FlexColumnElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'FlexColumn';
   readonly plugin: 'Users';
 }
 
 interface GridRowElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'GridRow';
   readonly plugin: 'Users';
 }
 
-interface UserFormSuccessStateElement
-  extends WebflowElement,
-    CustomAttributes,
-    NoDomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormSuccessState';
-  readonly plugin: 'Users';
-}
-
-interface UserFormErrorStateElement
-  extends WebflowElement,
+interface SlotElement
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
-  readonly type: 'UserFormErrorState';
-  readonly plugin: 'Users';
-}
-
-interface UserFormErrorStateStyleVariant1Element
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    Children,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserFormErrorStateStyleVariant1';
-  readonly plugin: 'Users';
-}
-
-interface UserLogInErrorMsgElement
-  extends WebflowElement,
-    NoCustomAttributes,
-    NoDomId,
-    NoStyles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserLogInErrorMsg';
-  readonly plugin: 'Users';
-}
-
-interface UserSignUpErrorMsgElement
-  extends WebflowElement,
-    NoCustomAttributes,
-    NoDomId,
-    NoStyles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserSignUpErrorMsg';
-  readonly plugin: 'Users';
-}
-
-interface UserResetPasswordErrorMsgElement
-  extends WebflowElement,
-    NoCustomAttributes,
-    NoDomId,
-    NoStyles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserResetPasswordErrorMsg';
-  readonly plugin: 'Users';
-}
-
-interface UserUpdatePasswordErrorMsgElement
-  extends WebflowElement,
-    NoCustomAttributes,
-    NoDomId,
-    NoStyles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserUpdatePasswordErrorMsg';
-  readonly plugin: 'Users';
-}
-
-interface UserErrorMsgElement
-  extends WebflowElement,
-    CustomAttributes,
-    DomId,
-    Styles,
-    NoChildren,
-    NoTextContent,
-    NoAppConnections {
-  readonly id: FullElementId;
-  readonly type: 'UserErrorMsg';
-  readonly plugin: 'Users';
+  readonly type: 'Slot';
+  readonly plugin: 'Slots';
 }
 
 interface FrameElement
-  extends WebflowElement,
+  extends
+    WebflowElement,
     CustomAttributes,
     DomId,
     Styles,
     Children,
     NoTextContent,
-    NoAppConnections {
+    NoAppConnections,
+    DisplayName,
+    ElementSettings {
   readonly id: FullElementId;
   readonly type: 'Frame';
   readonly plugin: 'Frame';
@@ -4555,6 +4882,7 @@ type AnyElement =
   | DropdownListElement
   | DropdownToggleElement
   | DropdownWrapperElement
+  | DropTargetElement
   | DynamoWrapperElement
   | DynamoListElement
   | DynamoItemElement
@@ -4589,7 +4917,6 @@ type AnyElement =
   | FormFileUploadRemoveLinkElement
   | FormFileUploadErrorElement
   | FormFileUploadErrorMsgElement
-  | UserFormUploadErrorMsgElement
   | FormFileUploadInputElement
   | FormFileUploadLabelElement
   | FormFileUploadInfoElement
@@ -4642,54 +4969,9 @@ type AnyElement =
   | MapWidgetElement
   | TwitterElement
   | GooglePlusElement
-  | UserAccountWrapperElement
-  | UserAccountFormWrapperElement
-  | UserAccountFormElement
-  | UserAccountFormSaveButtonElement
-  | UserAccountFormCancelButtonElement
-  | UserAccountSubscriptionListWrapperElement
-  | UserAccountSubscriptionListEmptyElement
-  | UserAccountSubscriptionListElement
-  | UserAccountSubscriptionListItemElement
-  | UserAccountSubscriptionListItemInfoElement
-  | UserAccountSubscriptionCancelButtonElement
-  | UserSignUpFormWrapperElement
-  | UserSignUpFormElement
-  | UserSignUpVerificationMessageElement
-  | UserSignUpRedirectWrapperElement
-  | UserSignUpTermsOfServiceWrapperElement
-  | UserSignUpTermsOfServiceCheckboxInputElement
-  | UserLogInFormWrapperElement
-  | UserLogInFormElement
-  | UserUpdatePasswordFormWrapperElement
-  | UserUpdatePasswordFormElement
-  | UserResetPasswordFormWrapperElement
-  | UserResetPasswordFormElement
-  | UserLogOutLogInElement
-  | UserFormBlockLabelElement
-  | UserFormButtonElement
-  | UserFormCheckboxInputElement
-  | UserFormTextInputElement
-  | UserFormEmailInputElement
-  | UserFormNameInputElement
-  | UserFormPasswordInputElement
-  | UserFormSelectElement
-  | UserFormNumberInputElement
-  | UserFormFileUploadInputElement
-  | UserFormUploadNameElement
-  | UserFormHeaderElement
-  | UserFormFooterElement
-  | UserFormPageWrapElement
   | BlockContentElement
   | BlockHeaderElement
   | FlexColumnElement
   | GridRowElement
-  | UserFormSuccessStateElement
-  | UserFormErrorStateElement
-  | UserFormErrorStateStyleVariant1Element
-  | UserLogInErrorMsgElement
-  | UserSignUpErrorMsgElement
-  | UserResetPasswordErrorMsgElement
-  | UserUpdatePasswordErrorMsgElement
-  | UserErrorMsgElement
+  | SlotElement
   | FrameElement;
