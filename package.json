@@ -17,7 +17,7 @@
     "@types/node": "22.13.5",
     "@types/prismjs": "1.26.3",
     "@vitejs/plugin-react": "4.5.2",
-    "@webflow/designer-extension-typings": "2.0.31",
+    "@webflow/designer-extension-typings": "^2.0.31",
     "@webflow/webflow-cli": "1.8.6",
     "@xatom/wf-app-hot-reload": "1.0.5",
     "concurrently": "6.5.1",
