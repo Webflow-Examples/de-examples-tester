@@ -7,8 +7,6 @@
     "vite:dev": "vite --port 1337",
     "dev": "vite build && concurrently \"webflow extension serve\" \"vite\"",
     "build": "vite build && webflow extension bundle",
-    "sync-dev": "nodemon --watch github/copies --exec \"node github/gh-sync-dev.mjs\"",
-    "sync-prod": "node github/gh-sync.mjs production",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules && npm install",
     "postinstall": "node scripts/sync-typings.js"
