@@ -297,6 +297,40 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  getResolvedProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Get what each prop actually renders — bindings resolved to their output values
+      const resolvedProps = await instanceEl.getResolvedProps();
+
+      for (const prop of resolvedProps) {
+        console.log(`${prop.propId}: ${prop.value}`);
+      }
+
+      // Comparison of all three instance prop read APIs:
+
+      // searchProps — full metadata: wrapped value, resolved value, display info, override status
+      const search = await instanceEl.searchProps();
+      console.log(search[0].value);         // { sourceType: 'static', value: 'My Custom Title' }
+      console.log(search[0].resolvedValue); // 'My Custom Title'
+      console.log(search[0].display);       // { label: 'Heading', group: 'Content' }
+      console.log(search[0].hasOverride);   // true
+
+      // getProps — raw values with override status, no display metadata
+      const props = await instanceEl.getProps();
+      console.log(props[0].value);          // 'My Custom Title' (bare value)
+      console.log(props[0].hasOverride);    // true
+
+      // getResolvedProps — just the final resolved output, no binding metadata
+      const resolved = await instanceEl.getResolvedProps();
+      console.log(resolved[0].value);       // 'My Custom Title'
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
   setProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
