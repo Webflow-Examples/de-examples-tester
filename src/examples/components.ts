@@ -313,4 +313,89 @@ export const Components = {
       console.log('No component element found')
     }
   },
+
+  searchProps: async () => {
+    // Get the selected element and confirm it's a component instance
+    const selected = await webflow.getSelectedElement()
+
+    if (selected?.type !== 'ComponentInstance') {
+      console.log('Select a component instance first.')
+      return
+    }
+
+    // Get all props on the instance with their current values and metadata
+    const props = await selected.searchProps()
+    console.log(props)
+    /*
+    [
+      {
+        propId: "prop_1",
+        valueType: "textContent",
+        hasOverride: true,
+        value: {
+          sourceType: "static",
+          value: "My Custom Title"
+        },
+        resolvedValue: "My Custom Title",
+        defaultValue: "Welcome to our site",
+        display: {
+          label: "Heading",
+          group: "Content"
+        }
+      },
+      {
+        propId: "prop_3",
+        valueType: "textContent",
+        hasOverride: false,
+        value: {
+          sourceType: "cms",
+          collectionId: "col_abc123",
+          collectionName: "Blog Posts",
+          fieldId: "field_author",
+          fieldName: "Author Name",
+          fieldGroup: null,
+          fieldType: "plainText"
+        },
+        resolvedValue: "Jane Doe",
+        defaultValue: "",
+        display: {
+          label: "Author",
+          group: "Content"
+        }
+      },
+      {
+        propId: "prop_4",
+        valueType: "boolean",
+        hasOverride: false,
+        value: {
+          sourceType: "static",
+          value: true
+        },
+        resolvedValue: true,
+        defaultValue: true,
+        display: {
+          label: "Show CTA",
+          group: "Settings",
+          trueLabel: "Visible",
+          falseLabel: "Hidden"
+        }
+      }
+    ]
+    */
+  },
+
+  searchPropsByValueType: async () => {
+    // Get the selected element and confirm it's a component instance
+    const selected = await webflow.getSelectedElement()
+
+    if (selected?.type !== 'ComponentInstance') {
+      console.log('Select a component instance first.')
+      return
+    }
+
+    // Filter to only props with a specific value type
+    const textProps = await selected.searchProps({ valueType: 'textContent' })
+    console.log(textProps)
+    // Returns only props where valueType === 'textContent'
+  },
 }
