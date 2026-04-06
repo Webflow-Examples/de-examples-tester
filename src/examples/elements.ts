@@ -1030,4 +1030,77 @@ export const Elements = {
       }
     },
   },
+
+  // Bindable Sources
+  bindableSources: {
+    searchBindableSources: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchBindableSources' in element) {
+        // Get all bindable sources available for this element
+        const sources = await element.searchBindableSources()
+        console.log(`Found ${sources.length} bindable source(s):`)
+        console.log(sources)
+      } else {
+        console.log('Selected element does not support searchBindableSources.')
+      }
+    },
+
+    searchBindableSourcesBySettingKey: async (settingKey: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchBindableSources' in element) {
+        // Filter bindable sources to those compatible with a specific setting key
+        // e.g. "src", "altText", "domId"
+        const sources = await element.searchBindableSources({ settingKey })
+        console.log(
+          `Found ${sources.length} bindable source(s) for settingKey "${settingKey}":`,
+        )
+        console.log(sources)
+      } else {
+        console.log('Selected element does not support searchBindableSources.')
+      }
+    },
+
+    searchBindableSourcesByValueType: async (valueType: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchBindableSources' in element) {
+        // Filter bindable sources to those that produce a specific value type
+        // e.g. "text", "imageAsset", "boolean", "link"
+        const sources = await element.searchBindableSources({ valueType })
+        console.log(
+          `Found ${sources.length} bindable source(s) with valueType "${valueType}":`,
+        )
+        console.log(sources)
+      } else {
+        console.log('Selected element does not support searchBindableSources.')
+      }
+    },
+
+    searchBindableSourcesWithBothFilters: async (
+      settingKey: string,
+      valueType: string,
+    ) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchBindableSources' in element) {
+        // Combine settingKey and valueType filters to narrow results further
+        const sources = await element.searchBindableSources({
+          settingKey,
+          valueType,
+        })
+        console.log(
+          `Found ${sources.length} bindable source(s) for settingKey "${settingKey}" and valueType "${valueType}":`,
+        )
+        console.log(sources)
+      } else {
+        console.log('Selected element does not support searchBindableSources.')
+      }
+    },
+  },
 }
