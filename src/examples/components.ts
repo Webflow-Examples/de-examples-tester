@@ -297,6 +297,40 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  setProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Read current prop values (round-trip: read, modify, write back)
+      const currentProps = await instanceEl.getProps();
+      console.log('Current props:', currentProps);
+
+      await instanceEl.setProps([
+        // Static value override — set the first prop to a new string value
+        { propId: currentProps[0].propId, value: 'New Heading' },
+
+        // Bind to a parent component prop
+        { propId: 'prop_2', value: { sourceType: 'prop', propId: 'parent_prop_5' } },
+
+        // Bind to a CMS field
+        { propId: 'prop_3', value: { sourceType: 'cms', collectionId: 'col_abc', fieldId: 'field_author' } },
+
+        // Bind to a page field
+        { propId: 'prop_4', value: { sourceType: 'page', fieldKey: 'seoTitle' } },
+
+        // Disconnect a binding / reset a prop to its component default
+        { propId: 'prop_5', value: null },
+      ]);
+
+      // Confirm updated values
+      const updatedProps = await instanceEl.getProps();
+      console.log('Updated props:', updatedProps);
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
   resetAllProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
