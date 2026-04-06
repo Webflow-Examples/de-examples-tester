@@ -297,6 +297,36 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  getProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      const props = await instanceEl.getProps();
+
+      // Distinguish bound props from static values using the sourceType property
+      for (const prop of props) {
+        if (typeof prop.value === 'object' && prop.value !== null && 'sourceType' in prop.value) {
+          console.log(`${prop.propId}: bound to ${(prop.value as { sourceType: string }).sourceType}`);
+        } else {
+          console.log(`${prop.propId}: ${prop.value}${prop.hasOverride ? ' (overridden)' : ''}`);
+        }
+      }
+
+      // Round-trip: read current values, modify one, and write them back with setProps
+      const updatedProps = props.map((prop) => {
+        if (prop.propId === props[0].propId) {
+          return { propId: prop.propId, value: 'Updated value' };
+        }
+        return { propId: prop.propId, value: prop.value };
+      });
+
+      await instanceEl.setProps(updatedProps);
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
   getResolvedProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
