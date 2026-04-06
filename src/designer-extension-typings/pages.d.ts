@@ -459,6 +459,53 @@ interface Page {
     | 'utility'
     | 'staticTemplate'
   >;
+  /**
+   * Get the branch ID of this page, if it exists on a branch.
+   * Returns null if the page is not on a branch.
+   * @returns The branch ID string, or null.
+   * @example
+   * ```ts
+   * const branchId = await myPage.getBranchId();
+   * if (branchId) {
+   *   console.log("Page is on branch:", branchId);
+   * }
+   * ```
+   */
+  getBranchId(): Promise<string | null>;
+  /**
+   * Get the ID of this page's parent. For branch pages, this returns the ID
+   * of the original page that was branched — use it with `switchPage()` to
+   * navigate back to main. For pages inside folders, returns the folder ID.
+   * Returns null for root-level non-branch pages.
+   * @returns The parent page or folder ID, or null.
+   * @example
+   * ```ts
+   * // Navigate back to main from a branch
+   * const parentId = await myPage.getParentPageId();
+   * if (parentId) {
+   *   const mainPage = await webflow.getPage(parentId);
+   *   await webflow.switchPage(mainPage);
+   * }
+   * ```
+   */
+  getParentPageId(): Promise<string | null>;
+
+  /**
+   * List all branch pages that exist for this page.
+   * Returns an array of objects with `pageId` and `branchId` for each branch.
+   * Use `pageId` with `webflow.getPage()` and `webflow.switchPage()` to navigate.
+   * Returns an empty array if the page has no branches.
+   * @returns Array of branch objects with pageId and branchId.
+   * @example
+   * ```ts
+   * const branches = await myPage.listBranches();
+   * if (branches.length > 0) {
+   *   const branchPage = await webflow.getPage(branches[0].pageId);
+   *   await webflow.switchPage(branchPage);
+   * }
+   * ```
+   */
+  listBranches(): Promise<Array<{pageId: string; branchId: string}>>;
 }
 
 type FolderId = string;

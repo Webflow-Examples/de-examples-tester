@@ -1,5 +1,6 @@
 /// <reference path="./styles.d.ts" />
 /// <reference path="./elements-generated.d.ts" />
+/// <reference path="./slots.d.ts" />
 
 type ElementId = string;
 type FullElementId = {component: ComponentId; element: ElementId};
