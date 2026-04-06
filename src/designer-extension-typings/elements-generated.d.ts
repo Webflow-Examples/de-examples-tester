@@ -186,6 +186,7 @@ interface ComponentElement
   setProps(
     props: Array<SetInstancePropEntry>
   ): Promise<Array<SetInstancePropEntry>>;
+  resetAllProps(): Promise<null>;
 }
 
 interface UnknownElement

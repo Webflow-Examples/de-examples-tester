@@ -297,6 +297,38 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  resetAllProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Get the instance's props to find a prop ID to override
+      const props = await instanceEl.searchProps();
+
+      if (props.length > 0) {
+        const firstProp = props[0];
+
+        // Set an override on the first prop
+        await instanceEl.setProps([{ propId: firstProp.propId, value: 'Custom value' }]);
+
+        // Confirm the override is applied
+        const before = await instanceEl.getProps();
+        console.log('Has override:', before[0].hasOverride); // true
+
+        // Reset all overrides to component defaults in one call
+        await instanceEl.resetAllProps();
+
+        // All props now show defaults, no overrides
+        const after = await instanceEl.getProps();
+        console.log('Has override after reset:', after[0].hasOverride); // false
+      } else {
+        console.log('This component instance has no props.');
+      }
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
   getComponent: async () => {
     // Select Component Element on Page
     const elements = await webflow.getAllElements()
