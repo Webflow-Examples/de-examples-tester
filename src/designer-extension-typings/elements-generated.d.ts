@@ -179,6 +179,7 @@ interface ComponentElement
   readonly plugin: '';
   getComponent(): Promise<Component>;
   getSlots(): Promise<Array<SlotInstanceElement>>;
+  getResolvedProps(): Promise<Array<ResolvedInstanceProp>>;
   getProps(): Promise<Array<InstancePropSummary>>;
   searchProps(
     options?: SearchInstancePropsOptions
@@ -186,6 +187,7 @@ interface ComponentElement
   setProps(
     props: Array<SetInstancePropEntry>
   ): Promise<Array<SetInstancePropEntry>>;
+  resetAllProps(): Promise<null>;
 }
 
 interface UnknownElement

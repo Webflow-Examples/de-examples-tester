@@ -297,6 +297,136 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  getProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      const props = await instanceEl.getProps();
+
+      // Distinguish bound props from static values using the sourceType property
+      for (const prop of props) {
+        if (typeof prop.value === 'object' && prop.value !== null && 'sourceType' in prop.value) {
+          console.log(`${prop.propId}: bound to ${(prop.value as { sourceType: string }).sourceType}`);
+        } else {
+          console.log(`${prop.propId}: ${JSON.stringify(prop.value)}${prop.hasOverride ? ' (overridden)' : ''}`);
+        }
+      }
+
+      // Round-trip: read current values, modify one, and write them back with setProps
+      const updatedProps = props.map((prop) => {
+        if (prop.propId === props[0].propId) {
+          return { propId: prop.propId, value: 'Updated value' };
+        }
+        return { propId: prop.propId, value: prop.value };
+      });
+
+      await instanceEl.setProps(updatedProps);
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
+  getResolvedProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Get what each prop actually renders — bindings resolved to their output values
+      const resolvedProps = await instanceEl.getResolvedProps();
+
+      for (const prop of resolvedProps) {
+        console.log(`${prop.propId}: ${JSON.stringify(prop.value)}`);
+      }
+
+      // Comparison of all three instance prop read APIs:
+
+      // searchProps — full metadata: wrapped value, resolved value, display info, override status
+      const search = await instanceEl.searchProps();
+      console.log(search[0].value);         // { sourceType: 'static', value: 'My Custom Title' }
+      console.log(search[0].resolvedValue); // 'My Custom Title'
+      console.log(search[0].display);       // { label: 'Heading', group: 'Content' }
+      console.log(search[0].hasOverride);   // true
+
+      // getProps — raw values with override status, no display metadata
+      const props = await instanceEl.getProps();
+      console.log(props[0].value);          // 'My Custom Title' (bare value)
+      console.log(props[0].hasOverride);    // true
+
+      // getResolvedProps — just the final resolved output, no binding metadata
+      const resolved = await instanceEl.getResolvedProps();
+      console.log(resolved[0].value);       // 'My Custom Title'
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
+  setProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Read current prop values (round-trip: read, modify, write back)
+      const currentProps = await instanceEl.getProps();
+      console.log('Current props:', currentProps);
+
+      await instanceEl.setProps([
+        // Static value override — set the first prop to a new string value
+        { propId: currentProps[0].propId, value: 'New Heading' },
+
+        // Bind to a parent component prop
+        { propId: 'prop_2', value: { sourceType: 'prop', propId: 'parent_prop_5' } },
+
+        // Bind to a CMS field
+        { propId: 'prop_3', value: { sourceType: 'cms', collectionId: 'col_abc', fieldId: 'field_author' } },
+
+        // Bind to a page field
+        { propId: 'prop_4', value: { sourceType: 'page', fieldKey: 'seoTitle' } },
+
+        // Disconnect a binding / reset a prop to its component default
+        { propId: 'prop_5', value: null },
+      ]);
+
+      // Confirm updated values
+      const updatedProps = await instanceEl.getProps();
+      console.log('Updated props:', updatedProps);
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
+  resetAllProps: async () => {
+    // Get the selected component instance
+    const instanceEl = await webflow.getSelectedElement();
+
+    if (instanceEl?.type === 'ComponentInstance') {
+      // Get the instance's props to find a prop ID to override
+      const props = await instanceEl.searchProps();
+
+      if (props.length > 0) {
+        const firstProp = props[0];
+
+        // Set an override on the first prop
+        await instanceEl.setProps([{ propId: firstProp.propId, value: 'Custom value' }]);
+
+        // Confirm the override is applied
+        const before = await instanceEl.getProps();
+        console.log('Has override:', before[0].hasOverride); // true
+
+        // Reset all overrides to component defaults in one call
+        await instanceEl.resetAllProps();
+
+        // All props now show defaults, no overrides
+        const after = await instanceEl.getProps();
+        console.log('Has override after reset:', after[0].hasOverride); // false
+      } else {
+        console.log('This component instance has no props.');
+      }
+    } else {
+      console.log('Please select a component instance.');
+    }
+  },
+
   getComponent: async () => {
     // Select Component Element on Page
     const elements = await webflow.getAllElements()
