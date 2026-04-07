@@ -205,6 +205,17 @@ export const Utilities = {
     )
   },
 
+  subscribeSelectedVariant: async () => {
+    // Subscribe to variant selection changes on the component canvas
+    const unsubscribe = webflow.subscribe('selectedvariant', (variant) => {
+      console.log('Selected variant:', variant.name)
+      console.log('Variant ID:', variant.id)
+    })
+
+    // Stop listening after 10 seconds
+    setTimeout(unsubscribe, 10000)
+  },
+
   getLaunchContext: async () => {
     const context = await webflow.getLaunchContext()
     console.log('Launch Context:', context)
