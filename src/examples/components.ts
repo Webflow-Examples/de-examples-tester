@@ -309,7 +309,7 @@ export const Components = {
         if (typeof prop.value === 'object' && prop.value !== null && 'sourceType' in prop.value) {
           console.log(`${prop.propId}: bound to ${(prop.value as { sourceType: string }).sourceType}`);
         } else {
-          console.log(`${prop.propId}: ${prop.value}${prop.hasOverride ? ' (overridden)' : ''}`);
+          console.log(`${prop.propId}: ${JSON.stringify(prop.value)}${prop.hasOverride ? ' (overridden)' : ''}`);
         }
       }
 
@@ -336,7 +336,7 @@ export const Components = {
       const resolvedProps = await instanceEl.getResolvedProps();
 
       for (const prop of resolvedProps) {
-        console.log(`${prop.propId}: ${prop.value}`);
+        console.log(`${prop.propId}: ${JSON.stringify(prop.value)}`);
       }
 
       // Comparison of all three instance prop read APIs:
