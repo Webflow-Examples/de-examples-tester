@@ -161,6 +161,10 @@ interface ElementSettings {
     this: {id: FullElementId},
     options?: SearchBindableSourcesOptions
   ): Promise<Array<BindableSource>>;
+  searchSettings(
+    this: {id: FullElementId},
+    options?: SearchSettingsOptions
+  ): Promise<Record<string, ElementSetting>>;
 }
 
 interface ComponentElement
