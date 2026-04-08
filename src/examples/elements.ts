@@ -1103,4 +1103,71 @@ export const Elements = {
       }
     },
   },
+
+  // Element Settings
+  elementSettings: {
+    searchSettings: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchSettings' in element) {
+        // Get all settings for this element, including current values and display metadata
+        const settings = await element.searchSettings()
+        const keys = Object.keys(settings)
+        console.log(`Found ${keys.length} setting(s):`)
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support searchSettings.')
+      }
+    },
+
+    searchSettingsByKey: async (key: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchSettings' in element) {
+        // Filter settings to a specific setting key, e.g. "assetId", "domId", "visibility"
+        const settings = await element.searchSettings({ key })
+        const keys = Object.keys(settings)
+        console.log(`Found ${keys.length} setting(s) for key "${key}":`)
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support searchSettings.')
+      }
+    },
+
+    searchSettingsByValueType: async (valueType: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchSettings' in element) {
+        // Filter settings to those with a specific value type, e.g. "string", "image", "boolean"
+        const settings = await element.searchSettings({ valueType })
+        const keys = Object.keys(settings)
+        console.log(
+          `Found ${keys.length} setting(s) with valueType "${valueType}":`,
+        )
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support searchSettings.')
+      }
+    },
+
+    searchSettingsWithBothFilters: async (key: string, valueType: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'searchSettings' in element) {
+        // Combine key and valueType filters to narrow results further
+        const settings = await element.searchSettings({ key, valueType })
+        const keys = Object.keys(settings)
+        console.log(
+          `Found ${keys.length} setting(s) for key "${key}" and valueType "${valueType}":`,
+        )
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support searchSettings.')
+      }
+    },
+  },
 }
