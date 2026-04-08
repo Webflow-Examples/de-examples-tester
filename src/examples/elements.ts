@@ -942,6 +942,38 @@ export const Elements = {
       }
     },
   },
+  // Display Name Operations
+  displayName: {
+    getDisplayName: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.displayName) {
+        // Get the Navigator display name (null if using automatic name)
+        const name = await element.getDisplayName()
+        console.log(name) // e.g. 'Hero Wrapper' or null
+      } else {
+        console.log('No element selected or element does not support display names')
+      }
+    },
+
+    setDisplayName: async (displayName: string) => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.displayName) {
+        // Set a custom Navigator label; pass '' to reset to automatic name
+        await element.setDisplayName(displayName)
+
+        // Verify the update
+        const name = await element.getDisplayName()
+        console.log(name)
+      } else {
+        console.log('No element selected or element does not support display names')
+      }
+    },
+  },
+
   formInputOperations: {
     getInputName: async () => {
       const selectedElement = await webflow.getSelectedElement()
