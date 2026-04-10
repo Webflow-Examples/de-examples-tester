@@ -182,6 +182,37 @@ export const Components = {
     }
   },
 
+  createComponentWithoutRoot: async () => {
+    // Create a hero component in the Sections group that is not within an existing element
+    const hero = await webflow.registerComponent({
+      name: 'Hero Section',
+      group: 'Sections',
+      description: 'A reusable hero section with heading and CTA',
+    });
+    console.log(`Component registered with ID: ${hero.id}`)
+  },
+
+  createComponentFromElement: async () => {
+    // Convert an existing element into a component, by default replacing the element with the new component
+    const selectedElement = await webflow.getSelectedElement()
+    if (selectedElement) {
+      const heroComponent = await webflow.registerComponent(
+        {
+          name: 'Hero Section',
+          group: 'Sections',
+          description: 'Main hero with heading and CTA'
+        },
+        selectedElement
+      )
+    }
+  },
+
+  duplicateComponent: async () => {
+    // Duplicate a component
+    const [original] = await webflow.getAllComponents()
+    const copy = await webflow.registerComponent({ name: 'Card Copy' }, original)
+  },
+
   deleteComponent: async () => {
     // Get selected element
     const selectedElement = await webflow.getSelectedElement()

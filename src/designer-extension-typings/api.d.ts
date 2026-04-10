@@ -132,8 +132,33 @@ interface SharedApi {
    */
   registerComponent(
     name: string,
-    root: AnyElement | ElementPreset<AnyElement> | Component
+    root?: AnyElement | ElementPreset<AnyElement> | Component | ComponentId
   ): Promise<Component>;
+
+  /**
+   * Create a component by converting an element into a component or duplicating a component.
+   * @param options - The options for the new component.
+   * @param root - An Element that will become the Root Element of the Component.
+   * @returns A Promise resolving to an object containing the newly created Component - with the id property.
+   * @example
+   * ```ts
+   * // Convert an existing element into a component
+   * const selectedElement = await webflow.getSelectedElement()
+   * const heroComponent = await webflow.registerComponent(
+   *   {
+   *     name: 'Hero Section',
+   *     group: 'Sections',
+   *     description: 'Main hero with heading and CTA'
+   *   },
+   *   selectedElement
+   * )
+   * ```
+   */
+  registerComponent(
+    options: ComponentOptions,
+    root?: AnyElement | ElementPreset<AnyElement> | Component | ComponentId
+  ): Promise<Component>;
+
   /**
    * Create a blank component.
    * @param options - Options for creating the blank component.
