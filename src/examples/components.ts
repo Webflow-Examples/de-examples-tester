@@ -168,18 +168,18 @@ export const Components = {
     const component = await webflow.getCurrentComponent()
 
     if (component) {
-    // Create a variant and select it immediately
-    const variant = await component.createVariant({
-      name: 'Secondary Hero',
-      isSelected: true,
-    })
-    console.log(variant)
-    // { id: 'variant-123', name: 'Secondary Hero', isSelected: true }
+      // Create a variant and select it immediately
+      const variant = await component.createVariant({
+        name: 'Secondary Hero',
+        isSelected: true,
+      })
+      console.log(variant)
+      // { id: 'variant-123', name: 'Secondary Hero', isSelected: true }
 
-    // Name conflicts auto-increment
-    const variant2 = await component.createVariant({ name: 'Secondary Hero' })
-    console.log(variant2.name) // 'Secondary Hero 2'
-  }
+      // Name conflicts auto-increment
+      const variant2 = await component.createVariant({ name: 'Secondary Hero' })
+      console.log(variant2.name) // 'Secondary Hero 2'
+    }
   },
 
   duplicateVariant: async () => {
