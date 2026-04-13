@@ -18,6 +18,7 @@ import assetsTypes from '../designer-extension-typings/assets.d.ts?raw'
 import brandTypes from '../designer-extension-typings/brand.d.ts?raw'
 import builderElementTypes from '../designer-extension-typings/builder-element.d.ts?raw'
 import appSubscriptionTypes from '../designer-extension-typings/app-subscription.d.ts?raw'
+import slotsTypes from '../designer-extension-typings/slots.d.ts?raw'
 import appModesGeneratedTypes from '../designer-extension-typings/app-modes-generated.d.ts?raw'
 import appConnectionsTypes from '../designer-extension-typings/app-connections.d.ts?raw'
 
@@ -46,6 +47,7 @@ export const getDesignerTypings = (): DesignerTypings => {
     'brand.d.ts': brandTypes,
     'builder-element.d.ts': builderElementTypes,
     'app-subscription.d.ts': appSubscriptionTypes,
+    'slots.d.ts': slotsTypes,
     'app-modes-generated.d.ts': appModesGeneratedTypes,
     'app-connections.d.ts': appConnectionsTypes,
   }

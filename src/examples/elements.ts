@@ -1202,4 +1202,114 @@ export const Elements = {
       }
     },
   },
+
+  // Slots and slot instance element
+  slots: {
+    getSlots: async () => {
+      const componentInstance = await webflow.getSelectedElement()
+
+      if (componentInstance?.type === 'ComponentInstance') {
+        // Get all slots on the component instance
+        const slots = await componentInstance.getSlots()
+        console.log(`Found ${slots.length} slot(s)`)
+
+        // Print the display name and child count of each slot
+        for (const slot of slots) {
+          const name = await slot.getDisplayName()
+          const children = await slot.getChildren()
+          console.log(`Slot "${name}" has ${children.length} child(ren)`)
+        }
+      } else {
+        console.log('No component instance found on the page')
+      }
+    },
+
+    getDisplayName: async () => {
+      const componentInstance = await webflow.getSelectedElement()
+
+      if (componentInstance?.type === 'ComponentInstance') {
+        const slots = await componentInstance.getSlots()
+
+        // Print the display name of each slot
+        for (const slot of slots) {
+          const name = await slot.getDisplayName()
+          console.log(name) // e.g. 'Content' or 'Sidebar'
+        }
+      } else {
+        console.log('No component instance found on the page')
+      }
+    },
+
+    getChildren: async () => {
+      const componentInstance = await webflow.getSelectedElement()
+
+      if (componentInstance?.type === 'ComponentInstance') {
+        const slots = await componentInstance.getSlots()
+
+        // Print the children of each slot
+        for (const slot of slots) {
+          const name = await slot.getDisplayName()
+          const children = await slot.getChildren()
+          console.log(`Slot "${name}" has ${children.length} child(ren)`)
+          children.forEach((child, index) => {
+            console.log(`  Child ${index + 1}: type=${child.type}`)
+          })
+        }
+      } else {
+        console.log('No component instance found on the page')
+      }
+    },
+
+    append: async () => {
+      const componentInstance = await webflow.getSelectedElement()
+
+      if (componentInstance?.type === 'ComponentInstance') {
+        const slots = await componentInstance.getSlots()
+        const firstSlot = slots[0]
+
+        if (firstSlot) {
+          // Find the component to add to the slot
+          const cardComponent = await webflow.getComponentByName('Card')
+
+          if (cardComponent) {
+            // Append a component instance to the end of the slot
+            await firstSlot.append(cardComponent)
+            console.log('Appended Card component to slot')
+          } else {
+            console.log('No component named "Card" found')
+          }
+        } else {
+          console.log('This component instance has no slots')
+        }
+      } else {
+        console.log('No component instance found on the page')
+      }
+    },
+
+    prepend: async () => {
+      const componentInstance = await webflow.getSelectedElement()
+
+      if (componentInstance?.type === 'ComponentInstance') {
+        const slots = await componentInstance.getSlots()
+        const firstSlot = slots[0]
+
+        if (firstSlot) {
+          // Find the component to add to the slot
+          const cardComponent = await webflow.getComponentByName('Card')
+
+          if (cardComponent) {
+            // Prepend a component instance to the beginning of the slot
+            await firstSlot.prepend(cardComponent)
+            console.log('Prepended Card component to slot')
+          } else {
+            console.log('No component named "Card" found')
+          }
+        } else {
+          console.log('This component instance has no slots')
+        }
+      } else {
+        console.log('No component instance found on the page')
+      }
+    },
+  },
 }
