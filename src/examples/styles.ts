@@ -409,7 +409,7 @@ export const Styles = {
     },
   },
 
-  ThemeAwareness: {
+  Themes: {
     getThemeAndStyles: async () => {
       // Get the current theme
       const theme = await webflow.getTheme()
