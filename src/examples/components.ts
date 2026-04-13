@@ -199,9 +199,9 @@ export const Components = {
   },
 
   setSelectedVariant: async () => {
-    const heroComponent = await webflow.getComponentByName('Hero');
-    if (heroComponent) {
-      await heroComponent.setSelectedVariant({ id: 'base' });
+    const component = await webflow.getCurrentComponent()
+    if (component) {
+      await component.setSelectedVariant({ id: 'base' })
     }
   },
 
