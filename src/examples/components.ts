@@ -164,6 +164,40 @@ export const Components = {
     */
   },
 
+  createVariant: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Create a variant and select it immediately
+      const variant = await component.createVariant({
+        name: 'Secondary Hero',
+        isSelected: true,
+      })
+      console.log(variant)
+      // { id: 'variant-123', name: 'Secondary Hero', isSelected: true }
+
+      // Name conflicts auto-increment
+      const variant2 = await component.createVariant({ name: 'Secondary Hero' })
+      console.log(variant2.name) // 'Secondary Hero 2'
+    }
+  },
+
+  duplicateVariant: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Get the selected variant or the base variant as default
+      const selectedVariant = await component.getSelectedVariant()
+
+      // Duplicate the selected variant
+      const duplicateVariant = await component.createVariant({
+        name: 'Duplicate of Secondary Hero',
+        isSelected: true,
+      }, selectedVariant.id)
+      console.log(duplicateVariant.name) // 'Duplicate of Secondary Hero'
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
