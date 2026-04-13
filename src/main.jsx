@@ -27,17 +27,30 @@ const queryClient = new QueryClient({
   },
 })
 
+const SIZE_OPTIONS = [
+  { value: 'default', label: 'Default' },
+  { value: 'comfortable', label: 'Comfortable' },
+  { value: 'large', label: 'Large' },
+  { value: 'compact', label: 'Compact' },
+]
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('api')
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
+  const [extensionSize, setExtensionSize] = useState('large')
   const containerRef = useRef(null)
   const hasInitializedRef = useRef(false)
 
   useEffect(() => {
-    // Set initial size
-    webflow.setExtensionSize({ height: 425, width: 500 })
+    webflow.setExtensionSize('large')
   }, [])
+
+  const handleSizeChange = (e) => {
+    const size = e.target.value
+    setExtensionSize(size)
+    webflow.setExtensionSize(size)
+  }
 
   // Auto-initialize first example and function
   useEffect(() => {
@@ -160,6 +173,20 @@ const App = () => {
         tabs={TABS}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        rightContent={
+          <select
+            className="w-select size-select"
+            value={extensionSize}
+            onChange={handleSizeChange}
+            aria-label="Window size"
+          >
+            {SIZE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        }
       />
       {activeTab === 'api' && (
         <APIExplorer
