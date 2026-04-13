@@ -206,6 +206,20 @@ export const Components = {
     }
   },
 
+  reorderVariants: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Get the current order of the variants
+      const allVariants = await component.getVariants()
+      const variantOrderBefore = allVariants.map(({id}) => id)
+
+      // Reverse the order
+      const newVariantOrder = variantOrderBefore.reverse()
+      await component.reorderVariants(newVariantOrder)
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
