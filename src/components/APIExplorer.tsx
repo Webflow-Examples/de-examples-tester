@@ -41,6 +41,7 @@ interface APIExplorerProps {
   setSelectedExampleCategory: (value: string) => void
   selectedFunctionName: string
   setSelectedFunctionName: (value: string) => void
+  onCopyToPlayground: (code: string) => void
 }
 
 const APIExplorer: React.FC<APIExplorerProps> = ({
@@ -48,6 +49,7 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
   setSelectedExampleCategory,
   selectedFunctionName,
   setSelectedFunctionName,
+  onCopyToPlayground,
 }) => {
   const [functionParameters, setFunctionParameters] = useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
@@ -323,6 +325,14 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           >
             Run
           </button>
+          {functionCode && (
+            <button
+              className="button cc-primary"
+              onClick={() => onCopyToPlayground(functionCode)}
+            >
+              Copy to playground
+            </button>
+          )}
         </div>
       )}
       {functionCode && (

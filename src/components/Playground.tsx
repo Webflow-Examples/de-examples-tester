@@ -42,8 +42,12 @@ const styleProperties = await primaryStyle.getProperties();
 console.log(styleProperties);
 `
 
-const Playground: React.FC = () => {
-  const [code, setCode] = useState(defaultCode)
+interface PlaygroundProps {
+  initialCode?: string | null
+}
+
+const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
+  const [code, setCode] = useState(initialCode ?? defaultCode)
   const [output, setOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
@@ -53,6 +57,13 @@ const Playground: React.FC = () => {
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
+
+  useEffect(() => {
+    if (initialCode != null) {
+      setCode(initialCode)
+      codeRef.current = initialCode
+    }
+  }, [initialCode])
   const isMountedRef = useRef(true)
 
   // Cleanup on unmount

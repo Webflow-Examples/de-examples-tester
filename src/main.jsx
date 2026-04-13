@@ -31,6 +31,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('api')
   const [selectedExampleCategory, setSelectedExampleCategory] = useState('')
   const [selectedFunctionName, setSelectedFunctionName] = useState('')
+  const [playgroundCode, setPlaygroundCode] = useState(null)
   const containerRef = useRef(null)
   const hasInitializedRef = useRef(false)
 
@@ -167,9 +168,13 @@ const App = () => {
           setSelectedExampleCategory={setSelectedExampleCategory}
           selectedFunctionName={selectedFunctionName}
           setSelectedFunctionName={setSelectedFunctionName}
+          onCopyToPlayground={(code) => {
+            setPlaygroundCode(code)
+            setActiveTab('code')
+          }}
         />
       )}
-      {activeTab === 'code' && <Playground />}
+      {activeTab === 'code' && <Playground initialCode={playgroundCode} />}
       <footer className="wf-footer">
         <img
           src="https://dhygzobemt712.cloudfront.net/Mark/Mark_Logo_Blue.svg"
