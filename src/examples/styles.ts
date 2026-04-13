@@ -351,6 +351,27 @@ export const Styles = {
       const themeStyles = await webflow.getThemeStyles(theme)
       console.log('Theme styles:', themeStyles)
     },
+
+    subscribeCurrentTheme: async () => {
+      // Set initial theme
+      const theme = await webflow.getTheme()
+      const styles = await webflow.getThemeStyles(theme)
+      console.log('Initial theme:', theme)
+      console.log('Initial theme styles:', styles)
+
+      // Subscribe to theme changes
+      const unsubscribe = webflow.subscribe(
+        'currenttheme',
+        async (newTheme) => {
+          const newStyles = await webflow.getThemeStyles(newTheme)
+          console.log('Theme changed:', newTheme)
+          console.log('New theme styles:', newStyles)
+        },
+      )
+
+      // Stop listening after 10 seconds
+      setTimeout(unsubscribe, 10000)
+    },
   },
 
   VariableModes: {
