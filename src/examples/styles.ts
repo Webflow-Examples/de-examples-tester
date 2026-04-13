@@ -341,6 +341,18 @@ export const Styles = {
     },
   },
 
+  ThemeAwareness: {
+    getThemeAndStyles: async () => {
+      // Get the current theme
+      const theme = await webflow.getTheme()
+      console.log('Current theme:', theme)
+
+      // Get the resolved design tokens for the current theme
+      const themeStyles = await webflow.getThemeStyles(theme)
+      console.log('Theme styles:', themeStyles)
+    },
+  },
+
   VariableModes: {
     // Variable Modes
 
