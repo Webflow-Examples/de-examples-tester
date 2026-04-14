@@ -362,6 +362,21 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  createProp: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const headingProp = await component.createProp({
+        type: 'textContent',
+        name: 'Heading',
+        group: 'Content',
+        defaultValue: 'Welcome to our site',
+        tooltip: 'The main heading displayed in the hero section',
+      })
+      console.log(headingProp)
+    }
+  },
+
   createProps: async () => {
     const component = await webflow.getCurrentComponent()
 
