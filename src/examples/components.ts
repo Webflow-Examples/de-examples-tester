@@ -362,6 +362,52 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  createProps: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.createProps([
+        {
+          type: 'textContent',
+          name: 'Heading',
+          group: 'Content',
+          defaultValue: 'Welcome to our site',
+        },
+        {
+          type: 'textContent',
+          name: 'Subheading',
+          group: 'Content',
+          defaultValue: 'We build things',
+        },
+        {
+          type: 'imageAsset',
+          name: 'Background Image',
+          group: 'Content',
+        },
+        {
+          type: 'link',
+          name: 'CTA Link',
+          group: 'Content',
+          defaultValue: {
+            mode: 'url',
+            to: 'https://example.com/signup',
+            openInNewTab: true,
+          },
+        },
+        {
+          type: 'number',
+          name: 'Overlay Opacity',
+          group: 'Settings',
+          min: 0,
+          max: 100,
+          precision: 0,
+          defaultValue: 50,
+        },
+      ])
+      console.log(props)
+    }
+  },
+
   getComponentProps: async () => {
     const component = await webflow.getCurrentComponent()
 
