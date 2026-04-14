@@ -62,6 +62,9 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
     if (initialCode != null) {
       setCode(initialCode)
       codeRef.current = initialCode
+      if (editorRef.current) {
+        editorRef.current.setValue(initialCode)
+      }
     }
   }, [initialCode])
   const isMountedRef = useRef(true)
@@ -412,6 +415,9 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
           onMount={(editor, monaco) => {
             try {
               editorRef.current = editor
+              // Force editor content to match current code, in case Monaco reuses
+              // a cached model for the same path with stale content
+              editor.setValue(codeRef.current)
               if (monaco && isMountedRef.current) {
                 editor.addCommand(
                   monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
