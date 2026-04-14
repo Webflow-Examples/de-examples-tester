@@ -206,6 +206,16 @@ export const Components = {
     }
   },
 
+  reorderVariants: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Before: base, variant-1, variant-2, variant-3
+      await component.reorderVariants(['variant-1', 'variant-3'])
+      // After: base, variant-1, variant-3, variant-2
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
