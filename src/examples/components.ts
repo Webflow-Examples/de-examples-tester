@@ -200,13 +200,9 @@ export const Components = {
 
   deleteVariant: async () => {
     const component = await webflow.getCurrentComponent()
+
     if (component) {
-      const allVariants = await component.getVariants()
-      // Delete the last variant
-      if (allVariants.length > 1) {
-        const variantToDelete = allVariants[allVariants.length - 1]
-        component.deleteVariant(variantToDelete.id)
-      }
+      await component.deleteVariant({ id: 'variant-456' })
     }
   },
 
