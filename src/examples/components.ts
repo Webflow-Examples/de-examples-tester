@@ -362,6 +362,22 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  getComponentProps: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.getProps()
+      console.log(props)
+
+      // Components with no props return an empty array
+      const blankComponent = await webflow.getComponentByName('Empty Component')
+      const emptyProps = await blankComponent?.getProps()
+      console.log(emptyProps) // []
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
   getProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
