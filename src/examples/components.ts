@@ -150,6 +150,34 @@ export const Components = {
     console.log(`Currently editing: ${activeVariant?.name}`)
   },
 
+  getVariantById: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Get a specific variant by ID
+      const variant = await component.getVariant('variant-123')
+      console.log(variant)
+      /*
+      {
+        id: 'variant-123',
+        name: 'Secondary Hero',
+        isSelected: true,
+      }
+      */
+
+      // Get the base variant
+      const base = await component.getVariant('base')
+      console.log(base)
+      /*
+      {
+        id: 'base',
+        name: 'Primary',
+        isSelected: false,
+      }
+      */
+    }
+  },
+
   getSelectedVariant: async () => {
     const heroComponent = webflow.getComponentByName('hero')
     // When no variant is explicitly selected, returns base
@@ -195,6 +223,18 @@ export const Components = {
         isSelected: true,
       }, selectedVariant.id)
       console.log(duplicateVariant.name) // 'Duplicate of Secondary Hero'
+    }
+  },
+
+  setVariantSettings: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const variant = await component.setVariant({
+        id: 'variant-123',
+        name: 'Primary Hero',
+      })
+      console.log(variant)
     }
   },
 
