@@ -198,6 +198,14 @@ export const Components = {
     }
   },
 
+  deleteVariant: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      await component.deleteVariant({ id: 'variant-456' })
+    }
+  },
+
   createComponent: async () => {
     // Get selected element
     const rootElement = await webflow.getSelectedElement()
