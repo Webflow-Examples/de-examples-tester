@@ -423,7 +423,7 @@ export const Components = {
     }
   },
 
-  getComponentProps: async () => {
+  getProps: async () => {
     const component = await webflow.getCurrentComponent()
 
     if (component) {
@@ -439,7 +439,7 @@ export const Components = {
     }
   },
 
-  getProps: async () => {
+  getInstanceProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
 
