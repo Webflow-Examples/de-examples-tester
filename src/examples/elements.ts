@@ -1201,5 +1201,52 @@ export const Elements = {
         console.log('Selected element does not support searchSettings.')
       }
     },
+
+    getSettings: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'getSettings' in element) {
+        // Get the raw setting values for the element, including any binding references
+        const settings = await element.getSettings()
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support getSettings.')
+      }
+    },
+
+    getResolvedSettings: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'getResolvedSettings' in element) {
+        // Get the resolved setting values for the element
+        // Unlike getSettings(), this resolves any binding references to their computed values
+        const settings = await element.getResolvedSettings()
+        console.log(settings)
+      } else {
+        console.log('Selected element does not support getResolvedSettings.')
+      }
+    },
+
+    setSettings: async () => {
+      // Get Selected Element
+      const element = await webflow.getSelectedElement()
+
+      if (element && 'setSettings' in element) {
+        // Set a static value
+        await element.setSettings({ tag: 'h2', domId: 'my-heading' })
+
+        // Bind a setting to a component property
+        // await element.setSettings({ domId: { sourceType: 'prop', propId: 'prop_3' } })
+
+        // Reset a setting to its default value and disconnect any binding
+        // await element.setSettings({ altText: null })
+
+        console.log('Element settings updated.')
+      } else {
+        console.log('Selected element does not support setSettings.')
+      }
+    },
   },
 }
