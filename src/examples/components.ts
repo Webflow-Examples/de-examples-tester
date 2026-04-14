@@ -210,13 +210,9 @@ export const Components = {
     const component = await webflow.getCurrentComponent()
 
     if (component) {
-      // Get the current order of the variants
-      const allVariants = await component.getVariants()
-      const variantOrderBefore = allVariants.map(({id}) => id)
-
-      // Reverse the order
-      const newVariantOrder = variantOrderBefore.reverse()
-      await component.reorderVariants(newVariantOrder)
+      // Before: base, variant-1, variant-2, variant-3
+      await component.reorderVariants(['variant-1', 'variant-3'])
+      // After: base, variant-1, variant-3, variant-2
     }
   },
 
