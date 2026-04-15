@@ -58,6 +58,7 @@ const Playground: React.FC = () => {
       console.error('VITE_ANTHROPIC_API_KEY is not set')
       return
     }
+    console.log(`running with prompt: ${text}`);
     const currentCode = codeRef.current
 
     const userMessage = `Here is the current code in the playground editor:
@@ -69,21 +70,12 @@ ${currentCode}
 Make the following changes to this code: ${text}`
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+     const response = await fetch('http://localhost:1338/prompt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
         },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 4096,
-          system:
-            'You are a coding assistant that helps users write and modify Webflow Designer API code. When asked to make changes to code, return only the modified code without any explanation or markdown code fences.',
-          messages: [{ role: 'user', content: userMessage }],
-        }),
+        body: JSON.stringify({ prompt: userMessage }),
       })
 
       const data = await response.json()
