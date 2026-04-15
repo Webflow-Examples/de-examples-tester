@@ -27,7 +27,7 @@ app.post('/prompt', async (req, res) => {
           model: 'claude-sonnet-4-6',
           max_tokens: 4096,
           system:
-            'You are a coding assistant that helps users write and modify Webflow Designer API code. When asked to make changes to code, return only the modified code without any explanation or markdown code fences.',
+            'You are a coding assistant that helps users write and modify Webflow Designer API code. When asked to make changes to code, return only the modified code without any explanation or markdown code fences. Always respond in plain text, without any markdown formatting.',
           messages: [{ role: 'user', content: prompt }],
         }),
     })
