@@ -50,6 +50,11 @@ const Playground: React.FC = () => {
   const [language, setLanguage] = useState<'javascript' | 'typescript'>(
     'javascript',
   )
+  const [prompt, setPrompt] = useState('')
+
+  const sendPromptToAgent = (text: string) => {
+    console.log(text)
+  }
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
@@ -430,19 +435,67 @@ const Playground: React.FC = () => {
           }}
         />
       </div>
-      <div style={{ marginBottom: 8, position: 'relative' }}>
+      <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'flex-end' }}>
         <button
           onClick={() => runCode(codeRef.current)}
           disabled={isRunning}
           className="button cc-primary"
-          style={{
-            position: 'absolute',
-            right: 16,
-            bottom: 16,
-          }}
         >
           {isRunning ? 'Running...' : 'Run'}
         </button>
+      </div>
+      <div
+        style={{
+          background: '#181818',
+          borderRadius: 4,
+          marginBottom: 8,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 12px',
+            borderBottom: '1px solid #282a2e',
+            background: '#1e1e1e',
+          }}
+        >
+          <label
+            htmlFor="agent-prompt"
+            style={{ fontSize: 11, color: 'rgb(255 255 255 / 0.5)' }}
+          >
+            Prompt
+          </label>
+        </div>
+        <input
+          id="agent-prompt"
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              const value = e.currentTarget.value.trim()
+              if (value) {
+                sendPromptToAgent(value)
+                setPrompt('')
+              }
+            }
+          }}
+          placeholder="Type a prompt and press Enter"
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            background: '#181818',
+            border: 'none',
+            color: 'rgb(255 255 255 / 0.9)',
+            fontSize: 11,
+            padding: '10px 12px',
+            outline: 'none',
+            fontFamily:
+              'ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace',
+          }}
+        />
       </div>
       <div
         style={{
@@ -450,74 +503,71 @@ const Playground: React.FC = () => {
           height: output ? 'auto' : 0,
           overflow: 'hidden',
           transition: 'opacity 0.2s ease-in-out',
-          padding: '0 16px 16px',
-          position: 'relative',
+          background: '#181818',
+          borderRadius: 4,
+          marginBottom: 8,
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            top: 10,
-            right: 24,
-            zIndex: 10,
             display: 'flex',
-            gap: 8,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 12px',
+            borderBottom: '1px solid #282a2e',
+            background: '#1e1e1e',
           }}
         >
-          <button
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(output)
-              } catch {
-                const ta = document.createElement("textarea")
-                ta.value = output
-                ta.style.position = "fixed"
-                ta.style.left = "-9999px"
-                document.body.appendChild(ta)
-                ta.select()
-                document.execCommand("copy")
-                document.body.removeChild(ta)
-              }
-              setIsCopied(true)
-              setTimeout(() => setIsCopied(false), 2000)
-            }}
-            title="Copy to clipboard"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgb(255 255 255 / 0.6)',
-              cursor: 'pointer',
-              padding: 4,
-            }}
-          >
-            {isCopied ? 'Copied!' : <ClipboardIcon />}
-          </button>
-          <button
-            onClick={() => setOutput('')}
-            title="Clear output"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgb(255 255 255 / 0.6)',
-              cursor: 'pointer',
-              padding: 4,
-            }}
-          >
-            <ClearIcon />
-          </button>
+          <div style={{ fontSize: 11, color: 'rgb(255 255 255 / 0.5)' }}>
+            Output
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(output)
+                } catch {
+                  const ta = document.createElement('textarea')
+                  ta.value = output
+                  ta.style.position = 'fixed'
+                  ta.style.left = '-9999px'
+                  document.body.appendChild(ta)
+                  ta.select()
+                  document.execCommand('copy')
+                  document.body.removeChild(ta)
+                }
+                setIsCopied(true)
+                setTimeout(() => setIsCopied(false), 2000)
+              }}
+              title="Copy to clipboard"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'rgb(255 255 255 / 0.6)',
+                cursor: 'pointer',
+                padding: 4,
+              }}
+            >
+              {isCopied ? 'Copied!' : <ClipboardIcon />}
+            </button>
+            <button
+              onClick={() => setOutput('')}
+              title="Clear output"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'rgb(255 255 255 / 0.6)',
+                cursor: 'pointer',
+                padding: 4,
+              }}
+            >
+              <ClearIcon />
+            </button>
+          </div>
         </div>
-        <label
-          style={{
-            fontWeight: 500,
-            fontSize: 13,
-            color: 'rgb(255 255 255 / 0.6)',
-            display: 'block',
-            marginBottom: 4,
-          }}
-        >
-          Output
-        </label>
-        <CodeBlock code={output || ' '} language="javascript" />
+        <div style={{ padding: 12 }}>
+          <CodeBlock code={output || ' '} language="javascript" />
+        </div>
       </div>
     </div>
   )
