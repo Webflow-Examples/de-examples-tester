@@ -35,14 +35,41 @@ export function parseTopLevelFunctions(code: string): ParsedFunction[] {
   }
 
   const functions: ParsedFunction[] = []
-  for (const node of ast.body) {
-    if (node.type === 'FunctionDeclaration' && node.id?.name) {
-      functions.push({
-        name: node.id.name,
-        code: code.slice(node.start, node.end),
-      })
+
+  function collectFunctions(nodes: typeof ast.body) {
+    for (const node of nodes) {
+      if (node.type === 'FunctionDeclaration' && node.id?.name) {
+        functions.push({
+          name: node.id.name,
+          code: code.slice(node.start, node.end),
+        })
+      }
     }
   }
+
+  // Check top-level nodes
+  collectFunctions(ast.body)
+
+  // If no functions found, check if the code is an IIFE — treat the whole
+  // thing as a single "run" action.
+  if (functions.length === 0) {
+    for (const node of ast.body) {
+      const expr = (node as any).expression
+      if (
+        node.type === 'ExpressionStatement' &&
+        expr?.type === 'CallExpression' &&
+        (expr.callee?.type === 'FunctionExpression' ||
+          expr.callee?.type === 'ArrowFunctionExpression')
+      ) {
+        functions.push({
+          name: 'run',
+          code: code,
+        })
+        break
+      }
+    }
+  }
+
   return functions
 }
 
