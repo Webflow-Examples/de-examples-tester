@@ -51,6 +51,7 @@ const Playground: React.FC = () => {
     'javascript',
   )
   const [prompt, setPrompt] = useState('')
+  const [isWaiting, setIsWaiting] = useState(false)
 
   const sendPromptToAgent = async (text: string) => {
     console.log(`running with prompt: ${text}`);
@@ -63,6 +64,9 @@ ${currentCode}
 \`\`\`
 
 Make the following changes to this code: ${text}`
+
+    setIsWaiting(true)
+    const timeoutId = setTimeout(() => setIsWaiting(false), 20000)
 
     try {
      const response = await fetch('http://localhost:1338/prompt', {
@@ -82,6 +86,9 @@ Make the following changes to this code: ${text}`
       }
     } catch (err) {
       console.error(err)
+    } finally {
+      clearTimeout(timeoutId)
+      setIsWaiting(false)
     }
   }
   const monaco = useMonaco()
@@ -501,6 +508,7 @@ Make the following changes to this code: ${text}`
           id="agent-prompt"
           type="text"
           value={prompt}
+          disabled={isWaiting}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -511,7 +519,7 @@ Make the following changes to this code: ${text}`
               }
             }
           }}
-          placeholder="Type a prompt and press Enter"
+          placeholder={isWaiting ? 'Waiting for response' : 'Type a prompt and press Enter'}
           style={{
             width: '100%',
             boxSizing: 'border-box',
@@ -523,6 +531,9 @@ Make the following changes to this code: ${text}`
             outline: 'none',
             fontFamily:
               'ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace',
+            fontStyle: isWaiting ? 'italic' : 'normal',
+            opacity: isWaiting ? 0.5 : 1,
+            cursor: isWaiting ? 'not-allowed' : 'text',
           }}
         />
       </div>
