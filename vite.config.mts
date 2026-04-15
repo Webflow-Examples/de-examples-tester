@@ -40,7 +40,7 @@ export default defineConfig({
             'sucrase',
           ],
           // Other vendor libraries
-          vendor: ['axios', '@tanstack/react-query', 'prismjs'],
+          vendor: ['axios', '@tanstack/react-query', 'prismjs', 'jszip'],
         },
       },
     },

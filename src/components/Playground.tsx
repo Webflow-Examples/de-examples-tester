@@ -3,7 +3,9 @@ import MonacoEditor, { useMonaco } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { transform } from 'sucrase'
 import CodeBlock from './CodeBlock'
+import BundlePreviewModal from './BundlePreviewModal'
 import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
+import { generateBundleFiles } from '../utils/bundleGenerator'
 import ClipboardIcon from './icons/ClipboardIcon'
 import ClearIcon from './icons/ClearIcon'
 
@@ -52,6 +54,26 @@ const Playground: React.FC = () => {
   )
   const [prompt, setPrompt] = useState('')
   const [isWaiting, setIsWaiting] = useState(false)
+  const [showBundleModal, setShowBundleModal] = useState(false)
+  const [bundleAppName, setBundleAppName] = useState('My Extension')
+  const [bundleResult, setBundleResult] = useState<ReturnType<
+    typeof generateBundleFiles
+  > | null>(null)
+
+  const handleBundle = () => {
+    const currentCode = codeRef.current
+    const result = generateBundleFiles(currentCode, bundleAppName)
+    setBundleResult(result)
+    setShowBundleModal(true)
+  }
+
+  const handleAppNameChange = (name: string) => {
+    setBundleAppName(name)
+    if (bundleResult) {
+      const updated = generateBundleFiles(codeRef.current, name)
+      setBundleResult(updated)
+    }
+  }
 
   const sendPromptToAgent = async (text: string) => {
     console.log(`running with prompt: ${text}`);
@@ -471,7 +493,21 @@ Make the following changes to this code: ${text}`
           }}
         />
       </div>
-      <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'flex-end' }}>
+      <div
+        style={{
+          marginBottom: 8,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: 8,
+        }}
+      >
+        <button
+          onClick={handleBundle}
+          className="button cc-primary"
+          style={{ background: '#383838', borderColor: 'rgba(255,255,255,0.13)' }}
+        >
+          Bundle
+        </button>
         <button
           onClick={() => runCode(codeRef.current)}
           disabled={isRunning}
@@ -609,6 +645,14 @@ Make the following changes to this code: ${text}`
           <CodeBlock code={output || ' '} language="javascript" />
         </div>
       </div>
+      {showBundleModal && bundleResult && (
+        <BundlePreviewModal
+          bundle={bundleResult}
+          appName={bundleAppName}
+          onAppNameChange={handleAppNameChange}
+          onClose={() => setShowBundleModal(false)}
+        />
+      )}
     </div>
   )
 }
