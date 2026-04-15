@@ -5,6 +5,11 @@ const app = express();
 const port = 1338;
 const apiKey = process.env.ANTHROPIC_API_KEY;
 
+if(!apiKey) {
+    console.error('ANTHROPIC_API_KEY is not set');
+    process.exit(1);
+}
+
 app.use(cors());
 app.use(express.json());
 

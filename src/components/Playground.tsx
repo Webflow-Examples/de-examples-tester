@@ -53,11 +53,6 @@ const Playground: React.FC = () => {
   const [prompt, setPrompt] = useState('')
 
   const sendPromptToAgent = async (text: string) => {
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-    if (!apiKey) {
-      console.error('VITE_ANTHROPIC_API_KEY is not set')
-      return
-    }
     console.log(`running with prompt: ${text}`);
     const currentCode = codeRef.current
 
