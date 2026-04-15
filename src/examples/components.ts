@@ -420,7 +420,84 @@ export const Components = {
     await myComponent.setName('My New Component Name')
   },
 
+  createProp: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const headingProp = await component.createProp({
+        type: 'textContent',
+        name: 'Heading',
+        group: 'Content',
+        defaultValue: 'Welcome to our site',
+        tooltip: 'The main heading displayed in the hero section',
+      })
+      console.log(headingProp)
+    }
+  },
+
+  createProps: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.createProps([
+        {
+          type: 'textContent',
+          name: 'Heading',
+          group: 'Content',
+          defaultValue: 'Welcome to our site',
+        },
+        {
+          type: 'textContent',
+          name: 'Subheading',
+          group: 'Content',
+          defaultValue: 'We build things',
+        },
+        {
+          type: 'imageAsset',
+          name: 'Background Image',
+          group: 'Content',
+        },
+        {
+          type: 'link',
+          name: 'CTA Link',
+          group: 'Content',
+          defaultValue: {
+            mode: 'url',
+            to: 'https://example.com/signup',
+            openInNewTab: true,
+          },
+        },
+        {
+          type: 'number',
+          name: 'Overlay Opacity',
+          group: 'Settings',
+          min: 0,
+          max: 100,
+          precision: 0,
+          defaultValue: 50,
+        },
+      ])
+      console.log(props)
+    }
+  },
+
   getProps: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.getProps()
+      console.log(props)
+
+      // Components with no props return an empty array
+      const blankComponent = await webflow.getComponentByName('Empty Component')
+      const emptyProps = await blankComponent?.getProps()
+      console.log(emptyProps) // []
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
+  getInstanceProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
 
