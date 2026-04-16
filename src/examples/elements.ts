@@ -325,7 +325,6 @@ export const Elements = {
 
       if (selectedElement) {
         // Insert a heading before the selected element with initial settings
-        // @ts-expect-error -- settings parameter not yet reflected in typings
         const newHeading = await selectedElement.before(webflow.elementPresets.Heading, {
           tag: 'h2',
           domId: 'section-title',
@@ -342,7 +341,6 @@ export const Elements = {
 
       if (selectedElement) {
         // Insert a heading after the selected element with initial settings
-        // @ts-expect-error -- settings parameter not yet reflected in typings
         const newHeading = await selectedElement.after(webflow.elementPresets.Heading, {
           tag: 'h2',
           domId: 'section-title',
@@ -360,7 +358,6 @@ export const Elements = {
       // Check if element supports child elements
       if (el?.children) {
         // Append a heading element with initial settings applied at creation time
-        // @ts-expect-error -- settings parameter not yet reflected in typings
         const newHeading = await el.append(webflow.elementPresets.Heading, {
           tag: 'h2',
           domId: 'section-title',
@@ -378,7 +375,6 @@ export const Elements = {
       // Check if element supports child elements
       if (el?.children) {
         // Prepend a heading element with initial settings applied at creation time
-        // @ts-expect-error -- settings parameter not yet reflected in typings
         const newHeading = await el.prepend(webflow.elementPresets.Heading, {
           tag: 'h2',
           domId: 'section-title',
