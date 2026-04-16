@@ -98,6 +98,52 @@ export const Elements = {
         console.log('No element is currently selected.')
       }
     },
+
+    getTag: async () => {
+      // Get the HTML tag of the selected element
+      const el = await webflow.getSelectedElement();
+
+      if (el?.type === 'Block') {
+        const tag = await el.getTag(); // BlockElementTag | null
+        console.log(tag); // e.g. 'section'
+      }
+
+      if (el?.type === 'Heading') {
+        const tag = await el.getTag(); // HeadingTag | null
+        console.log(tag); // e.g. 'h2'
+      }
+
+      if (el?.type === 'List') {
+        const tag = await el.getTag(); // ListTag | null
+        console.log(tag); // 'ul' or 'ol'
+      }
+    },
+
+    setTag: async (myTag: string) => {
+      // Set the HTML tag of the selected element
+      const element = await webflow.getSelectedElement();
+
+      // Change a Section element to use a nav tag
+      if (element?.type === 'Section') {
+        await element.setTag('nav');
+      }
+
+      // Change a Heading element from h1 to h2 and change its CMS binding
+      if (element?.type === 'Heading') {
+        await element.setTag('h2');
+        // Bind to a CMS field
+        await element.setTag({
+          sourceType: 'cms',
+          collectionId: 'col_abc',
+          fieldId: 'field_xyz',
+        });
+      }
+
+      // Change a List element from unordered to ordered
+      if (element?.type === 'List') {
+        await element.setTag('ol');
+      }
+    },
   },
 
   // Element Creation
@@ -594,36 +640,6 @@ export const Elements = {
 
   // DOM Operations
   domOperations: {
-    getTag: async () => {
-      // Get All Elements and find first DOM Element
-      const elements = await webflow.getAllElements()
-      const DOMElement = elements.find((element) => element.type === 'DOM')
-
-      if (DOMElement?.type === 'DOM') {
-        // Get DOM Element's Tag
-        const tag = await DOMElement.getTag()
-        console.log(tag)
-      } else {
-        console.log('No DOM Element Found')
-      }
-    },
-
-    setTag: async (myTag: string) => {
-      // Get Selected Element
-      const selectedElement = await webflow.getSelectedElement()
-
-      if (selectedElement?.children) {
-        // Create and append DOM Element
-        const DOMElement = await selectedElement.append(
-          webflow.elementPresets.DOM,
-        )
-        console.log(DOMElement)
-
-        // Set Tag
-        await DOMElement?.setTag(myTag)
-        const tag = await DOMElement.getTag()
-      }
-    },
 
     getAllAttributes: async () => {
       // Get Selected Element
