@@ -1248,5 +1248,26 @@ export const Elements = {
         console.log('Selected element does not support setSettings.')
       }
     },
+
+    getDomId: async () => {
+      const element = await webflow.getSelectedElement();
+
+      if (element?.domId) {
+
+        // Get the current DOM ID
+        const id = await element.getDomId();
+        console.log(id);
+      }
+    },
+
+    setDomId: async () => {
+      const element = await webflow.getSelectedElement();
+
+      if (element?.domId) {
+
+        // Set a static ID
+        await element.setDomId('hero-section');
+      }
+    },
   },
 }
