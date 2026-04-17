@@ -362,4 +362,34 @@ export const Pages = {
       await currentPage.setOpenGraphDescription(description)
     },
   },
+
+  // Page Branching
+  pageBranching: {
+    getBranchId: async () => {
+      // Get Current Page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // Get branch ID
+      const branchId = await currentPage.getBranchId()
+      console.log(branchId)
+    },
+
+    getParentPageId: async () => {
+      // Get Current Page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // Get parent page ID
+      const parentPageId = await currentPage.getParentPageId()
+      console.log(parentPageId)
+    },
+
+    listBranches: async () => {
+      // Get Current Page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // List branches
+      const branches = await currentPage.listBranches()
+      console.log(branches)
+    },
+  },
 }
