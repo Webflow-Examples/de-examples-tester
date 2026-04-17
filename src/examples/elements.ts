@@ -324,13 +324,14 @@ export const Elements = {
       const selectedElement = await webflow.getSelectedElement()
 
       if (selectedElement) {
-        // Insert DIV before selected Element
-        const newDiv = await selectedElement.before(
-          'div',
-        )
+        // Insert a heading before the selected element with initial settings
+        const newHeading = await selectedElement.before(webflow.elementPresets.Heading, {
+          tag: 'h2',
+          domId: 'section-title',
+        })
 
         // Print element details
-        console.log(`${JSON.stringify(newDiv)}`)
+        console.log(JSON.stringify(newHeading))
       }
     },
 
@@ -339,13 +340,14 @@ export const Elements = {
       const selectedElement = await webflow.getSelectedElement()
 
       if (selectedElement) {
-        // Insert DIV after selected Element
-        const newDiv = await selectedElement.after(
-          'div',
-        )
+        // Insert a heading after the selected element with initial settings
+        const newHeading = await selectedElement.after(webflow.elementPresets.Heading, {
+          tag: 'h2',
+          domId: 'section-title',
+        })
 
         // Print element details
-        console.log(JSON.stringify(newDiv))
+        console.log(JSON.stringify(newHeading))
       }
     },
 
@@ -355,11 +357,14 @@ export const Elements = {
 
       // Check if element supports child elements
       if (el?.children) {
-        // Append newElement as a child to of the selected element
-        const newElement = await el?.append('div')
+        // Append a heading element with initial settings applied at creation time
+        const newHeading = await el.append(webflow.elementPresets.Heading, {
+          tag: 'h2',
+          domId: 'section-title',
+        })
 
-        // Print element Details
-        console.log(JSON.stringify(newElement))
+        // Print element details
+        console.log(JSON.stringify(newHeading))
       }
     },
 
@@ -369,11 +374,14 @@ export const Elements = {
 
       // Check if element supports child elements
       if (el?.children) {
-        // Prepend newElement as a child to of the selected element
-        const newElement = await el?.prepend('div')
+        // Prepend a heading element with initial settings applied at creation time
+        const newHeading = await el.prepend(webflow.elementPresets.Heading, {
+          tag: 'h2',
+          domId: 'section-title',
+        })
 
-        // Print element Details
-        console.log(JSON.stringify(newElement))
+        // Print element details
+        console.log(JSON.stringify(newHeading))
       }
     },
   },
