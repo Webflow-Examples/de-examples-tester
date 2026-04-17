@@ -42,8 +42,12 @@ const styleProperties = await primaryStyle.getProperties();
 console.log(styleProperties);
 `
 
-const Playground: React.FC = () => {
-  const [code, setCode] = useState(defaultCode)
+interface PlaygroundProps {
+  initialCode?: string | null
+}
+
+const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
+  const [code, setCode] = useState(initialCode ?? defaultCode)
   const [output, setOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
@@ -53,6 +57,16 @@ const Playground: React.FC = () => {
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
+
+  useEffect(() => {
+    if (initialCode != null) {
+      setCode(initialCode)
+      codeRef.current = initialCode
+      if (editorRef.current) {
+        editorRef.current.setValue(initialCode)
+      }
+    }
+  }, [initialCode])
   const isMountedRef = useRef(true)
 
   // Cleanup on unmount
@@ -401,6 +415,9 @@ const Playground: React.FC = () => {
           onMount={(editor, monaco) => {
             try {
               editorRef.current = editor
+              // Force editor content to match current code, in case Monaco reuses
+              // a cached model for the same path with stale content
+              editor.setValue(codeRef.current)
               if (monaco && isMountedRef.current) {
                 editor.addCommand(
                   monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
