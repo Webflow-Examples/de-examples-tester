@@ -1248,5 +1248,33 @@ export const Elements = {
         console.log('Selected element does not support setSettings.')
       }
     },
+
+    getVisibility: async () => {
+      const element = await webflow.getSelectedElement();
+
+      if (element?.visibility) {
+
+        // Check current visibility
+        const isVisible = await element.getVisibility();
+        console.log(isVisible); // true or false
+
+        // Read binding metadata
+        const value = await element.getVisibility({ bindings: true });
+        // Returns BindingValue when bound, or boolean when static
+      }
+    },
+
+    setVisibility: async () => {
+      const element = await webflow.getSelectedElement();
+
+      if (element?.visibility) {
+
+        // Hide the element
+        await element.setVisibility(false);
+
+        // Show the element
+        await element.setVisibility(true);
+      }
+    },
   },
 }
