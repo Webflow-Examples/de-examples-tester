@@ -235,6 +235,10 @@ export const Styles = {
       if (style) {
         const properties = await style.getProperties()
         console.log(properties)
+
+        // Get properties for a specific variant
+        const variantProperties = await style.getProperties({ variantId: 'variant-123' })
+        console.log('Variant properties:', variantProperties)
       }
     },
     setStyleProperties: async () => {
@@ -254,6 +258,9 @@ export const Styles = {
           }
 
           await primaryStyle.setProperties(propertyMap)
+
+          // Set properties for a specific variant
+          await primaryStyle.setProperties(propertyMap, { variantId: 'variant-123' })
         } else {
           console.log('Please choose an element with styles')
         }
@@ -277,6 +284,10 @@ export const Styles = {
                 console.log(
                   `Style Name: ${styleName}, ${propertyName}: ${property}`,
                 )
+
+                // Get the same property for a specific variant
+                const variantProperty = await style.getProperty(propertyName, { variantId: 'variant-123' })
+                console.log(`Variant property — ${propertyName}: ${variantProperty}`)
               }
             }),
           )
@@ -298,6 +309,9 @@ export const Styles = {
         if (primaryStyle) {
           await primaryStyle.setProperty(styleProperty, propertyValue)
           console.log(primaryStyle.getProperty(styleProperty))
+
+          // Set the property for a specific variant
+          await primaryStyle.setProperty(styleProperty, propertyValue, { variantId: 'variant-123' })
         }
       }
     },
@@ -305,8 +319,11 @@ export const Styles = {
       // Retrieve the style by name
       const retrievedStyle = await webflow.getStyleByName(styleName)
 
-      // Clear Style Properties
+      // Remove all properties from the base style
       await retrievedStyle?.removeAllProperties()
+
+      // Remove all properties for a specific variant
+      await retrievedStyle?.removeAllProperties({ variantId: 'variant-123' })
     },
     removeSingleStyleProperty: async (property: StyleProperty) => {
       // Get Selected Element
@@ -318,6 +335,9 @@ export const Styles = {
         const primaryStyle = styles?.[0]
         if (primaryStyle) {
           await primaryStyle.removeProperty(property)
+
+          // Remove the property for a specific variant
+          await primaryStyle.removeProperty(property, { variantId: 'variant-123' })
         }
       }
     },
@@ -336,6 +356,9 @@ export const Styles = {
             'font-family',
           ]
           await primaryStyle.removeProperties(properties)
+
+          // Remove the same properties for a specific variant
+          await primaryStyle.removeProperties(properties, { variantId: 'variant-123' })
         }
       }
     },
