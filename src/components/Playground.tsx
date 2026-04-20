@@ -235,11 +235,18 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
   // Run user code safely
   const runCode = async (customCode?: string) => {
     setIsRunning(true)
-    setOutput('Running...\n')
+    setOutput('')
     const codeToRun = customCode ?? codeRef.current
+    let timedOut = false
+    const timeoutId = setTimeout(() => {
+      timedOut = true
+      setOutput(
+        (prev) =>
+          prev + '[Timeout] Execution exceeded 5 seconds and was stopped.\n',
+      )
+      setIsRunning(false)
+    }, 5000)
     try {
-      // Clear output and start fresh
-      setOutput('')
       const jsCode = transform(codeToRun, {
         transforms: ['typescript', 'imports'],
         jsxPragma: 'React.createElement',
@@ -251,9 +258,14 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
       const fn = eval(asyncCode)
       await fn((window as any).webflow, safeConsole)
     } catch (err) {
-      safeConsole.error(err)
+      if (!timedOut) {
+        safeConsole.error(err)
+      }
     } finally {
-      setIsRunning(false)
+      clearTimeout(timeoutId)
+      if (!timedOut) {
+        setIsRunning(false)
+      }
     }
   }
 
