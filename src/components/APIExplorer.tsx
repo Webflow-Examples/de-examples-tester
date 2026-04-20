@@ -53,6 +53,7 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
 }) => {
   const [functionParameters, setFunctionParameters] = useState<ParameterMap>({})
   const [apiOutput, setApiOutput] = useState('')
+  const [isRunning, setIsRunning] = useState(false)
 
   // Fetch function code and parameters
   const { functionCode, parameterNames, parameterTypes, setParameterNames } =
@@ -177,9 +178,12 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
 
       if (funcToExecute) {
         const originalConsole = { ...console }
+        let timedOut = false
+        let timeoutId: ReturnType<typeof setTimeout> | undefined
 
         try {
           setApiOutput('')
+          setIsRunning(true)
 
           const paramValues =
             parameterNames.length > 0
@@ -216,21 +220,42 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           }
           Object.assign(console, apiConsole)
 
+          timeoutId = setTimeout(() => {
+            timedOut = true
+            Object.assign(console, originalConsole)
+            setApiOutput(
+              (prev) =>
+                prev +
+                '[Timeout] Execution exceeded 5 seconds and was stopped.\n',
+            )
+            setIsRunning(false)
+          }, 5000)
+
           if (typeof funcToExecute === 'function') {
             const result = funcToExecute(...paramValues)
             if (result && typeof result.then === 'function') {
               // Restore console after the async function completes, not before
               result
                 .catch(apiConsole.error)
-                .finally(() => Object.assign(console, originalConsole))
+                .finally(() => {
+                  clearTimeout(timeoutId)
+                  Object.assign(console, originalConsole)
+                  if (!timedOut) setIsRunning(false)
+                })
             } else {
+              clearTimeout(timeoutId)
               Object.assign(console, originalConsole)
+              if (!timedOut) setIsRunning(false)
             }
           } else {
+            clearTimeout(timeoutId)
             Object.assign(console, originalConsole)
+            if (!timedOut) setIsRunning(false)
           }
         } catch (error) {
+          if (timeoutId) clearTimeout(timeoutId)
           Object.assign(console, originalConsole)
+          if (!timedOut) setIsRunning(false)
           console.error('Error executing function:', error)
         }
       }
@@ -321,9 +346,9 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           <button
             className="button cc-primary"
             onClick={handleFunctionExecution}
-            disabled={!selectedFunctionName}
+            disabled={!selectedFunctionName || isRunning}
           >
-            Run
+            {isRunning ? 'Running...' : 'Run'}
           </button>
           {functionCode && (
             <button
