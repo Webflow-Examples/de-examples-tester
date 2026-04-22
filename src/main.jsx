@@ -37,7 +37,7 @@ const App = () => {
 
   useEffect(() => {
     // Set initial size
-    webflow.setExtensionSize('large')
+    webflow.setExtensionSize({ height: 425, width: 500 })
   }, [])
 
   // Auto-initialize first example and function
