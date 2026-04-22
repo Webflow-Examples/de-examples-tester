@@ -206,6 +206,20 @@ const stripFunctionWrapper = (code: string): string => {
   code = code.replace(/^[^{]*{/, '')
   code = code.replace(/}[^}]*$/, '')
 
+  // Dedent: find the minimum indentation of non-empty lines and strip it uniformly
+  const lines = code.split('\n')
+  const nonEmptyLines = lines.filter((line) => line.trim().length > 0)
+  if (nonEmptyLines.length > 0) {
+    const minIndent = Math.min(
+      ...nonEmptyLines.map((line) => line.match(/^(\s*)/)?.[1].length ?? 0),
+    )
+    if (minIndent > 0) {
+      code = lines
+        .map((line) => (line.length >= minIndent ? line.slice(minIndent) : line))
+        .join('\n')
+    }
+  }
+
   // Remove leading/trailing whitespace
   code = code.trim()
 
