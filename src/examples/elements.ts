@@ -432,54 +432,6 @@ export const Elements = {
     },
   },
 
-  // Custom Attributes
-  customAttributes: {
-    getAllCustomAttributes: async () => {
-      // Get Selected Element
-      const selectedElement = await webflow.getSelectedElement()
-
-      if (selectedElement?.customAttributes) {
-        // Get All Custom Attributes
-        const customAttributes = await selectedElement.getAllCustomAttributes()
-        console.log(customAttributes)
-      }
-    },
-
-    getCustomAttribute: async (name: string) => {
-      // Get Selected Element
-      const selectedElement = await webflow.getSelectedElement()
-
-      if (selectedElement?.customAttributes) {
-        // Get Custom Attribute by Name
-        const customAttribute = await selectedElement.getCustomAttribute(name)
-        console.log(customAttribute)
-      }
-    },
-
-    setCustomAttribute: async (name: string, value: string) => {
-      // Get Selected Element
-      const selectedElement = await webflow.getSelectedElement()
-
-      if (selectedElement?.customAttributes) {
-        // Set Custom Attribute
-        const newAttribute = await selectedElement.setCustomAttribute(
-          name,
-          value,
-        )
-      }
-    },
-
-    removeCustomAttribute: async (name: string) => {
-      // Get Selected Element
-      const selectedElement = await webflow.getSelectedElement()
-
-      if (selectedElement?.customAttributes) {
-        // Remove Custom Attribute
-        await selectedElement.removeCustomAttribute(name)
-      }
-    },
-  },
-
   // Text Content
   textContent: {
     getTextContent: async () => {
