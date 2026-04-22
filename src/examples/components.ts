@@ -497,6 +497,80 @@ export const Components = {
     }
   },
 
+  getProp: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.getProps()
+      if (props.length > 0) {
+        const prop = await component.getProp(props[0].id)
+        console.log(prop)
+      } else {
+        console.log('This component has no props.')
+      }
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
+  getPropByName: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      // Look up by name — searches across all groups
+      const headingProp = await component.getPropByName('Heading')
+      console.log(headingProp)
+
+      // Look up by group + name
+      const opacityProp = await component.getPropByName('Settings', 'Overlay Opacity')
+      console.log(opacityProp)
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
+  setProp: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.getProps()
+      if (props.length > 0) {
+        // Update name and tooltip using the ID + updates signature
+        const updated = await component.setProp(props[0].id, {
+          name: 'Updated Heading',
+          tooltip: 'The main heading for the hero section',
+        })
+        console.log(updated)
+
+        // Use the object-with-ID signature to move the prop to a different group
+        const moved = await component.setProp({ id: props[0].id, group: 'Layout' })
+        console.log(moved.group) // 'Layout'
+      } else {
+        console.log('This component has no props.')
+      }
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
+  removeProp: async () => {
+    const component = await webflow.getCurrentComponent()
+
+    if (component) {
+      const props = await component.getProps()
+      const targetProp = props.find((p) => p.name === 'Old Heading')
+
+      if (targetProp) {
+        await component.removeProp(targetProp.id)
+        console.log(`Removed prop: ${targetProp.name}`)
+      } else {
+        console.log('Prop not found.')
+      }
+    } else {
+      console.log('Not currently editing a component.')
+    }
+  },
+
   getInstanceProps: async () => {
     // Get the selected component instance
     const instanceEl = await webflow.getSelectedElement();
