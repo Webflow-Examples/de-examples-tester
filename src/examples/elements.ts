@@ -432,6 +432,87 @@ export const Elements = {
     },
   },
 
+  attributes: {
+    getAttributes: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        const attributes = await element.getAttributes()
+        console.log(attributes)
+        // [{ name: 'data-label', value: 'primary' }]
+      }
+    },
+
+    getAttributeValue: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        // Look up by name
+        const value = await element.getAttributeValue('data-label')
+        console.log(value) // 'primary'
+
+        // Look up by index
+        const first = await element.getAttributeValue(0)
+        console.log(first) // 'primary'
+      }
+    },
+
+    getResolvedAttributes: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        const attributes = await element.getResolvedAttributes()
+        console.log(attributes)
+        // [{ name: 'data-label', value: 'primary' }]
+      }
+    },
+
+    getResolvedAttributeValue: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        const value = await element.getResolvedAttributeValue('data-title')
+        console.log(value) // 'My heading'
+      }
+    },
+
+    setAttribute: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        // Set by name (string values only)
+        await element.setAttribute('data-label', 'primary')
+
+        // Set by index (supports bindings)
+        await element.setAttribute(0, { name: 'data-label', value: 'primary' })
+      }
+    },
+
+    setAttributes: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        await element.setAttributes([
+          { name: 'data-label', value: 'primary' },
+          { name: 'data-index', value: '1' },
+        ])
+        console.log(await element.getAttributes())
+      }
+    },
+
+    removeAttribute: async () => {
+      const element = await webflow.getSelectedElement()
+
+      if (element && element.attributes) {
+        // Remove by name
+        await element.removeAttribute('data-label')
+
+        // Remove by index
+        await element.removeAttribute(0)
+      }
+    },
+  },
+
   // Text Content
   textContent: {
     getTextContent: async () => {
@@ -766,7 +847,7 @@ export const Elements = {
 
   // Link Operations
   linkOperations: {
-    setLinkBlockSettings: async (mode: LinkModeSettings, target: string) => {
+    setLinkBlockSettings: async (mode: 'url' | 'page' | 'pageSection' | 'email' | 'phone' | 'file', target: string) => {
       // Get Selected Element
       const element = await webflow.getSelectedElement()
 
