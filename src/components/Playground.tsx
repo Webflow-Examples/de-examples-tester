@@ -3,7 +3,9 @@ import MonacoEditor, { useMonaco } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { transform } from 'sucrase'
 import CodeBlock from './CodeBlock'
+import BundlePreviewModal from './BundlePreviewModal'
 import { configureMonacoWithDesignerTypings } from '../utils/designerTypings'
+import { generateBundleFiles } from '../utils/bundleGenerator'
 import ClipboardIcon from './icons/ClipboardIcon'
 import ClearIcon from './icons/ClearIcon'
 
@@ -54,6 +56,67 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
   const [language, setLanguage] = useState<'javascript' | 'typescript'>(
     'javascript',
   )
+  const [prompt, setPrompt] = useState('')
+  const [isWaiting, setIsWaiting] = useState(false)
+  const [showBundleModal, setShowBundleModal] = useState(false)
+  const [bundleAppName, setBundleAppName] = useState('My Extension')
+  const [bundleResult, setBundleResult] = useState<ReturnType<
+    typeof generateBundleFiles
+  > | null>(null)
+
+  const handleBundle = () => {
+    const currentCode = codeRef.current
+    const result = generateBundleFiles(currentCode, bundleAppName)
+    setBundleResult(result)
+    setShowBundleModal(true)
+  }
+
+  const handleAppNameChange = (name: string) => {
+    setBundleAppName(name)
+    if (bundleResult) {
+      const updated = generateBundleFiles(codeRef.current, name)
+      setBundleResult(updated)
+    }
+  }
+
+  const sendPromptToAgent = async (text: string) => {
+    console.log(`running with prompt: ${text}`);
+    const currentCode = codeRef.current
+
+    const userMessage = `Here is the current code in the playground editor:
+
+\`\`\`javascript
+${currentCode}
+\`\`\`
+
+Make the following changes to this code: ${text}`
+
+    setIsWaiting(true)
+    const timeoutId = setTimeout(() => setIsWaiting(false), 20000)
+
+    try {
+     const response = await fetch('http://localhost:1338/prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: userMessage }),
+      })
+
+      const data = await response.json()
+      const result = (data.content?.[0]?.text ?? '') as string
+      if (result) {
+        setCode(result)
+        codeRef.current = result
+        editorRef.current?.setValue(result)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      clearTimeout(timeoutId)
+      setIsWaiting(false)
+    }
+  }
   const monaco = useMonaco()
   const editorRef = useRef<any>(null)
   const codeRef = useRef(code)
@@ -459,19 +522,85 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
           }}
         />
       </div>
-      <div style={{ marginBottom: 8, position: 'relative' }}>
+      <div
+        style={{
+          marginBottom: 8,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: 8,
+        }}
+      >
+        <button
+          onClick={handleBundle}
+          className="button cc-primary"
+          style={{ background: '#383838', borderColor: 'rgba(255,255,255,0.13)' }}
+        >
+          Bundle
+        </button>
         <button
           onClick={() => runCode(codeRef.current)}
           disabled={isRunning}
           className="button cc-primary"
-          style={{
-            position: 'absolute',
-            right: 16,
-            bottom: 16,
-          }}
         >
           {isRunning ? 'Running...' : 'Run'}
         </button>
+      </div>
+      <div
+        style={{
+          background: '#181818',
+          borderRadius: 4,
+          marginBottom: 8,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 12px',
+            borderBottom: '1px solid #282a2e',
+            background: '#1e1e1e',
+          }}
+        >
+          <label
+            htmlFor="agent-prompt"
+            style={{ fontSize: 11, color: 'rgb(255 255 255 / 0.5)' }}
+          >
+            Prompt
+          </label>
+        </div>
+        <input
+          id="agent-prompt"
+          type="text"
+          value={prompt}
+          disabled={isWaiting}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              const value = e.currentTarget.value.trim()
+              if (value) {
+                sendPromptToAgent(value)
+                setPrompt('')
+              }
+            }
+          }}
+          placeholder={isWaiting ? 'Waiting for response' : 'Type a prompt and press Enter'}
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            background: '#181818',
+            border: 'none',
+            color: 'rgb(255 255 255 / 0.9)',
+            fontSize: 11,
+            padding: '10px 12px',
+            outline: 'none',
+            fontFamily:
+              'ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace',
+            fontStyle: isWaiting ? 'italic' : 'normal',
+            opacity: isWaiting ? 0.5 : 1,
+            cursor: isWaiting ? 'not-allowed' : 'text',
+          }}
+        />
       </div>
       <div
         style={{
@@ -479,75 +608,80 @@ const Playground: React.FC<PlaygroundProps> = ({ initialCode }) => {
           height: output ? 'auto' : 0,
           overflow: 'hidden',
           transition: 'opacity 0.2s ease-in-out',
-          padding: '0 16px 16px',
-          position: 'relative',
+          background: '#181818',
+          borderRadius: 4,
+          marginBottom: 8,
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            top: 10,
-            right: 24,
-            zIndex: 10,
             display: 'flex',
-            gap: 8,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 12px',
+            borderBottom: '1px solid #282a2e',
+            background: '#1e1e1e',
           }}
         >
-          <button
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(output)
-              } catch {
-                const ta = document.createElement("textarea")
-                ta.value = output
-                ta.style.position = "fixed"
-                ta.style.left = "-9999px"
-                document.body.appendChild(ta)
-                ta.select()
-                document.execCommand("copy")
-                document.body.removeChild(ta)
-              }
-              setIsCopied(true)
-              setTimeout(() => setIsCopied(false), 2000)
-            }}
-            title="Copy to clipboard"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgb(255 255 255 / 0.6)',
-              cursor: 'pointer',
-              padding: 4,
-            }}
-          >
-            {isCopied ? 'Copied!' : <ClipboardIcon />}
-          </button>
-          <button
-            onClick={() => setOutput('')}
-            title="Clear output"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'rgb(255 255 255 / 0.6)',
-              cursor: 'pointer',
-              padding: 4,
-            }}
-          >
-            <ClearIcon />
-          </button>
+          <div style={{ fontSize: 11, color: 'rgb(255 255 255 / 0.5)' }}>
+            Output
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(output)
+                } catch {
+                  const ta = document.createElement('textarea')
+                  ta.value = output
+                  ta.style.position = 'fixed'
+                  ta.style.left = '-9999px'
+                  document.body.appendChild(ta)
+                  ta.select()
+                  document.execCommand('copy')
+                  document.body.removeChild(ta)
+                }
+                setIsCopied(true)
+                setTimeout(() => setIsCopied(false), 2000)
+              }}
+              title="Copy to clipboard"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'rgb(255 255 255 / 0.6)',
+                cursor: 'pointer',
+                padding: 4,
+              }}
+            >
+              {isCopied ? 'Copied!' : <ClipboardIcon />}
+            </button>
+            <button
+              onClick={() => setOutput('')}
+              title="Clear output"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'rgb(255 255 255 / 0.6)',
+                cursor: 'pointer',
+                padding: 4,
+              }}
+            >
+              <ClearIcon />
+            </button>
+          </div>
         </div>
-        <label
-          style={{
-            fontWeight: 500,
-            fontSize: 13,
-            color: 'rgb(255 255 255 / 0.6)',
-            display: 'block',
-            marginBottom: 4,
-          }}
-        >
-          Output
-        </label>
-        <CodeBlock code={output || ' '} language="javascript" />
+        <div style={{ padding: 12 }}>
+          <CodeBlock code={output || ' '} language="javascript" />
+        </div>
       </div>
+      {showBundleModal && bundleResult && (
+        <BundlePreviewModal
+          bundle={bundleResult}
+          appName={bundleAppName}
+          onAppNameChange={handleAppNameChange}
+          onClose={() => setShowBundleModal(false)}
+        />
+      )}
     </div>
   )
 }
