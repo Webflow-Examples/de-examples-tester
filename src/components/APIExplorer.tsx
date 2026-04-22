@@ -130,15 +130,18 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           if (
             typeof value === 'object' &&
             value !== null &&
-            !('type' in value)
+            !('type' in value) &&
+            typeof value !== 'function'
           ) {
             return {
               value: key,
               label: key.replace(/([A-Z])/g, ' $1').trim(),
-              subcategories: Object.keys(value || {}).map((subKey) => ({
-                value: subKey,
-                label: subKey.replace(/([A-Z])/g, ' $1').trim(),
-              })),
+              subcategories: Object.keys(value || {}).map((subKey) => {
+                const entry = (value as any)[subKey]
+                const label =
+                  entry?.displayName ?? subKey.replace(/([A-Z])/g, ' $1').trim()
+                return { value: subKey, label }
+              }),
             }
           }
           return {
@@ -172,9 +175,10 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
         ? selectedFunctionName.split('.')
         : [null, selectedFunctionName]
       const topCategory = examples[selectedExampleCategory]
-      const funcToExecute = category
+      const rawEntry = category
         ? topCategory[category][funcName]
         : topCategory[selectedFunctionName]
+      const funcToExecute = rawEntry?.code ?? rawEntry
 
       if (funcToExecute) {
         const originalConsole = { ...console }

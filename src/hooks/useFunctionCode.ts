@@ -175,8 +175,28 @@ const parseFunctionText = (
   if (functionStart === -1) return null
 
   const functionContentStart = functionStart + `${functionName}: `.length
-  const functionContentEnd = findMatchingBrace(searchText, functionContentStart)
 
+  // Detect { displayName, code } object structure
+  const afterColon = searchText.slice(functionContentStart).replace(/^\s+/, '')
+  if (afterColon.startsWith('{')) {
+    // Find 'code: ' within this method's object
+    const codeMarker = 'code: '
+    const codePropertyIndex = searchText.indexOf(codeMarker, functionContentStart)
+    if (codePropertyIndex !== -1) {
+      const codeContentStart = codePropertyIndex + codeMarker.length
+      // Find the opening { of the code function
+      const fnOpenBrace = searchText.indexOf('{', codeContentStart)
+      if (fnOpenBrace !== -1) {
+        const fnCloseEnd = findMatchingBrace(searchText, fnOpenBrace + 1)
+        // Include the function signature (async (...) => ) plus the body
+        const fnSignature = searchText.slice(codeContentStart, fnOpenBrace)
+        const fnBody = searchText.slice(fnOpenBrace, fnCloseEnd)
+        return `${functionName}: ${fnSignature}${fnBody}`
+      }
+    }
+  }
+
+  const functionContentEnd = findMatchingBrace(searchText, functionContentStart)
   return searchText.slice(functionStart, functionContentEnd)
 }
 

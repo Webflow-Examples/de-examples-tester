@@ -1,81 +1,101 @@
 export const Folders = {
 
   folders: {
-    createNewFolder: async (name: string) => {
-      // Create and name new folder
-      const newFolder = await webflow.createPageFolder()
-      await newFolder.setName(name)
+    createNewFolder: {
+      displayName: 'Create new folder',
+      code: async (name: string) => {
+        // Create and name new folder
+        const newFolder = await webflow.createPageFolder()
+        await newFolder.setName(name)
 
-      // Print details
-      const folderName = await newFolder.getName()
-      console.log(folderName)
+        // Print details
+        const folderName = await newFolder.getName()
+        console.log(folderName)
+      },
     },
-    getFolderName: async () => {
-      // Get all Pages and folders
-      const pagesAndFolders = await webflow.getAllPagesAndFolders()
+    getFolderName: {
+      displayName: 'Get folder name',
+      code: async () => {
+        // Get all Pages and folders
+        const pagesAndFolders = await webflow.getAllPagesAndFolders()
 
-      for (let folder of pagesAndFolders) {
-        const folderName = await folder.getName()
-        const type = folder.type
-        console.log(folderName, type)
-      }
+        for (let folder of pagesAndFolders) {
+          const folderName = await folder.getName()
+          const type = folder.type
+          console.log(folderName, type)
+        }
+      },
     },
-    setFolderName: async (name: string) => {
-      // Create and name new folder
-      const newFolder = await webflow.createPageFolder()
-      await newFolder.setName(name)
+    setFolderName: {
+      displayName: 'Set folder name',
+      code: async (name: string) => {
+        // Create and name new folder
+        const newFolder = await webflow.createPageFolder()
+        await newFolder.setName(name)
 
-      // Print details
-      const folderName = await newFolder.getName()
-      console.log(folderName)
+        // Print details
+        const folderName = await newFolder.getName()
+        console.log(folderName)
+      },
     },
-
   },
 
   slugs: {
-    getSlug: async () => {
-      // Get all Pages and folders
-      const pagesAndFolders = await webflow.getAllPagesAndFolders()
+    getSlug: {
+      displayName: 'Get slug',
+      code: async () => {
+        // Get all Pages and folders
+        const pagesAndFolders = await webflow.getAllPagesAndFolders()
 
-      for (let folder of pagesAndFolders) {
-        const folderSlug = await folder.getSlug()
-        console.log('Slug', folderSlug)
-      }
+        for (let folder of pagesAndFolders) {
+          const folderSlug = await folder.getSlug()
+          console.log('Slug', folderSlug)
+        }
+      },
     },
-    setSlug: async (slug: string) => {
-      // Create and give slug to new folder
-      const newFolder = await webflow.createPageFolder()
-      await newFolder.setSlug(slug)
+    setSlug: {
+      displayName: 'Set slug',
+      code: async (slug: string) => {
+        // Create and give slug to new folder
+        const newFolder = await webflow.createPageFolder()
+        await newFolder.setSlug(slug)
 
-      // Print details
-      const newSlug = await newFolder.getSlug()
-      console.log('Slug', newSlug)
+        // Print details
+        const newSlug = await newFolder.getSlug()
+        console.log('Slug', newSlug)
+      },
     },
   },
 
   parents: {
-    getParentFolder: async () => {
-      // Get all Pages and folders
-      const pagesAndFolders = await webflow.getAllPagesAndFolders()
+    getParentFolder: {
+      displayName: 'Get parent folder',
+      code: async () => {
+        // Get all Pages and folders
+        const pagesAndFolders = await webflow.getAllPagesAndFolders()
 
-      for (let folder of pagesAndFolders) {
-        const childName = await folder.getName()
-        const parent = await folder.getParent()
-        const parentName = await parent?.getName()
-        console.log(`Folder: ${childName}`, `Parent: ${parentName}`)
-      }
+        for (let folder of pagesAndFolders) {
+          const childName = await folder.getName()
+          const parent = await folder.getParent()
+          const parentName = await parent?.getName()
+          console.log(`Folder: ${childName}`, `Parent: ${parentName}`)
+        }
+      },
     },
-    setParentFolder: async (folderName: string) => {
-      // Get all Pages and folders
-      const pagesAndFolders = await webflow.getAllPagesAndFolders()
+    setParentFolder: {
+      displayName: 'Set parent folder',
+      code: async (folderName: string) => {
+        // Get all Pages and folders
+        const pagesAndFolders = await webflow.getAllPagesAndFolders()
 
-      // Create and name new folder
-      const newFolder = await webflow.createPageFolder()
-      await newFolder.setName(folderName)
+        // Create and name new folder
+        const newFolder = await webflow.createPageFolder()
+        await newFolder.setName(folderName)
 
-      for (let folder of pagesAndFolders) {
-        await folder.setParent(newFolder)
-      }
+        for (let folder of pagesAndFolders) {
+          await folder.setParent(newFolder)
+        }
+      },
     },
   },
 }
