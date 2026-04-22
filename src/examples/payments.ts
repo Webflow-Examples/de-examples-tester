@@ -1,9 +1,12 @@
 export const Payments = {
 
-    getAppSubscriptions: async () => {
+    subscriptions: {
+        getAppSubscriptions: async () => {
 
-        const subcriptions = await webflow.getAppSubscriptions()
-        console.log(`Subscriptions: ${subcriptions}`)
+            const subcriptions = await webflow.getAppSubscriptions()
+            console.log(`Subscriptions: ${subcriptions}`)
 
+        },
     },
+
 }
