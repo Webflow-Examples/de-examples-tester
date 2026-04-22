@@ -174,7 +174,7 @@ export const Assets = {
     fileName: string,
     fileTypeEnum: ValidFileTypesEnum,
   ) => {
-    // Fetch image from remote source and buil a Blob object
+    // Fetch image from remote source and build a Blob object
     const response = await fetch(url)
     const blob = await response.blob()
     const file = new File([blob], fileName, {
