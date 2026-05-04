@@ -49,7 +49,7 @@ export const Pages = {
       // Get all pages and folders
       const pagesAndFolders = await webflow.getAllPagesAndFolders()
 
-      // Print Page Details
+      // Print page details
       const pages = pagesAndFolders?.filter((i) => i.type === 'Page')
       await Promise.all(
         pages.map(async (page) => {
@@ -68,11 +68,11 @@ export const Pages = {
     },
 
     switchPage: async () => {
-      // Get All Pages and Folders
+      // Get all pages and folders
       const pagesAndFolders = await webflow.getAllPagesAndFolders()
       const pages = pagesAndFolders?.filter((i): i is Page => i.type === 'Page')
 
-      // Switch Page
+      // Switch page
       const newPage = pages[2]
       await webflow.switchPage(newPage)
     },
@@ -139,7 +139,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Get page Description
+      // Get page description
       const pageDescription = await currentPage.getDescription()
       console.log(pageDescription)
     },
@@ -166,7 +166,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Set page Description
+      // Set page description
       await currentPage.setSlug(slug)
       const newSlug = await currentPage.getSlug()
       console.log('Slug', newSlug)
@@ -277,7 +277,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Check if page is using the Title as the Open Graph title
+      // Check if page is using the title as the Open Graph title
       const isOpenGraphTitle = await currentPage.usesTitleAsOpenGraphTitle()
 
       // Print results
@@ -302,7 +302,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Get Open Graph Title
+      // Get Open Graph title
       const openGraphTitle = await currentPage.getOpenGraphTitle()
       console.log('Open Graph Title', openGraphTitle)
     },
@@ -311,7 +311,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Set Open Graph Title
+      // Set Open Graph title
       await currentPage.setOpenGraphTitle(title)
 
       // Print results
@@ -349,7 +349,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Get Open Graph Description
+      // Get Open Graph description
       const openGraphDescription = await currentPage.getOpenGraphDescription()
       console.log('Open Graph Description', openGraphDescription)
     },
@@ -358,7 +358,7 @@ export const Pages = {
       // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
-      // Set Open Graph Description
+      // Set Open Graph description
       await currentPage.setOpenGraphDescription(description)
     },
 
