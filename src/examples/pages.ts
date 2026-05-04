@@ -37,7 +37,7 @@ export const Pages = {
   // Page Management
   pageManagement: {
     getCurrentPage: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = await webflow.getCurrentPage()
       const pageName = await currentPage?.getName()
 
@@ -91,7 +91,7 @@ export const Pages = {
   // Page Information
   pageInformation: {
     getPageKind: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get the page
@@ -100,7 +100,7 @@ export const Pages = {
     },
 
     getPageName: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get page name
@@ -109,7 +109,7 @@ export const Pages = {
     },
 
     setPageName: async (pageName: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page name
@@ -118,7 +118,7 @@ export const Pages = {
     },
 
     getPageTitle: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get page title
@@ -127,7 +127,7 @@ export const Pages = {
     },
 
     setPageTitle: async (pageTitle: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page Title
@@ -136,7 +136,7 @@ export const Pages = {
     },
 
     getPageDescription: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get page Description
@@ -145,7 +145,7 @@ export const Pages = {
     },
 
     setPageDescription: async (pageDescription: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page Description
@@ -154,7 +154,7 @@ export const Pages = {
     },
 
     getPageSlug: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get page slug
@@ -163,7 +163,7 @@ export const Pages = {
     },
 
     setPageSlug: async (slug: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page Description
@@ -177,7 +177,7 @@ export const Pages = {
   collectionInformation: {
     getCollectionId: async () => {
       try {
-        // Get Current Page
+        // Get current page
         const currentPage = (await webflow.getCurrentPage()) as Page
 
         // Get Collection ID if page belongs to a collection
@@ -191,7 +191,7 @@ export const Pages = {
 
     getCollectionName: async () => {
       try {
-        // Get Current Page
+        // Get current page
         const currentPage = (await webflow.getCurrentPage()) as Page
 
         // Get Collection ID if page belongs to a collection
@@ -207,7 +207,7 @@ export const Pages = {
   // Page Status
   pageStatus: {
     checkIfDraft: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Check page status
@@ -222,7 +222,7 @@ export const Pages = {
     },
 
     setAsDraft: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page as draft
@@ -234,7 +234,7 @@ export const Pages = {
     },
 
     checkIfPassword: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Check if current page is the homepage
@@ -248,7 +248,7 @@ export const Pages = {
     },
 
     isPageHomePage: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Check if current page is the homepage
@@ -262,7 +262,7 @@ export const Pages = {
     },
 
     getUtilityPageKey: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get Utility Key
@@ -274,7 +274,7 @@ export const Pages = {
   // Open Graph Settings
   openGraphSettings: {
     checkOpenGraphTitle: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Check if page is using the Title as the Open Graph title
@@ -289,7 +289,7 @@ export const Pages = {
     },
 
     setTitleAsOpenGraphTitle: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page title as open graph title
@@ -299,7 +299,7 @@ export const Pages = {
     },
 
     getOpenGraphTitle: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get Open Graph Title
@@ -308,7 +308,7 @@ export const Pages = {
     },
 
     setOpenGraphTitle: async (title: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set Open Graph Title
@@ -320,7 +320,7 @@ export const Pages = {
     },
 
     checkOpenGraphDescription: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Check page status
@@ -336,7 +336,7 @@ export const Pages = {
     },
 
     setDescriptionAsOpenGraphDescription: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set page description open graph description
@@ -346,7 +346,7 @@ export const Pages = {
     },
 
     getOpenGraphDescription: async () => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Get Open Graph Description
@@ -355,11 +355,34 @@ export const Pages = {
     },
 
     setOpenGraphDescription: async (description: string) => {
-      // Get Current Page
+      // Get current page
       const currentPage = (await webflow.getCurrentPage()) as Page
 
       // Set Open Graph Description
       await currentPage.setOpenGraphDescription(description)
+    },
+
+    getOpenGraphImage: async () => {
+      // Get current page
+      const currentPage = await webflow.getCurrentPage() as Page
+
+      //  Get Open Graph image and print its URL
+      const openGraphImage = await currentPage.getOpenGraphImage()
+      if (openGraphImage) {
+        console.log(openGraphImage)
+      } else {
+        console.log('No Open Graph image is set for this page')
+      }
+    },
+
+    setOpenGraphImage: async (url: string) => {
+      // Get current page
+      const currentPage = (await webflow.getCurrentPage()) as Page
+
+      // Set Open Graph image
+      await currentPage.setOpenGraphImage(url)
+      const openGraphImage = await currentPage.getOpenGraphImage()
+      console.log(openGraphImage)
     },
   },
 }
