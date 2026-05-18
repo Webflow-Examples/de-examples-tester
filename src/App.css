@@ -306,6 +306,10 @@ input {
   min-height: 28px;
 }
 
+#agent-prompt:disabled::placeholder {
+  font-style: italic;
+}
+
 /* Code block styles */
 pre {
   font-size: 11px !important;
