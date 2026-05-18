@@ -116,173 +116,196 @@ export enum ValidFileTypesEnum {
 }
 
 export const Assets = {
-  getAllAssets: async () => {
-    // Get all assets
-    const assets = await webflow.getAllAssets()
+  // Asset Management
+  assetManagement: {
+    getAllAssets: async () => {
+      // Get all assets
+      const assets = await webflow.getAllAssets()
 
-    // Loop to list assets in the console
-    for (const asset of assets) {
-      const name = await asset.getName()
-      const mimeType = await asset.getMimeType()
-      console.log(name, mimeType)
-    }
-  },
-  getAssetName: async () => {
-    // Get Selected Element
-    const el = await webflow.getSelectedElement()
+      // Loop to list assets in the console
+      for (const asset of assets) {
+        const name = await asset.getName()
+        const mimeType = await asset.getMimeType()
+        console.log(name, mimeType)
+      }
+    },
 
-    // Check if element is selected and its type
-    if (!el || el.type !== 'Image') {
-      console.error('Please select an Image element on the canvas')
-      await webflow.notify({
-        type: 'Error',
-        message: 'Please select an Image element on the canvas',
-      })
-    } else {
-      const asset = await el.getAsset() // Get Asset
-      const assetName = await asset?.getName() // Get Asset Name
-      console.log(`Asset Name: ${assetName}`)
-    }
-  },
-
-  getAssetMimeType: async () => {
-    // Get Selected Element
-    const el = await webflow.getSelectedElement()
-
-    // Check if element is selected and its type
-    if (!el || el.type !== 'Image') {
-      console.error('Please select an Image element on the canvas')
-      await webflow.notify({
-        type: 'Error',
-        message: 'Please select an Image element on the canvas',
-      })
-    } else {
-      const asset = await el.getAsset() // Get Asset
-      const assetMimeType = await asset?.getMimeType() // Get Asset MIME Type
-      console.log(`Asset MIME type: ${assetMimeType}`)
-    }
-  },
-  createAssetFromFileUpload: async (file: File) => {
-    if (file) {
-      const asset = await webflow.createAsset(file)
-
-      console.log(`Asset ID: ${asset.id}`)
-    }
-  },
-  createAssetFromURL: async (
-    url: string,
-    fileName: string,
-    fileTypeEnum: ValidFileTypesEnum,
-  ) => {
-    // Fetch image from remote source and buil a Blob object
-    const response = await fetch(url)
-    const blob = await response.blob()
-    const file = new File([blob], fileName, {
-      type: fileTypeEnum,
-    })
-
-    console.log('file', file)
-
-    try {
-      // Create and upload the asset to webflow
-      const asset = await webflow.createAsset(file)
+    getAssetById: async (asset_id: string) => {
+      const asset = await webflow.getAssetById(asset_id)
+      console.log('check')
       console.log(asset)
-    } catch (err) {
-      const error = err as { cause: { tag: string }; message: string }
-      console.error(`Cause:${error.cause.tag}`)
-      console.error(`Cause:${error.message}`)
-    }
-  },
-  getAssetById: async (asset_id: string) => {
-    const asset = await webflow.getAssetById(asset_id)
-    console.log('check')
-    console.log(asset)
-  },
-  getAssetURL: async (assetId: string) => {
-    // Get Asset by ID
-    const asset = await webflow.getAssetById(assetId)
-    console.log(asset)
+    },
 
-    if (asset) {
-      // Get asset URL
-      const url = await asset.getUrl()
-      console.log(`Asset URL: ${url}`)
-    }
-  },
-  getAltText: async (asset: Asset) => {
-    // Now asset is the actual Asset object, not wrapped
-    if (asset) {
-      // Get asset alt text
-      const altText = await asset.getAltText()
-      console.log(`Asset Alt Text: ${altText}`)
-    }
-  },
-  setAltText: async (assetId: string, altText: string) => {
-    // Get Asset by ID
-    const asset = await webflow.getAssetById(assetId)
-    console.log(asset)
+    getAssetName: async () => {
+      // Get Selected Element
+      const el = await webflow.getSelectedElement()
 
-    if (asset) {
-      // Get asset URL
-      const originalAltText = await asset.getAltText()
-      await asset.setAltText(altText)
-      const newAltText = await asset.getAltText()
-      console.log(`Original Asset Alt Text: ${originalAltText}`)
-      console.log(`New Asset Alt Text: ${newAltText}`)
-    }
-  },
-  addAssetToCanvas: async (assetId: string) => {
-    // Get Asset URL
-    const asset = await webflow.getAssetById(assetId)
-    const assetUrl = await asset?.getUrl()
+      // Check if element is selected and its type
+      if (!el || el.type !== 'Image') {
+        console.error('Please select an Image element on the canvas')
+        await webflow.notify({
+          type: 'Error',
+          message: 'Please select an Image element on the canvas',
+        })
+      } else {
+        const asset = await el.getAsset() // Get Asset
+        const assetName = await asset?.getName() // Get Asset Name
+        console.log(`Asset Name: ${assetName}`)
+      }
+    },
 
-    // Get selected element
-    const selectedElement = await webflow.getSelectedElement()
-    if (!selectedElement) {
-      webflow.notify({ type: 'Error', message: 'Please select an element' })
-      return
-    }
+    getAssetMimeType: async () => {
+      // Get Selected Element
+      const el = await webflow.getSelectedElement()
 
-    // Add DOM element with an image tag to selected element
-    if (selectedElement.children && assetUrl) {
-      const domElement = await selectedElement.append(
-        webflow.elementPresets.DOM,
-      )
-      await domElement.setTag('img')
-      await domElement.setAttribute('src', assetUrl)
-    }
+      // Check if element is selected and its type
+      if (!el || el.type !== 'Image') {
+        console.error('Please select an Image element on the canvas')
+        await webflow.notify({
+          type: 'Error',
+          message: 'Please select an Image element on the canvas',
+        })
+      } else {
+        const asset = await el.getAsset() // Get Asset
+        const assetMimeType = await asset?.getMimeType() // Get Asset MIME Type
+        console.log(`Asset MIME type: ${assetMimeType}`)
+      }
+    },
+
+    getAssetURL: async (assetId: string) => {
+      // Get Asset by ID
+      const asset = await webflow.getAssetById(assetId)
+      console.log(asset)
+
+      if (asset) {
+        // Get asset URL
+        const url = await asset.getUrl()
+        console.log(`Asset URL: ${url}`)
+      }
+    },
   },
 
-  getAllAssetFolders: async () => {
-    const folders = await webflow.getAllAssetFolders()
-    console.log(folders)
+  // Asset Creation
+  assetCreation: {
+    createAssetFromFileUpload: async (file: File) => {
+      if (file) {
+        const asset = await webflow.createAsset(file)
+
+        console.log(`Asset ID: ${asset.id}`)
+      }
+    },
+
+    createAssetFromURL: async (
+      url: string,
+      fileName: string,
+      fileTypeEnum: ValidFileTypesEnum,
+    ) => {
+      // Fetch image from remote source and build a Blob object
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const file = new File([blob], fileName, {
+        type: fileTypeEnum,
+      })
+
+      console.log('file', file)
+
+      try {
+        // Create and upload the asset to webflow
+        const asset = await webflow.createAsset(file)
+        console.log(asset)
+      } catch (err) {
+        const error = err as { cause: { tag: string }; message: string }
+        console.error(`Cause:${error.cause.tag}`)
+        console.error(`Cause:${error.message}`)
+      }
+    },
   },
 
-  createAssetFolder: async (name: string, parentFolderName?: string) => {
-    // Get All Asset Folders
-    const folders = await webflow.getAllAssetFolders()
+  // Alt Text
+  altText: {
+    getAltText: async (asset: Asset) => {
+      // Now asset is the actual Asset object, not wrapped
+      if (asset) {
+        // Get asset alt text
+        const altText = await asset.getAltText()
+        console.log(`Asset Alt Text: ${altText}`)
+      }
+    },
 
-    // Find Parent Folder by Name
-    if (parentFolderName) {
-      const parentFolder = await Promise.all(
-        folders.map(async (folder) => {
-          const folderName = await folder.getName()
-          if (folderName === parentFolderName) {
-            return folder
-          }
-          return null
-        }),
-      ).then((results) => results.find((folder) => folder !== null))
+    setAltText: async (assetId: string, altText: string) => {
+      // Get Asset by ID
+      const asset = await webflow.getAssetById(assetId)
+      console.log(asset)
 
-      // Create Asset Folder with parent folder
-      if (parentFolder) {
-        const newFolder = await webflow.createAssetFolder(name, parentFolder.id)
+      if (asset) {
+        // Get asset URL
+        const originalAltText = await asset.getAltText()
+        await asset.setAltText(altText)
+        const newAltText = await asset.getAltText()
+        console.log(`Original Asset Alt Text: ${originalAltText}`)
+        console.log(`New Asset Alt Text: ${newAltText}`)
+      }
+    },
+  },
+
+  // Canvas
+  canvas: {
+    addAssetToCanvas: async (assetId: string) => {
+      // Get Asset URL
+      const asset = await webflow.getAssetById(assetId)
+      const assetUrl = await asset?.getUrl()
+
+      // Get selected element
+      const selectedElement = await webflow.getSelectedElement()
+      if (!selectedElement) {
+        webflow.notify({ type: 'Error', message: 'Please select an element' })
+        return
+      }
+
+      // Add DOM element with an image tag to selected element
+      if (selectedElement.children && assetUrl) {
+        const domElement = await selectedElement.append(
+          webflow.elementPresets.DOM,
+        )
+        await domElement.setTag('img')
+        await domElement.setAttribute('src', assetUrl)
+      }
+    },
+  },
+
+  // Asset Folders
+  assetFolders: {
+    getAllAssetFolders: async () => {
+      const folders = await webflow.getAllAssetFolders()
+      console.log(folders)
+    },
+
+    createAssetFolder: async (name: string, parentFolderName?: string) => {
+      // Get All Asset Folders
+      const folders = await webflow.getAllAssetFolders()
+
+      // Find Parent Folder by Name
+      if (parentFolderName) {
+        const parentFolder = await Promise.all(
+          folders.map(async (folder) => {
+            const folderName = await folder.getName()
+            if (folderName === parentFolderName) {
+              return folder
+            }
+            return null
+          }),
+        ).then((results) => results.find((folder) => folder !== null))
+
+        // Create Asset Folder with parent folder
+        if (parentFolder) {
+          const newFolder = await webflow.createAssetFolder(name, parentFolder.id)
+          console.log(newFolder)
+        }
+      } else {
+        // Create Asset Folder
+        const newFolder = await webflow.createAssetFolder(name)
         console.log(newFolder)
       }
-    } else {
-      // Create Asset Folder
-      const newFolder = await webflow.createAssetFolder(name)
-      console.log(newFolder)
-    }
+    },
   },
 }

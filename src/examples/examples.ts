@@ -10,7 +10,7 @@ import { Assets } from './assets'
 import { ValidFileTypesEnum } from './assets'
 
 // Add default example for createAssetFromURL
-Assets.createAssetFromURL.example = {
+Assets.assetCreation.createAssetFromURL.example = {
   url: 'https://picsum.photos/200',
   fileName: 'example-image.jpg',
   fileTypeEnum: ValidFileTypesEnum.JPEG,
