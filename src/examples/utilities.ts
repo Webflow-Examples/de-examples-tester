@@ -43,6 +43,52 @@ export const Utilities = {
       },
     },
 
+    getCurrentMode: {
+      displayName: 'Get current mode',
+      code: async () => {
+        // Read the Designer mode the user is currently in
+        const mode = await webflow.getCurrentMode()
+        console.log('Current Designer mode:', mode)
+
+        switch (mode) {
+          case 'design':
+            console.log('The user is in Design mode.')
+            break
+          case 'build':
+            console.log('The user is editing CMS content on the canvas.')
+            break
+          case 'preview':
+            console.log('The user is viewing a read-only site preview.')
+            break
+          case 'edit':
+            console.log('The user is in the Editor outside the canvas.')
+            break
+          case 'comment':
+            console.log('The user is annotating and commenting.')
+            break
+          case null:
+            console.log('The Designer is not in a public mode.')
+            break
+        }
+      },
+    },
+
+    isMode: {
+      displayName: 'Check current mode',
+      code: async () => {
+        // Check whether the Designer is in a single specific mode
+        const isDesign = await webflow.isMode('design')
+        console.log(`Designer is in Design mode: ${isDesign}`)
+
+        if (!isDesign) {
+          await webflow.notify({
+            type: 'Info',
+            message: 'Switch to Design mode to run layout-editing actions.',
+          })
+        }
+      }
+    },
+
     checkAppConnection: {
       displayName: 'Check app connection',
       code: async () => {
@@ -278,7 +324,7 @@ export const Utilities = {
     },
 
     subscribeAppModes: {
-      displayName: 'Subscribe app modes',
+      displayName: 'Subscribe to app mode changes',
       code: async () => {
         // Subscribe to changes in the selected page
         const checkAppModes = async () => {
@@ -292,6 +338,27 @@ export const Utilities = {
           'currentappmode',
           checkAppModes,
         )
+      },
+    },
+
+    subscribeAppModesEnriched: {
+      displayName: 'Subscribe to app mode changes with enriched callback',
+      code: async () => {
+        // The enriched callback receives the new mode and a full snapshot of
+        // the user's capability booleans, so no extra canForAppMode() call is needed.
+        const unsubscribe = webflow.subscribe('currentappmode', (event) => {
+          console.log('New mode:', event.mode)
+          console.log('Capabilities:', event.appModes)
+
+          if (event.appModes.canDesign) {
+            console.log('Design tools are available.')
+          } else {
+            console.log('Design tools are not available in this mode.')
+          }
+        })
+
+        // Stop listening after 30 seconds
+        setTimeout(unsubscribe, 30000)
       },
     },
 
