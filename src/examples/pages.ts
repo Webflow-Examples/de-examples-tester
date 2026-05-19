@@ -475,4 +475,43 @@ export const Pages = {
       },
     },
   },
+
+  // Page Branching
+  pageBranching: {
+    getBranchId: {
+      displayName: 'Get branch ID',
+      code: async () => {
+        // Get Current Page
+        const currentPage = (await webflow.getCurrentPage()) as Page
+
+        // Get branch ID
+        const branchId = await currentPage.getBranchId()
+        console.log(branchId)
+      }
+    },
+
+    getParentPageId: {
+      displayName: 'Get parent page ID',
+      code: async () => {
+        // Get Current Page
+        const currentPage = (await webflow.getCurrentPage()) as Page
+
+        // Get parent page ID
+        const parentPageId = await currentPage.getParentPageId()
+        console.log(parentPageId)
+      },
+    },
+
+    listBranches: {
+      displayName: 'List the branches of a page',
+      code: async () => {
+        // Get Current Page
+        const currentPage = (await webflow.getCurrentPage()) as Page
+
+        // List branches
+        const branches = await currentPage.listBranches()
+        console.log(branches)
+      },
+    }
+  },
 }
