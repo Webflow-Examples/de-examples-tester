@@ -45,10 +45,10 @@ export const Components = {
         if (components.length > 0) {
           console.log('List of registered components:')
 
-          for (let component in components) {
-            const currentComponentName = await components[component].getName()
+          for (let i = 0; i < components.length; i++) {
+            const currentComponentName = await components[i].getName()
             console.log(
-              `${component + 1}. Component Name: ${currentComponentName}, Component ID: ${components[component].id}`,
+              `${i + 1}. Component Name: ${currentComponentName}, Component ID: ${components[i].id}`,
             )
           }
         } else {
@@ -221,7 +221,6 @@ export const Components = {
         // Select the base variant
         await heroComponent.setSelectedVariant({ id: 'base' });
         await heroComponent.setSelectedVariant('base');
-        }
       },
     },
 
@@ -467,7 +466,7 @@ export const Components = {
     getSelectedVariant: {
       displayName: 'Get selected variant',
       code: async () => {
-        const heroComponent = webflow.getComponentByName('hero')
+        const heroComponent = await webflow.getComponentByName('hero')
         // When no variant is explicitly selected, returns base
         const base = await heroComponent.getSelectedVariant()
         console.log(JSON.stringify(base))
