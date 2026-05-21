@@ -203,6 +203,28 @@ export const Components = {
       },
     },
 
+    setSelectedVariant: {
+      displayName: "Set selected variant",
+      code: async () => {
+        // Select component
+        const heroComponent = await webflow.getComponentByName('Hero')
+
+        // Select variant by name
+        await heroComponent.setSelectedVariant({ name: 'Secondary Hero' });
+
+        // Select variant by ID (object form)
+        await heroComponent.setSelectedVariant({ id: 'secondary-hero' });
+
+        // Select variant by ID (string shorthand)
+        await heroComponent.setSelectedVariant('secondary-hero');
+
+        // Select the base variant
+        await heroComponent.setSelectedVariant({ id: 'base' });
+        await heroComponent.setSelectedVariant('base');
+        }
+      },
+    },
+
     createComponent: {
       displayName: 'Create component',
       code: async () => {
