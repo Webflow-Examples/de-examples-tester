@@ -1,6 +1,7 @@
 {
   "name": "My Amazing App",
   "publicDir": "dist",
+  "size": "large",
   "apiVersion": "2",
   "featureFlags": { "userAbilities": true },
   "appIntents": {
