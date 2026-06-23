@@ -9,12 +9,14 @@ interface TabNavigationProps {
   tabs: Tab[]
   activeTab: string
   setActiveTab: (tabKey: string) => void
+  rightContent?: React.ReactNode
 }
 
 const TabNavigation: React.FC<TabNavigationProps> = ({
   tabs,
   activeTab,
   setActiveTab,
+  rightContent,
 }) => (
   <div role="tablist" aria-label="Main Tabs" className="tablist">
     {tabs.map((tab) => {
@@ -35,6 +37,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
         </button>
       )
     })}
+    {rightContent && (
+      <div className="tablist-right">{rightContent}</div>
+    )}
   </div>
 )
 
