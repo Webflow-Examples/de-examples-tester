@@ -27,7 +27,7 @@ function Dropdown({
   }
 
   return (
-    <div>
+    <div className="w-select-wrap">
       <select
         value={selectedValue}
         onChange={handleChange}

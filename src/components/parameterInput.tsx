@@ -169,35 +169,37 @@ const ParameterInput: React.FC<ParameterInputProps> = React.memo(
 
       // Use regular select for fewer options
       return (
-        <select
-          className={config.className}
-          value={displayValue}
-          onChange={handleChange}
-          disabled={disabled || loading}
-        >
-          <option value="" disabled>
-            {effectivePlaceholder}
-          </option>
-          {options.map((option, index) => {
-            if (typeof option === 'string') {
-              return (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              )
-            }
+        <div className="w-select-wrap">
+          <select
+            className={config.className}
+            value={displayValue}
+            onChange={handleChange}
+            disabled={disabled || loading}
+          >
+            <option value="" disabled>
+              {effectivePlaceholder}
+            </option>
+            {options.map((option, index) => {
+              if (typeof option === 'string') {
+                return (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                )
+              }
 
-            if (isDynamicEnumValue(option)) {
-              return (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              )
-            }
+              if (isDynamicEnumValue(option)) {
+                return (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                )
+              }
 
-            return null
-          })}
-        </select>
+              return null
+            })}
+          </select>
+        </div>
       )
     }
 

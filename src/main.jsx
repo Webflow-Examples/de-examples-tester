@@ -36,8 +36,10 @@ const App = () => {
   const hasInitializedRef = useRef(false)
 
   useEffect(() => {
-    // Set initial size
-    webflow.setExtensionSize({ height: 425, width: 500 })
+    // Set initial size. The `webflow` global only exists inside the Designer.
+    if (typeof webflow !== 'undefined') {
+      webflow.setExtensionSize({ height: 425, width: 500 })
+    }
   }, [])
 
   // Auto-initialize first example and function

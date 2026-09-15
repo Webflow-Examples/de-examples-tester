@@ -114,16 +114,19 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
           {loading ? 'Loading...' : getDisplayValue() || placeholder}
         </span>
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`dropdown-chevron ${isOpen ? 'is-open' : ''}`}
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
           fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M7.99996 9.29293L11.6464 5.64648L12.3535 6.35359L7.99996 10.7071L3.64641 6.35359L4.35352 5.64648L7.99996 9.29293Z"
+            fill="currentColor"
           />
         </svg>
       </button>
